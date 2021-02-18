@@ -35,7 +35,7 @@ namespace DFC.Api.Lmi.Import.Services
 
                 //TODO: ian: remove the following #if DEBUG block -- jobProfiles = jobProfiles.Take(10).ToList(); -- once development is completed
 #if DEBUG
-                jobProfileSummaries = jobProfileSummaries.Take(1).ToList();
+                jobProfileSummaries = jobProfileSummaries.Take(10).ToList();
 #endif
 
                 var jobProfileDetails = await jobProfileApiConnector.GetDetailsAsync(jobProfileSummaries).ConfigureAwait(false);
