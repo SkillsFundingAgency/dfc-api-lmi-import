@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.Lmi.Import.Models.ClientOptions
 {
+    [ExcludeFromCodeCoverage]
     public class LmiApiClientOptions : ClientOptionsModel
     {
         public enum LmiQuery
