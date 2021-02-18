@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace DFC.Api.Lmi.Import.UnitTests
@@ -8,7 +7,6 @@ namespace DFC.Api.Lmi.Import.UnitTests
         [Fact]
         public void Test1()
         {
-
         }
     }
 }
