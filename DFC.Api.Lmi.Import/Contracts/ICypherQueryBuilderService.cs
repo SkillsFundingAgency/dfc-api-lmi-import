@@ -5,7 +5,7 @@ namespace DFC.Api.Lmi.Import.Contracts
 {
     public interface ICypherQueryBuilderService
     {
-        string BuildMerge(object item, string nodeAlias, string nodeName);
+        string BuildMerge(object item, string nodeName);
 
         string BuildMerge(string nodeAlias, string nodeName, string? keyValues);
 
@@ -16,11 +16,11 @@ namespace DFC.Api.Lmi.Import.Contracts
 
         string BuildSetUriProperty(string nodeAlias, string nodeName);
 
-        IList<string> BuildRelationships(object parent, string parentNodeAlias, string parentNodeName);
+        IList<string> BuildRelationships(object parent, string parentNodeName);
 
-        IList<string> BuildChildRelationship(object parent, object child, string parentNodeAlias, string parentNodeName, string relationshipName);
+        IList<string> BuildChildRelationship(object parent, object child, string parentNodeName, string relationshipName);
 
-        string BuildRelationship(string parentAlias, string parentNode, string childAlias, string childNode, string relationshipName, object parent, object child);
+        string BuildRelationship(string parentNode, string childNode, string relationshipName, object parent, object child);
 
         string BuildRelationship(string fromAlias, string toAlias, string relationship);
 

@@ -13,7 +13,7 @@ namespace DFC.Api.Lmi.Import.AutoMapperProfiles
         public LmiToSocProfile()
         {
             CreateMap<LmiSocDatasetModel, GraphSocDatasetModel>()
-                .ForMember(d => d.CreatedDate, s => s.MapFrom(m => DateTime.UtcNow));
+                .ForMember(d => d.CreatedDate, s => s.Ignore());
 
             CreateMap<SocJobProfileItemModel, GraphJobProfileModel>();
 

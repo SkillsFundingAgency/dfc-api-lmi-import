@@ -5,14 +5,11 @@ namespace DFC.Api.Lmi.Import.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class GraphNodeAttribute : Attribute
     {
-        public GraphNodeAttribute(string nodeAlias, string nodeName)
+        public GraphNodeAttribute(string name)
         {
-            NodeAlias = nodeAlias;
-            NodeName = nodeName;
+            Name = name;
         }
 
-        public string NodeAlias { get; }
-
-        public string NodeName { get; }
+        public string Name { get; }
     }
 }

@@ -9,6 +9,6 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
         public int Soc { get; set; }
 
         [GraphProperty(nameof(CreatedDate))]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 }

@@ -6,9 +6,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace DFC.Api.Lmi.Import.Models.GraphData
 {
     [ExcludeFromCodeCoverage]
-    [GraphNode("s", "LmiSoc")]
+    [GraphNode("LmiSoc")]
     public class GraphSocDatasetModel : GraphBaseModel
     {
+        [GraphProperty(nameof(Soc), isKey: true, isPreferredLabel: true)]
+        public new int Soc { get; set; }
+
         [GraphProperty(nameof(Title))]
         public string? Title { get; set; }
 

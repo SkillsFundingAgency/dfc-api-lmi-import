@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DFC.Api.Lmi.Import.Models.GraphData
 {
     [ExcludeFromCodeCoverage]
-    [GraphNode("jp", "LmiSocJobProfile")]
+    [GraphNode("LmiSocJobProfile")]
     public class GraphJobProfileModel
     {
         [GraphProperty(nameof(CanonicalName), isKey: true, isPreferredLabel: true)]

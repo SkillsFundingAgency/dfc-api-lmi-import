@@ -19,10 +19,11 @@ namespace DFC.Api.Lmi.Import.Services
             this.graphOptions = graphOptions;
         }
 
-        public string BuildMerge(object item, string nodeAlias, string nodeName)
+        public string BuildMerge(object item, string nodeName)
         {
             _ = item ?? throw new ArgumentNullException(nameof(item));
 
+            const string nodeAlias = "a";
             var mergeCommand = BuildMerge(nodeAlias, nodeName, BuildKeyProperties(item));
             var setProperties = BuldSetProperties(nodeAlias, nodeName, item);
 
@@ -84,7 +85,7 @@ namespace DFC.Api.Lmi.Import.Services
 
         public string BuildSetUriProperty(string nodeAlias, string nodeName)
         {
-            return BuildSetProperty(nodeAlias, graphOptions.UriName, QuoteString($"{graphOptions.ContentApiUriPrefix}{nodeName}/{Guid.NewGuid()}".ToLowerInvariant()));
+            return BuildSetProperty(nodeAlias, graphOptions.UriPropertyName, QuoteString($"{graphOptions.ContentApiUriPrefix}{nodeName}/{Guid.NewGuid()}".ToLowerInvariant()));
         }
 
         public string BuildSetProperty(string nodeAlias, string name, string? value)
@@ -92,7 +93,7 @@ namespace DFC.Api.Lmi.Import.Services
             return $"{nodeAlias}.{name} = {value}";
         }
 
-        public IList<string> BuildRelationships(object parent, string parentNodeAlias, string parentNodeName)
+        public IList<string> BuildRelationships(object parent, string parentNodeName)
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
 
@@ -107,7 +108,7 @@ namespace DFC.Api.Lmi.Import.Services
 
                     if (child != null)
                     {
-                        commands.AddRange(BuildChildRelationship(parent, child, parentNodeAlias, parentNodeName, graphRelationshipRootAttribute.Name));
+                        commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipRootAttribute.Name));
                     }
                 }
 
@@ -120,7 +121,7 @@ namespace DFC.Api.Lmi.Import.Services
                     {
                         foreach (var child in children)
                         {
-                            commands.AddRange(BuildChildRelationship(parent, child, parentNodeAlias, parentNodeName, graphRelationshipAttribute.Name));
+                            commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipAttribute.Name));
                         }
                     }
                 }
@@ -129,7 +130,7 @@ namespace DFC.Api.Lmi.Import.Services
             return commands;
         }
 
-        public IList<string> BuildChildRelationship(object parent, object child, string parentNodeAlias, string parentNodeName, string relationshipName)
+        public IList<string> BuildChildRelationship(object parent, object child, string parentNodeName, string relationshipName)
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
             _ = child ?? throw new ArgumentNullException(nameof(child));
@@ -139,21 +140,23 @@ namespace DFC.Api.Lmi.Import.Services
 
             if (childGraphNodeAttribute != null)
             {
-                commands.Add(BuildMerge(child, childGraphNodeAttribute.NodeAlias, childGraphNodeAttribute.NodeName));
-                commands.Add(BuildRelationship(parentNodeAlias, parentNodeName, childGraphNodeAttribute.NodeAlias, childGraphNodeAttribute.NodeName, relationshipName, parent, child));
+                commands.Add(BuildMerge(child, childGraphNodeAttribute.Name));
+                commands.Add(BuildRelationship(parentNodeName, childGraphNodeAttribute.Name, relationshipName, parent, child));
 
-                commands.AddRange(BuildRelationships(child, childGraphNodeAttribute.NodeAlias, childGraphNodeAttribute.NodeName));
+                commands.AddRange(BuildRelationships(child, childGraphNodeAttribute.Name));
             }
 
             return commands;
         }
 
-        public string BuildRelationship(string parentAlias, string parentNode, string childAlias, string childNode, string relationshipName, object parent, object child)
+        public string BuildRelationship(string parentNode, string childNode, string relationshipName, object parent, object child)
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
             _ = child ?? throw new ArgumentNullException(nameof(child));
 
             const char space = ' ';
+            const string parentAlias = "p";
+            const string childAlias = "c";
             var sb = new StringBuilder();
 
             sb.Append(BuildMatch(parentAlias, parentNode, BuildKeyProperties(parent)));

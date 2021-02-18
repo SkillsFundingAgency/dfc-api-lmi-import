@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DFC.Api.Lmi.Import.Models.GraphData
 {
     [ExcludeFromCodeCoverage]
-    [GraphNode("byi", "LmiSocBreakdownYearItem")]
+    [GraphNode("LmiSocBreakdownYearItem")]
     public class GraphBreakdownYearItemModel : GraphBaseModel
     {
         [GraphProperty(nameof(BreakdownType), isKey: true)]

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DFC.Api.Lmi.Import.Models.GraphData
 {
     [ExcludeFromCodeCoverage]
-    [GraphNode("b", "LmiSocBreakdown")]
+    [GraphNode("LmiSocBreakdown")]
     public class GraphBreakdownModel : GraphBaseModel
     {
         [GraphProperty(nameof(Note))]

@@ -8,7 +8,7 @@ namespace DFC.Api.Lmi.Import.Models
     {
         public string PreferredLabelName { get; set; } = "skos__prefLabel";
 
-        public string UriName { get; set; } = "uri";
+        public string UriPropertyName { get; set; } = "uri";
 
         public Uri? ContentApiUriPrefix { get; set; }
 

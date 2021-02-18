@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DFC.Api.Lmi.Import.Models.GraphData
 {
     [ExcludeFromCodeCoverage]
-    [GraphNode("p", "LmiSocPredicted")]
+    [GraphNode("LmiSocPredicted")]
     public class GraphPredictedModel : GraphBaseModel
     {
         [GraphProperty(nameof(PredictedType), isPreferredLabel: true)]
