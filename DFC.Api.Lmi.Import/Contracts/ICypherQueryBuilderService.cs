@@ -5,6 +5,10 @@ namespace DFC.Api.Lmi.Import.Contracts
 {
     public interface ICypherQueryBuilderService
     {
+        IList<string> BuildPurgeCommands();
+
+        string BuildPurgeCommand(string nodeName);
+
         string BuildMerge(object item, string nodeName);
 
         string BuildMerge(string nodeAlias, string nodeName, string? keyValues);

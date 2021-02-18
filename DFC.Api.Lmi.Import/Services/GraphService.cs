@@ -25,13 +25,26 @@ namespace DFC.Api.Lmi.Import.Services
 
             logger.LogInformation($"Importing SOC dataset to Cosmos: {graphSocDataset.Soc}");
 
-            var command = graphConnector.BuildCommand(graphSocDataset);
+            var commands = graphConnector.BuildImportCommanda(graphSocDataset);
 
-            logger.LogInformation($"Importing SOC dataset to Cosmos: {graphSocDataset.Soc}: executing command");
+            logger.LogInformation($"Importing SOC dataset to Cosmos: {graphSocDataset.Soc}: executing commands");
 
-            await graphConnector.RunAsync(command, graphSocDataset.Soc).ConfigureAwait(false);
+            await graphConnector.RunAsync(commands).ConfigureAwait(false);
 
             logger.LogInformation($"Imported SOC dataset to Cosmos: {graphSocDataset.Soc}");
+        }
+
+        public async Task PurgeAsync()
+        {
+            logger.LogInformation("Purging Graph of LMI data");
+
+            var commands = graphConnector.BuildPurgeCommands();
+
+            logger.LogInformation("Purging Graph of LMI data: executing commands");
+
+            await graphConnector.RunAsync(commands).ConfigureAwait(false);
+
+            logger.LogInformation("Purged Graph of LMI data");
         }
     }
 }

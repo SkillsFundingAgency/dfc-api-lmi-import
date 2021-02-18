@@ -6,6 +6,7 @@ using DFC.ServiceTaxonomy.Neo4j.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Connectors
@@ -29,7 +30,12 @@ namespace DFC.Api.Lmi.Import.Connectors
             this.cypherQueryBuilderService = cypherQueryBuilderService;
         }
 
-        public IList<string> BuildCommand<TModel>(TModel parent)
+        public IList<string> BuildPurgeCommands()
+        {
+            return cypherQueryBuilderService.BuildPurgeCommands();
+        }
+
+        public IList<string> BuildImportCommanda<TModel>(TModel parent)
             where TModel : class
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
@@ -39,14 +45,14 @@ namespace DFC.Api.Lmi.Import.Connectors
             var parentGraphNodeAttribute = Utilities.AttributeUtilies.GetAttribute<GraphNodeAttribute>(parent.GetType());
             if (parentGraphNodeAttribute != null)
             {
-                commands.Add(cypherQueryBuilderService.BuildMerge(parent,  parentGraphNodeAttribute.Name));
-                commands.AddRange(cypherQueryBuilderService.BuildRelationships(parent,  parentGraphNodeAttribute.Name));
+                commands.Add(cypherQueryBuilderService.BuildMerge(parent, parentGraphNodeAttribute.Name));
+                commands.AddRange(cypherQueryBuilderService.BuildRelationships(parent, parentGraphNodeAttribute.Name));
             }
 
             return commands;
         }
 
-        public async Task RunAsync(IList<string> commands, int soc)
+        public async Task RunAsync(IList<string> commands)
         {
             _ = commands ?? throw new ArgumentNullException(nameof(commands));
 

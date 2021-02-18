@@ -19,6 +19,33 @@ namespace DFC.Api.Lmi.Import.Services
             this.graphOptions = graphOptions;
         }
 
+        public IList<string> BuildPurgeCommands()
+        {
+            var commands = new List<string>();
+
+            var graphNodeClasses = Utilities.AttributeUtilies.GetTypesWithAttribute(Assembly.GetExecutingAssembly(), typeof(GraphNodeAttribute));
+
+            if (graphNodeClasses != null && graphNodeClasses.Any())
+            {
+                foreach (var graphNodeClass in graphNodeClasses)
+                {
+                    var graphNodeAttribute = Utilities.AttributeUtilies.GetAttribute<GraphNodeAttribute>(graphNodeClass);
+
+                    if (graphNodeAttribute != null)
+                    {
+                        commands.Add(BuildPurgeCommand(graphNodeAttribute.Name));
+                    }
+                }
+            }
+
+            return commands;
+        }
+
+        public string BuildPurgeCommand(string nodeName)
+        {
+            return $"MATCH (s:{nodeName}) DETACH DELETE s";
+        }
+
         public string BuildMerge(object item, string nodeName)
         {
             _ = item ?? throw new ArgumentNullException(nameof(item));

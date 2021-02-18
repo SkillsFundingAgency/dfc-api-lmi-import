@@ -6,5 +6,7 @@ namespace DFC.Api.Lmi.Import.Contracts
     public interface IGraphService
     {
         Task ImportAsync(GraphSocDatasetModel graphSocDataset);
+
+        Task PurgeAsync();
     }
 }

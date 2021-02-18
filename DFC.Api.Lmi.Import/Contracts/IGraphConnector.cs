@@ -5,9 +5,11 @@ namespace DFC.Api.Lmi.Import.Contracts
 {
     public interface IGraphConnector
     {
-        IList<string> BuildCommand<TModel>(TModel parent)
+        IList<string> BuildImportCommanda<TModel>(TModel parent)
             where TModel : class;
 
-        Task RunAsync(IList<string> commands, int soc);
+        IList<string> BuildPurgeCommands();
+
+        Task RunAsync(IList<string> commands);
     }
 }

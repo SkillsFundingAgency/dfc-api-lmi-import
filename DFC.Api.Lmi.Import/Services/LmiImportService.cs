@@ -35,6 +35,8 @@ namespace DFC.Api.Lmi.Import.Services
 
             if (socJobProfileMappings != null && socJobProfileMappings.Any())
             {
+                await graphService.PurgeAsync().ConfigureAwait(false);
+
                 int importedToGraphCount = 0;
 
                 logger.LogInformation($"Importing {socJobProfileMappings.Count} SOC mappings");
