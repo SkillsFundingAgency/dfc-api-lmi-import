@@ -23,9 +23,9 @@ namespace DFC.Api.Lmi.Import.Models.ClientOptions
             { LmiQuery.TopIndustriesInJobGroup, "wf/predict/breakdown/industry?soc={v}&minYear={minYear}&maxYear={maxYear}" },
         };
 
-        public int MinYear { get; set; } = 2019;
+        public int MinYear { get; set; } = 2020;
 
-        public int MaxYear { get; set; } = 2026;
+        public int MaxYear { get; set; } = 2027;
 
         public Uri BuildApiUri(int soc, LmiQuery lmiQuery)
         {
