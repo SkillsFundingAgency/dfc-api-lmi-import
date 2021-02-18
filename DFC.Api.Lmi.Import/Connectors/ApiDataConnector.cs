@@ -9,11 +9,11 @@ namespace DFC.Api.Lmi.Import.Connectors
 {
     public class ApiDataConnector : IApiDataConnector
     {
-        private readonly IApiConnector apiService;
+        private readonly IApiConnector apiConnector;
 
-        public ApiDataConnector(IApiConnector apiService)
+        public ApiDataConnector(IApiConnector apiConnector)
         {
-            this.apiService = apiService;
+            this.apiConnector = apiConnector;
         }
 
         public async Task<TApiModel?> GetAsync<TApiModel>(HttpClient? httpClient, Uri url)
@@ -21,7 +21,7 @@ namespace DFC.Api.Lmi.Import.Connectors
         {
             _ = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
-            var response = await apiService.GetAsync(httpClient, url, MediaTypeNames.Application.Json).ConfigureAwait(false);
+            var response = await apiConnector.GetAsync(httpClient, url, MediaTypeNames.Application.Json).ConfigureAwait(false);
 
             if (!string.IsNullOrWhiteSpace(response))
             {

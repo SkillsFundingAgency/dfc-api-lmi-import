@@ -36,7 +36,7 @@ namespace DFC.Api.Lmi.Import.Connectors
             return jobProfileSummaries;
         }
 
-        public async Task<IList<JobProfileDetailModel>> GetDetailsAsync(IList<JobProfileSummaryModel> jobProfileSummaries)
+        public async Task<IList<JobProfileDetailModel>> GetDetailsAsync(IList<JobProfileSummaryModel>? jobProfileSummaries)
         {
             _ = jobProfileSummaries ?? throw new ArgumentNullException(nameof(jobProfileSummaries));
 

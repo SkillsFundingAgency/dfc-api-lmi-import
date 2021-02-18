@@ -35,7 +35,7 @@ namespace DFC.Api.Lmi.Import.Connectors
             return cypherQueryBuilderService.BuildPurgeCommands();
         }
 
-        public IList<string> BuildImportCommanda<TModel>(TModel parent)
+        public IList<string> BuildImportCommands<TModel>(TModel? parent)
             where TModel : class
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));

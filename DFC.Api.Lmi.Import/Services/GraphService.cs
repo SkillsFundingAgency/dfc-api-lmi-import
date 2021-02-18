@@ -25,7 +25,7 @@ namespace DFC.Api.Lmi.Import.Services
 
             logger.LogInformation($"Importing SOC dataset to Cosmos: {graphSocDataset.Soc}");
 
-            var commands = graphConnector.BuildImportCommanda(graphSocDataset);
+            var commands = graphConnector.BuildImportCommands(graphSocDataset);
 
             logger.LogInformation($"Importing SOC dataset to Cosmos: {graphSocDataset.Soc}: executing commands");
 

@@ -1,4 +1,5 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
@@ -25,10 +26,10 @@ namespace DFC.Api.Lmi.Import.Connectors
             this.apiDataConnector = apiDataConnector;
         }
 
-        public async Task<TModel?> ImportAsync<TModel>(int soc, LmiApiClientOptions.LmiQuery lmiQuery)
+        public async Task<TModel?> ImportAsync<TModel>(int soc, LmiApiQuery lmiApiQuery)
             where TModel : class
         {
-            var uri = lmiApiClientOptions.BuildApiUri(soc, lmiQuery);
+            var uri = lmiApiClientOptions.BuildApiUri(soc, lmiApiQuery);
             logger.LogInformation($"Getting LMI data from: {uri}");
 
             var apiData = await apiDataConnector.GetAsync<TModel>(httpClient, uri).ConfigureAwait(false);

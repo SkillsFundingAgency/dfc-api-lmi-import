@@ -30,10 +30,20 @@ namespace DFC.Api.Lmi.Import.Services
 
         private static void PropogateKeys(GraphSocDatasetModel graphSocDataset)
         {
-            PropogateKeys(graphSocDataset.Soc, graphSocDataset.JobGrowth?.PredictedEmployment);
+            PropogateKeys(graphSocDataset.Soc, graphSocDataset.JobGrowth);
             PropogateKeys(graphSocDataset.Soc, graphSocDataset.QualificationLevel);
             PropogateKeys(graphSocDataset.Soc, graphSocDataset.EmploymentByRegion);
             PropogateKeys(graphSocDataset.Soc, graphSocDataset.TopIndustriesInJobGroup);
+        }
+
+        private static void PropogateKeys(int soc, GraphPredictedModel? graphPredictedModel)
+        {
+            if (graphPredictedModel != null)
+            {
+                graphPredictedModel.Soc = soc;
+
+                PropogateKeys(graphPredictedModel.Soc, graphPredictedModel?.PredictedEmployment);
+            }
         }
 
         private static void PropogateKeys(int soc, IList<GraphPredictedYearModel>? graphPredictedYears)
@@ -51,6 +61,8 @@ namespace DFC.Api.Lmi.Import.Services
         {
             if (graphBreakdown != null)
             {
+                graphBreakdown.Soc = soc;
+
                 PropogateKeys(soc, graphBreakdown.BreakdownType, graphBreakdown?.PredictedEmployment);
             }
         }

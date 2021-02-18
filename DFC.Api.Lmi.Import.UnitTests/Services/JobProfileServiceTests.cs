@@ -1,9 +1,9 @@
-using Xunit;
+﻿using Xunit;
 
 namespace DFC.Api.Lmi.Import.UnitTests.Services
 {
-    [Trait("Category", "Cypher query builder service Unit Tests")]
-    public class CypherQueryBuilderServiceTests
+    [Trait("Category", "Job profile service Unit Tests")]
+    public class JobProfileServiceTests
     {
         [Fact]
         public void Test1()

@@ -8,6 +8,6 @@ namespace DFC.Api.Lmi.Import.Contracts
     {
         Task<IList<JobProfileSummaryModel>?> GetSummaryAsync();
 
-        Task<IList<JobProfileDetailModel>> GetDetailsAsync(IList<JobProfileSummaryModel> jobProfileSummaries);
+        Task<IList<JobProfileDetailModel>> GetDetailsAsync(IList<JobProfileSummaryModel>? jobProfileSummaries);
     }
 }

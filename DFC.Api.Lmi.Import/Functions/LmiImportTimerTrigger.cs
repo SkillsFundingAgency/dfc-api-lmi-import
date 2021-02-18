@@ -10,14 +10,14 @@ namespace DFC.Api.Lmi.Import.Functions
     public class LmiImportTimerTrigger
     {
         private readonly ILogger<LmiImportTimerTrigger> logger;
-        private readonly ILmiImportService lmiProcessorService;
+        private readonly ILmiImportService lmiImportService;
 
         public LmiImportTimerTrigger(
             ILogger<LmiImportTimerTrigger> logger,
-            ILmiImportService lmiProcessorService)
+            ILmiImportService lmiImportService)
         {
             this.logger = logger;
-            this.lmiProcessorService = lmiProcessorService;
+            this.lmiImportService = lmiImportService;
         }
 
         [FunctionName("GetLmiImportTimerTrigger")]
@@ -29,7 +29,7 @@ namespace DFC.Api.Lmi.Import.Functions
             activity.DisplayName = Environment.GetEnvironmentVariable("ApplicationName") ?? nameof(LmiImportTimerTrigger);
             activity.Start();
 
-            await lmiProcessorService.ImportAsync().ConfigureAwait(false);
+            await lmiImportService.ImportAsync().ConfigureAwait(false);
 
             logger.LogTrace($"Next run of {nameof(LmiImportTimerTrigger)}is {myTimer?.ScheduleStatus?.Next}");
 
