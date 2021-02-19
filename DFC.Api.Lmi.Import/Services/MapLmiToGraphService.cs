@@ -42,17 +42,18 @@ namespace DFC.Api.Lmi.Import.Services
             {
                 graphPredictedModel.Soc = soc;
 
-                PropogateKeys(graphPredictedModel.Soc, graphPredictedModel?.PredictedEmployment);
+                PropogateKeys(graphPredictedModel.Soc, graphPredictedModel.Measure, graphPredictedModel?.PredictedEmployment);
             }
         }
 
-        private static void PropogateKeys(int soc, IList<GraphPredictedYearModel>? graphPredictedYears)
+        private static void PropogateKeys(int soc, string? measure, IList<GraphPredictedYearModel>? graphPredictedYears)
         {
             if (graphPredictedYears != null && graphPredictedYears.Any())
             {
                 foreach (var graphPredictedYear in graphPredictedYears)
                 {
                     graphPredictedYear.Soc = soc;
+                    graphPredictedYear.Measure = measure;
                 }
             }
         }
@@ -63,32 +64,32 @@ namespace DFC.Api.Lmi.Import.Services
             {
                 graphBreakdown.Soc = soc;
 
-                PropogateKeys(soc, graphBreakdown.BreakdownType, graphBreakdown?.PredictedEmployment);
+                PropogateKeys(soc, graphBreakdown.Measure, graphBreakdown?.PredictedEmployment);
             }
         }
 
-        private static void PropogateKeys(int soc, string? breakdownType, IList<GraphBreakdownYearModel>? graphBreakdownYears)
+        private static void PropogateKeys(int soc, string? measure, IList<GraphBreakdownYearModel>? graphBreakdownYears)
         {
             if (graphBreakdownYears != null && graphBreakdownYears.Any())
             {
                 foreach (var graphBreakdownYear in graphBreakdownYears)
                 {
                     graphBreakdownYear.Soc = soc;
-                    graphBreakdownYear.BreakdownType = breakdownType;
+                    graphBreakdownYear.Measure = measure;
 
-                    PropogateKeys(soc, breakdownType, graphBreakdownYear.Year, graphBreakdownYear?.Breakdown);
+                    PropogateKeys(soc, measure, graphBreakdownYear.Year, graphBreakdownYear?.Breakdown);
                 }
             }
         }
 
-        private static void PropogateKeys(int soc, string? breakdownType, int year, IList<GraphBreakdownYearItemModel>? graphBreakdownYearItems)
+        private static void PropogateKeys(int soc, string? measure, int year, IList<GraphBreakdownYearItemModel>? graphBreakdownYearItems)
         {
             if (graphBreakdownYearItems != null && graphBreakdownYearItems.Any())
             {
                 foreach (var graphBreakdownYearItem in graphBreakdownYearItems)
                 {
                     graphBreakdownYearItem.Soc = soc;
-                    graphBreakdownYearItem.BreakdownType = breakdownType;
+                    graphBreakdownYearItem.Measure = measure;
                     graphBreakdownYearItem.Year = year;
                 }
             }

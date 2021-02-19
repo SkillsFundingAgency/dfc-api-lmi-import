@@ -49,23 +49,23 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             Assert.Equal(lmiSocDataset.JobGrowth!.PredictedEmployment.First().Year, result.JobGrowth.PredictedEmployment.First().Year);
             Assert.Equal(lmiSocDataset.JobGrowth.PredictedEmployment.First().Employment, result.JobGrowth.PredictedEmployment.First().Employment);
             Assert.Equal(lmiSocDataset.Soc, result.QualificationLevel.Soc);
-            Assert.Equal(lmiSocDataset.QualificationLevel!.Breakdown, result.QualificationLevel.BreakdownType);
+            Assert.Equal(lmiSocDataset.QualificationLevel!.Breakdown, result.QualificationLevel.Measure);
             Assert.Equal(lmiSocDataset.QualificationLevel.PredictedEmployment.First().Year, result.QualificationLevel.PredictedEmployment.First().Year);
             Assert.Equal(lmiSocDataset.Soc, result.QualificationLevel.PredictedEmployment.First().Breakdown.First().Soc);
             Assert.Equal(lmiSocDataset.QualificationLevel.PredictedEmployment.First().Year, result.QualificationLevel.PredictedEmployment.First().Breakdown.First().Year);
-            Assert.Equal(lmiSocDataset.QualificationLevel.Breakdown, result.QualificationLevel.PredictedEmployment.First().Breakdown.First().BreakdownType);
+            Assert.Equal(lmiSocDataset.QualificationLevel.Breakdown, result.QualificationLevel.PredictedEmployment.First().Breakdown.First().Measure);
             Assert.Equal(lmiSocDataset.Soc, result.EmploymentByRegion.Soc);
-            Assert.Equal(lmiSocDataset.EmploymentByRegion!.Breakdown, result.EmploymentByRegion.BreakdownType);
+            Assert.Equal(lmiSocDataset.EmploymentByRegion!.Breakdown, result.EmploymentByRegion.Measure);
             Assert.Equal(lmiSocDataset.EmploymentByRegion.PredictedEmployment.First().Year, result.EmploymentByRegion.PredictedEmployment.First().Year);
             Assert.Equal(lmiSocDataset.Soc, result.EmploymentByRegion.PredictedEmployment.First().Breakdown.First().Soc);
             Assert.Equal(lmiSocDataset.EmploymentByRegion.PredictedEmployment.First().Year, result.EmploymentByRegion.PredictedEmployment.First().Breakdown.First().Year);
-            Assert.Equal(lmiSocDataset.EmploymentByRegion.Breakdown, result.EmploymentByRegion.PredictedEmployment.First().Breakdown.First().BreakdownType);
+            Assert.Equal(lmiSocDataset.EmploymentByRegion.Breakdown, result.EmploymentByRegion.PredictedEmployment.First().Breakdown.First().Measure);
             Assert.Equal(lmiSocDataset.Soc, result.TopIndustriesInJobGroup.Soc);
-            Assert.Equal(lmiSocDataset.TopIndustriesInJobGroup!.Breakdown, result.TopIndustriesInJobGroup.BreakdownType);
+            Assert.Equal(lmiSocDataset.TopIndustriesInJobGroup!.Breakdown, result.TopIndustriesInJobGroup.Measure);
             Assert.Equal(lmiSocDataset.TopIndustriesInJobGroup.PredictedEmployment.First().Year, result.TopIndustriesInJobGroup.PredictedEmployment.First().Year);
             Assert.Equal(lmiSocDataset.Soc, result.TopIndustriesInJobGroup.PredictedEmployment.First().Breakdown.First().Soc);
             Assert.Equal(lmiSocDataset.TopIndustriesInJobGroup.PredictedEmployment.First().Year, result.TopIndustriesInJobGroup.PredictedEmployment.First().Breakdown.First().Year);
-            Assert.Equal(lmiSocDataset.TopIndustriesInJobGroup.Breakdown, result.QualificationLevel.PredictedEmployment.First().Breakdown.First().BreakdownType);
+            Assert.Equal(lmiSocDataset.TopIndustriesInJobGroup.Breakdown, result.QualificationLevel.PredictedEmployment.First().Breakdown.First().Measure);
         }
 
         private LmiSocDatasetModel BuildValidLmiSocDatasetModel()
@@ -197,7 +197,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 QualificationLevel = new GraphBreakdownModel
                 {
                     Note = "a note",
-                    BreakdownType = "breakdown",
+                    Measure = "breakdown",
                     PredictedEmployment = new List<GraphBreakdownYearModel>
                     {
                         new GraphBreakdownYearModel
@@ -219,7 +219,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 EmploymentByRegion = new GraphBreakdownModel
                 {
                     Note = "b note",
-                    BreakdownType = "breakdown",
+                    Measure = "breakdown",
                     PredictedEmployment = new List<GraphBreakdownYearModel>
                     {
                         new GraphBreakdownYearModel
@@ -241,7 +241,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 TopIndustriesInJobGroup = new GraphBreakdownModel
                 {
                     Note = "c note",
-                    BreakdownType = "breakdown",
+                    Measure = "breakdown",
                     PredictedEmployment = new List<GraphBreakdownYearModel>
                     {
                         new GraphBreakdownYearModel

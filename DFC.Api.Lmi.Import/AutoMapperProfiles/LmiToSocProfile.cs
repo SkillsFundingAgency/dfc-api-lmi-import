@@ -18,21 +18,22 @@ namespace DFC.Api.Lmi.Import.AutoMapperProfiles
             CreateMap<SocJobProfileItemModel, GraphJobProfileModel>();
 
             CreateMap<LmiPredictedModel, GraphPredictedModel>()
-                .ForMember(d => d.PredictedType, s => s.MapFrom(m => "employment prediction"));
+                .ForMember(d => d.Measure, s => s.MapFrom(m => "employment"));
 
             CreateMap<LmiPredictedYearModel, GraphPredictedYearModel>()
-                .ForMember(d => d.Soc, s => s.Ignore());
+                .ForMember(d => d.Soc, s => s.Ignore())
+                .ForMember(d => d.Measure, s => s.Ignore());
 
             CreateMap<LmiBreakdownModel, GraphBreakdownModel>()
-                .ForMember(d => d.BreakdownType, s => s.MapFrom(m => $"{m.Breakdown} breakdown"));
+                .ForMember(d => d.Measure, s => s.MapFrom(m => m.Breakdown));
 
             CreateMap<LmiBreakdownYearModel, GraphBreakdownYearModel>()
                 .ForMember(d => d.Soc, s => s.Ignore())
-                .ForMember(d => d.BreakdownType, s => s.Ignore());
+                .ForMember(d => d.Measure, s => s.Ignore());
 
             CreateMap<LmiBreakdownYearItemModel, GraphBreakdownYearItemModel>()
                 .ForMember(d => d.Soc, s => s.Ignore())
-                .ForMember(d => d.BreakdownType, s => s.Ignore())
+                .ForMember(d => d.Measure, s => s.Ignore())
                 .ForMember(d => d.Year, s => s.Ignore());
         }
     }

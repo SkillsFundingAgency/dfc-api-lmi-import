@@ -8,8 +8,8 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
     [GraphNode("LmiSocPredicted")]
     public class GraphPredictedModel : GraphBaseModel
     {
-        [GraphProperty(nameof(PredictedType), isPreferredLabel: true)]
-        public string? PredictedType { get; set; }
+        [GraphProperty(nameof(Measure), isPreferredLabel: true)]
+        public string? Measure { get; set; }
 
         [GraphRelationship(nameof(PredictedEmployment))]
         public IList<GraphPredictedYearModel>? PredictedEmployment { get; set; }

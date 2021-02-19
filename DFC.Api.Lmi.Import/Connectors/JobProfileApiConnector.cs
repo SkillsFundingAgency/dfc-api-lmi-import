@@ -33,6 +33,11 @@ namespace DFC.Api.Lmi.Import.Connectors
         {
             var jobProfileSummaries = await apiDataConnector.GetAsync<IList<JobProfileSummaryModel>>(httpClient, jobProfileApiClientOptions.BaseAddress!).ConfigureAwait(false);
 
+            if (jobProfileApiClientOptions.DeveloperModeMaxJobProfiles > 0)
+            {
+                jobProfileSummaries = jobProfileSummaries.Take(10).ToList();
+            }
+
             return jobProfileSummaries;
         }
 

@@ -7,6 +7,9 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
     [GraphNode("LmiSocPredictedYear")]
     public class GraphPredictedYearModel : GraphBaseModel
     {
+        [GraphProperty(nameof(Measure))]
+        public string? Measure { get; set; }
+
         [GraphProperty(nameof(Year), isKey: true, isPreferredLabel: true)]
         public int Year { get; set; }
 

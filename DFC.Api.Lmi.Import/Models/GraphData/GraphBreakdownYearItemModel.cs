@@ -7,8 +7,8 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
     [GraphNode("LmiSocBreakdownYearItem")]
     public class GraphBreakdownYearItemModel : GraphBaseModel
     {
-        [GraphProperty(nameof(BreakdownType), isKey: true)]
-        public string? BreakdownType { get; set; }
+        [GraphProperty(nameof(Measure), isKey: true)]
+        public string? Measure { get; set; }
 
         [GraphProperty(nameof(Year), isKey: true)]
         public int Year { get; set; }

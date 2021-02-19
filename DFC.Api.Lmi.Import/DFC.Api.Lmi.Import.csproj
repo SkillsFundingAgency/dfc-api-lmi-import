@@ -6,9 +6,6 @@
 	  <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
 	  <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
 
   <ItemGroup>
 	  <AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />

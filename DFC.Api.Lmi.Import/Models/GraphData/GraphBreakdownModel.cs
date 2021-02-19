@@ -11,8 +11,8 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
         [GraphProperty(nameof(Note))]
         public string? Note { get; set; }
 
-        [GraphProperty(nameof(BreakdownType), isKey: true, isPreferredLabel: true)]
-        public string? BreakdownType { get; set; }
+        [GraphProperty(nameof(Measure), isKey: true, isPreferredLabel: true)]
+        public string? Measure { get; set; }
 
         [GraphRelationship("Breakdown" + nameof(PredictedEmployment))]
         public IList<GraphBreakdownYearModel>? PredictedEmployment { get; set; }

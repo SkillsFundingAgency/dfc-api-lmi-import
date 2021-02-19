@@ -33,13 +33,7 @@ namespace DFC.Api.Lmi.Import.Services
             {
                 logger.LogInformation($"Retrieved {jobProfileSummaries.Count} job-profiles from job-profiles API");
 
-                //TODO: ian: remove the following #if DEBUG block -- jobProfiles = jobProfiles.Take(10).ToList(); -- once development is completed
-#if DEBUG
-                jobProfileSummaries = jobProfileSummaries.Take(10).ToList();
-#endif
-
                 var jobProfileDetails = await jobProfileApiConnector.GetDetailsAsync(jobProfileSummaries).ConfigureAwait(false);
-
                 var socJobProfileMappings = jobProfilesToSocMappingService.Map(jobProfileDetails);
 
                 logger.LogInformation($"Transformed {jobProfileSummaries.Count} job-profiles into {socJobProfileMappings.Count} SOC / job-profile mapping");

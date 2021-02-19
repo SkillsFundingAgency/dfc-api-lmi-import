@@ -18,7 +18,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
     {
         private readonly ILogger<JobProfileApiConnector> fakeLogger = A.Fake<ILogger<JobProfileApiConnector>>();
         private readonly HttpClient httpClient = new HttpClient();
-        private readonly JobProfileApiClientOptions jobProfileApiClientOptions = new JobProfileApiClientOptions { BaseAddress = new Uri("https://somewhere.com/", UriKind.Absolute) };
+        private readonly JobProfileApiClientOptions jobProfileApiClientOptions = new JobProfileApiClientOptions { BaseAddress = new Uri("https://somewhere.com/", UriKind.Absolute), DeveloperModeMaxJobProfiles = 2 };
         private readonly IApiDataConnector fakeApiDataConnector = A.Fake<IApiDataConnector>();
         private readonly IJobProfileApiConnector jobProfileApiConnector;
 
