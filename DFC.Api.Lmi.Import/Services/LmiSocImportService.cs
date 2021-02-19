@@ -22,7 +22,7 @@ namespace DFC.Api.Lmi.Import.Services
             this.lmiApiConnector = lmiApiConnector;
         }
 
-        public async Task<LmiSocDatasetModel> ImportAsync(SocJobProfileMappingModel socJobProfileMappingModel)
+        public async Task<LmiSocDatasetModel> ImportAsync(SocJobProfileMappingModel? socJobProfileMappingModel)
         {
             _ = socJobProfileMappingModel?.Soc ?? throw new ArgumentNullException(nameof(socJobProfileMappingModel));
 

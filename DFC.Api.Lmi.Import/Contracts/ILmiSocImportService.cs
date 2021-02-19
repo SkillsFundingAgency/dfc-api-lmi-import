@@ -6,6 +6,6 @@ namespace DFC.Api.Lmi.Import.Contracts
 {
     public interface ILmiSocImportService
     {
-        Task<LmiSocDatasetModel> ImportAsync(SocJobProfileMappingModel socJobProfileMappingModel);
+        Task<LmiSocDatasetModel> ImportAsync(SocJobProfileMappingModel? socJobProfileMappingModel);
     }
 }

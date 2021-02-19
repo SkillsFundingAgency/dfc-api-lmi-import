@@ -19,7 +19,7 @@ namespace DFC.Api.Lmi.Import.Services
             this.graphConnector = graphConnector;
         }
 
-        public async Task ImportAsync(GraphSocDatasetModel graphSocDataset)
+        public async Task ImportAsync(GraphSocDatasetModel? graphSocDataset)
         {
             _ = graphSocDataset ?? throw new ArgumentNullException(nameof(graphSocDataset));
 

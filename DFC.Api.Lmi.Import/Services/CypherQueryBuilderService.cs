@@ -85,7 +85,6 @@ namespace DFC.Api.Lmi.Import.Services
             foreach (var propertyInfo in type.GetProperties())
             {
                 var graphPropertyAttribute = propertyInfo.GetCustomAttributes(typeof(GraphPropertyAttribute), false).FirstOrDefault() as GraphPropertyAttribute;
-
                 if (graphPropertyAttribute != null && !graphPropertyAttribute.Ignore)
                 {
                     if (!graphPropertyAttribute.IsKey)
@@ -143,7 +142,6 @@ namespace DFC.Api.Lmi.Import.Services
                 if (graphRelationshipAttribute != null && !graphRelationshipAttribute.Ignore && !string.IsNullOrWhiteSpace(graphRelationshipAttribute.Name))
                 {
                     var children = propertyInfo.GetValue(parent, null) as IEnumerable<object>;
-
                     if (children != null && children.Any())
                     {
                         foreach (var child in children)
@@ -211,7 +209,6 @@ namespace DFC.Api.Lmi.Import.Services
             foreach (var propertyInfo in type.GetProperties())
             {
                 var graphPropertyAttribute = propertyInfo.GetCustomAttributes(typeof(GraphPropertyAttribute), false).FirstOrDefault() as GraphPropertyAttribute;
-
                 if (graphPropertyAttribute != null && graphPropertyAttribute.IsKey && !graphPropertyAttribute.Ignore)
                 {
                     sb.Append(BuildKeyProperty(graphPropertyAttribute.Name, GetPropertyValue(item, propertyInfo)) + ",");
