@@ -52,7 +52,7 @@ namespace DFC.Api.Lmi.Import.Services
 
             const string nodeAlias = "a";
             var mergeCommand = BuildMerge(nodeAlias, nodeName, BuildKeyProperties(item));
-            var setProperties = BuldSetProperties(nodeAlias, nodeName, item);
+            var setProperties = BuildSetProperties(nodeAlias, nodeName, item);
 
             if (!string.IsNullOrWhiteSpace(setProperties))
             {
@@ -72,7 +72,7 @@ namespace DFC.Api.Lmi.Import.Services
             return $"MATCH ({nodeAlias}:{nodeName} {{{keyValues}}})";
         }
 
-        public string BuldSetProperties<TModel>(string nodeAlias, string nodeName, TModel item)
+        public string BuildSetProperties<TModel>(string nodeAlias, string nodeName, TModel item)
             where TModel : class
         {
             _ = item ?? throw new ArgumentNullException(nameof(item));
@@ -127,27 +127,48 @@ namespace DFC.Api.Lmi.Import.Services
 
             foreach (var propertyInfo in parent.GetType().GetProperties())
             {
-                var graphRelationshipRootAttribute = propertyInfo.GetCustomAttributes(typeof(GraphRelationshipRootAttribute), false).FirstOrDefault() as GraphRelationshipRootAttribute;
-                if (graphRelationshipRootAttribute != null && !graphRelationshipRootAttribute.Ignore && !string.IsNullOrWhiteSpace(graphRelationshipRootAttribute.Name))
-                {
-                    var child = propertyInfo.GetValue(parent, null);
+                commands.AddRange(BuildEqualRelationship(propertyInfo, parent, parentNodeName));
+                commands.AddRange(BuildChildRelationship(propertyInfo, parent, parentNodeName));
+            }
 
-                    if (child != null)
-                    {
-                        commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipRootAttribute.Name));
-                    }
+            return commands;
+        }
+
+        public IList<string> BuildEqualRelationship(PropertyInfo? propertyInfo, object parent, string parentNodeName)
+        {
+            _ = parent ?? throw new ArgumentNullException(nameof(parent));
+
+            var commands = new List<string>();
+
+            var graphRelationshipRootAttribute = propertyInfo.GetCustomAttributes(typeof(GraphRelationshipRootAttribute), false).FirstOrDefault() as GraphRelationshipRootAttribute;
+            if (graphRelationshipRootAttribute != null && !graphRelationshipRootAttribute.Ignore && !string.IsNullOrWhiteSpace(graphRelationshipRootAttribute.Name))
+            {
+                var child = propertyInfo.GetValue(parent, null);
+
+                if (child != null)
+                {
+                    commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipRootAttribute.Name));
                 }
+            }
 
-                var graphRelationshipAttribute = propertyInfo.GetCustomAttributes(typeof(GraphRelationshipAttribute), false).FirstOrDefault() as GraphRelationshipAttribute;
-                if (graphRelationshipAttribute != null && !graphRelationshipAttribute.Ignore && !string.IsNullOrWhiteSpace(graphRelationshipAttribute.Name))
+            return commands;
+        }
+
+        public IList<string> BuildChildRelationship(PropertyInfo? propertyInfo, object parent, string parentNodeName)
+        {
+            _ = parent ?? throw new ArgumentNullException(nameof(parent));
+
+            var commands = new List<string>();
+
+            var graphRelationshipAttribute = propertyInfo.GetCustomAttributes(typeof(GraphRelationshipAttribute), false).FirstOrDefault() as GraphRelationshipAttribute;
+            if (graphRelationshipAttribute != null && !graphRelationshipAttribute.Ignore && !string.IsNullOrWhiteSpace(graphRelationshipAttribute.Name))
+            {
+                var children = propertyInfo.GetValue(parent, null) as IEnumerable<object>;
+                if (children != null && children.Any())
                 {
-                    var children = propertyInfo.GetValue(parent, null) as IEnumerable<object>;
-                    if (children != null && children.Any())
+                    foreach (var child in children)
                     {
-                        foreach (var child in children)
-                        {
-                            commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipAttribute.Name));
-                        }
+                        commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipAttribute.Name));
                     }
                 }
             }

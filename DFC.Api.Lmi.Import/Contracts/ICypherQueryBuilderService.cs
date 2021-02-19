@@ -15,12 +15,16 @@ namespace DFC.Api.Lmi.Import.Contracts
 
         string BuildMatch(string nodeAlias, string nodeName, string? keyValues);
 
-        string BuldSetProperties<TModel>(string nodeAlias, string nodeName, TModel item)
+        string BuildSetProperties<TModel>(string nodeAlias, string nodeName, TModel item)
             where TModel : class;
 
         string BuildSetUriProperty(string nodeAlias, string nodeName);
 
         IList<string> BuildRelationships(object parent, string parentNodeName);
+
+        IList<string> BuildEqualRelationship(PropertyInfo? propertyInfo, object parent, string parentNodeName);
+
+        IList<string> BuildChildRelationship(PropertyInfo? propertyInfo, object parent, string parentNodeName);
 
         IList<string> BuildChildRelationship(object parent, object child, string parentNodeName, string relationshipName);
 
