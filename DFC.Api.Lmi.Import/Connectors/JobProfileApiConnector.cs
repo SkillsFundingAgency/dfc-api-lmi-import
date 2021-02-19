@@ -35,7 +35,7 @@ namespace DFC.Api.Lmi.Import.Connectors
 
             if (jobProfileApiClientOptions.DeveloperModeMaxJobProfiles > 0)
             {
-                jobProfileSummaries = jobProfileSummaries.Take(10).ToList();
+                jobProfileSummaries = jobProfileSummaries.Take(jobProfileApiClientOptions.DeveloperModeMaxJobProfiles).ToList();
             }
 
             return jobProfileSummaries;

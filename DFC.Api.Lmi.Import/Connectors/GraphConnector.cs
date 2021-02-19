@@ -52,7 +52,7 @@ namespace DFC.Api.Lmi.Import.Connectors
             return commands;
         }
 
-        public async Task RunAsync(IList<string> commands)
+        public async Task RunAsync(IList<string>? commands)
         {
             _ = commands ?? throw new ArgumentNullException(nameof(commands));
 

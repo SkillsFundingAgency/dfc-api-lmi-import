@@ -106,5 +106,19 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
             A.CallTo(() => fakeGraphCluster.Run(A<string>.Ignored, A<ICommand[]>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.True(true);
         }
+
+        [Fact]
+        public async Task GraphConnectorRunReturnsExceptionForNullCommands()
+        {
+            // arrange
+
+            // act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await graphConnector.RunAsync(null).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeServiceProvider.GetService(typeof(ICustomCommand))).MustNotHaveHappened();
+            A.CallTo(() => fakeGraphCluster.Run(A<string>.Ignored, A<ICommand[]>.Ignored)).MustNotHaveHappened();
+            Assert.Equal("Value cannot be null. (Parameter 'commands')", exceptionResult.Message);
+        }
     }
 }

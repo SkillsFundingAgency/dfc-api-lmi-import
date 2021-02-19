@@ -10,6 +10,6 @@ namespace DFC.Api.Lmi.Import.Contracts
         IList<string> BuildImportCommands<TModel>(TModel? parent)
             where TModel : class;
 
-        Task RunAsync(IList<string> commands);
+        Task RunAsync(IList<string>? commands);
     }
 }
