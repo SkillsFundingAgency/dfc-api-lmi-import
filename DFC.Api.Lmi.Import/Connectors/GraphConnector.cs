@@ -1,12 +1,12 @@
 ﻿using DFC.Api.Lmi.Import.Attributes;
 using DFC.Api.Lmi.Import.Contracts;
 using DFC.Api.Lmi.Import.Models;
+using DFC.Api.Lmi.Import.Models.GraphData;
 using DFC.ServiceTaxonomy.Neo4j.Commands.Interfaces;
 using DFC.ServiceTaxonomy.Neo4j.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Connectors
@@ -35,8 +35,7 @@ namespace DFC.Api.Lmi.Import.Connectors
             return cypherQueryBuilderService.BuildPurgeCommands();
         }
 
-        public IList<string> BuildImportCommands<TModel>(TModel? parent)
-            where TModel : class
+        public IList<string> BuildImportCommands(GraphBaseSocModel? parent)
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
 

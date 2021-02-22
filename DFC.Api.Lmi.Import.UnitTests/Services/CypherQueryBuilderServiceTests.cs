@@ -16,6 +16,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
     [Trait("Category", "Cypher query builder service Unit Tests")]
     public class CypherQueryBuilderServiceTests
     {
+        private const string HttpContentApi = "https://content.api.com/";
         private readonly CypherQueryBuilderService cypherQueryBuilderService;
         private readonly IList<string> definedGraphNodeNames = new List<string>
         {
@@ -32,7 +33,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         {
             var graphOptions = new GraphOptions
             {
-                ContentApiUriPrefix = new Uri("https://content.api.com/", UriKind.Absolute),
+                ContentApiUriPrefix = new Uri(HttpContentApi, UriKind.Absolute),
             };
             cypherQueryBuilderService = new CypherQueryBuilderService(graphOptions);
         }
@@ -97,20 +98,31 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         public void CypherQueryBuilderServiceBuildMergeReturnsSuccess()
         {
             //arrange
+            const string nodeName = "NodeName";
             var graphJobProfile = new GraphJobProfileModel
             {
                 CanonicalName = "canonical-name",
                 Title = "The title",
             };
-            string expectedResultStartPart = $"MERGE (a:NodeName {{CanonicalName: '{graphJobProfile.CanonicalName}'}}) SET a.uri = '";
-            string expectedResultEndPart = $"',a.skos__prefLabel = '{graphJobProfile.CanonicalName}',a.Title = '{graphJobProfile.Title}'";
+            string expectedResult = $"MERGE (a:{nodeName} {{CanonicalName: '{graphJobProfile.CanonicalName}'}}) SET a.uri = '{HttpContentApi}{nodeName.ToLowerInvariant()}/{graphJobProfile.ItemId.ToString().ToLowerInvariant()}',a.skos__prefLabel = '{graphJobProfile.CanonicalName}',a.Title = '{graphJobProfile.Title}',a.CreatedDate = datetime('{graphJobProfile.CreatedDate:O}')";
 
             //act
-            var result = cypherQueryBuilderService.BuildMerge(graphJobProfile, "NodeName");
+            var result = cypherQueryBuilderService.BuildMerge(graphJobProfile, nodeName);
 
             //assert
-            Assert.StartsWith(expectedResultStartPart, result);
-            Assert.EndsWith(expectedResultEndPart, result);
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildMergeReturnsExceptionForNullItem()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildMerge(null, string.Empty));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'item')", exceptionResult.Message);
         }
 
         [Fact]
@@ -145,40 +157,52 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         public void CypherQueryBuilderServiceBuildSetPropertiesReturnsSuccess()
         {
             //arrange
+            const string nodeAlias = "n";
+            const string nodeName = "NodeName";
             const int soc = 3231;
             const int year = 2021;
             var item = new GraphPredictedYearModel
             {
                 Soc = soc,
                 Year = year,
-                CreatedDate = DateTime.UtcNow,
                 Measure = "a measure",
                 Employment = new decimal(1234.5678),
             };
-            var expectedResultStartsWith = "a.uri = '";
-            var expectedResultEndsWith = $",a.Measure = '{item.Measure}',a.skos__prefLabel = {item.Year},a.Employment = {item.Employment},a.CreatedDate = datetime('{item.CreatedDate:O}')";
+            var expectedResult = $"{nodeAlias}.uri = '{HttpContentApi}{nodeName.ToLowerInvariant()}/{item.ItemId.ToString().ToLowerInvariant()}',{nodeAlias}.Measure = '{item.Measure}',{nodeAlias}.skos__prefLabel = {item.Year},{nodeAlias}.Employment = {item.Employment},{nodeAlias}.CreatedDate = datetime('{item.CreatedDate:O}')";
 
             //act
-            var result = cypherQueryBuilderService.BuildSetProperties("a", "nodeName", item);
+            var result = cypherQueryBuilderService.BuildSetProperties(nodeAlias, nodeName, item);
 
             //assert
-            Assert.StartsWith(expectedResultStartsWith, result);
-            Assert.EndsWith(expectedResultEndsWith, result);
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildSetPropertiesReturnsExceptionForNullItem()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildSetProperties(string.Empty, string.Empty, null));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'item')", exceptionResult.Message);
         }
 
         [Fact]
         public void CypherQueryBuilderServiceBuildSetUriPropertyReturnsSuccess()
         {
             //arrange
-            const string expectedResultStartPart = "n.uri = '";
-            const string expectedResultEndPart = "'";
+            Guid itemId = Guid.NewGuid();
+            const string nodeAlias = "n";
+            const string nodeName = "NodeName";
+            string expectedResult = $"{nodeAlias}.uri = '{HttpContentApi}{nodeName}/{itemId}'".ToLowerInvariant();
 
             //act
-            var result = cypherQueryBuilderService.BuildSetUriProperty("n", "NodeName");
+            var result = cypherQueryBuilderService.BuildSetUriProperty(nodeAlias, nodeName, itemId);
 
             //assert
-            Assert.StartsWith(expectedResultStartPart, result);
-            Assert.EndsWith(expectedResultEndPart, result);
+            Assert.Equal(expectedResult, result);
         }
 
         [Fact]
@@ -213,6 +237,18 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         }
 
         [Fact]
+        public void CypherQueryBuilderServiceBuildRelationshipsReturnsExceptionForNullParent()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildRelationships(null, string.Empty));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'parent')", exceptionResult.Message);
+        }
+
+        [Fact]
         public void CypherQueryBuilderServiceBuildEqualRelationshipReturnsSuccess()
         {
             //arrange
@@ -229,17 +265,53 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 },
             };
             var propertyInfo = item.GetType().GetProperty(nameof(GraphSocDatasetModel.JobGrowth));
-            var expectedFirstResultStartsWith = $"MERGE (a:LmiSocPredicted {{Soc: {soc}}}) SET a.uri = '";
-            var expectedFirstResultEndsWith = $"',a.Measure = '{item.JobGrowth.Measure}',a.skos__prefLabel = '{item.JobGrowth.Measure}',a.CreatedDate = datetime('{item.JobGrowth.CreatedDate:O}')";
-            var expectedSecondResult = $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredicted {{Soc: {soc}}}) MERGE (p)-[rel:PredictedJobGrowth]->(c)";
+            var expectedResults = new List<string>
+            {
+                $"MERGE (a:LmiSocPredicted {{Soc: {soc}}}) SET a.uri = '{HttpContentApi}lmisocpredicted/{item.JobGrowth.ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.JobGrowth.Measure}',a.skos__prefLabel = '{item.JobGrowth.Measure}',a.CreatedDate = datetime('{item.JobGrowth.CreatedDate:O}')",
+                $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredicted {{Soc: {soc}}}) MERGE (p)-[rel:PredictedJobGrowth]->(c)",
+            };
 
             //act
             var results = cypherQueryBuilderService.BuildEqualRelationship(propertyInfo, item, nodeName);
 
             //assert
-            Assert.StartsWith(expectedFirstResultStartsWith, results[0]);
-            Assert.EndsWith(expectedFirstResultEndsWith, results[0]);
-            Assert.Equal(expectedSecondResult, results[1]);
+            Assert.Equal(expectedResults, results);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildEqualRelationshipReturnsExceptionForNullPropertyInfo()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildEqualRelationship(null, new GraphSocDatasetModel(), string.Empty));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'propertyInfo')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildEqualRelationshipReturnsExceptionForNullParent()
+        {
+            //arrange
+            const int soc = 3231;
+            var item = new GraphSocDatasetModel
+            {
+                Soc = soc,
+                JobGrowth = new GraphPredictedModel
+                {
+                    Soc = soc,
+                    Measure = "a measure",
+                    CreatedDate = DateTime.UtcNow,
+                },
+            };
+            var propertyInfo = item.GetType().GetProperty(nameof(GraphSocDatasetModel.JobGrowth));
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildEqualRelationship(propertyInfo, null, string.Empty));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'parent')", exceptionResult.Message);
         }
 
         [Fact]
@@ -265,17 +337,53 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 },
             };
             var propertyInfo = item.GetType().GetProperty(nameof(GraphPredictedModel.PredictedEmployment));
-            var expectedFirstResultStartsWith = $"MERGE (a:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) SET a.uri = '";
-            var expectedFirstResultEndsWith = $"',a.Measure = '{item.PredictedEmployment.First().Measure:O}',a.skos__prefLabel = {year},a.Employment = 1234.5678,a.CreatedDate = datetime('{item.PredictedEmployment.First().CreatedDate:O}')";
-            var expectedSecondResult = $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) MERGE (p)-[rel:PredictedEmployment]->(c)";
+            var expectedResults = new List<string>
+            {
+                $"MERGE (a:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{item.PredictedEmployment.First().ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.PredictedEmployment.First().Measure:O}',a.skos__prefLabel = {year},a.Employment = 1234.5678,a.CreatedDate = datetime('{item.PredictedEmployment.First().CreatedDate:O}')",
+                $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) MERGE (p)-[rel:PredictedEmployment]->(c)",
+            };
 
             //act
             var results = cypherQueryBuilderService.BuildChildRelationship(propertyInfo, item, nodeName);
 
             //assert
-            Assert.StartsWith(expectedFirstResultStartsWith, results[0]);
-            Assert.EndsWith(expectedFirstResultEndsWith, results[0]);
-            Assert.Equal(expectedSecondResult, results[1]);
+            Assert.Equal(expectedResults, results);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildChildRelationshipReturnsExceptionForNullPropertyInfo()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildChildRelationship(null, new GraphSocDatasetModel(), string.Empty));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'propertyInfo')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildChildRelationshipReturnsExceptionForNullParent()
+        {
+            //arrange
+            const int soc = 3231;
+            var item = new GraphSocDatasetModel
+            {
+                Soc = soc,
+                JobGrowth = new GraphPredictedModel
+                {
+                    Soc = soc,
+                    Measure = "a measure",
+                    CreatedDate = DateTime.UtcNow,
+                },
+            };
+            var propertyInfo = item.GetType().GetProperty(nameof(GraphSocDatasetModel.JobGrowth));
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildChildRelationship(propertyInfo, null, string.Empty));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'parent')", exceptionResult.Message);
         }
 
         [Fact]
@@ -288,15 +396,40 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             const string relName = "relNme";
             var parent = new GraphPredictedModel { Soc = soc };
             var child = new GraphPredictedYearModel { Soc = soc, Year = year };
-            var expectedResultFirstPart = $"MERGE (a:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) SET a.uri = '";
-            var expcetedResultSecondPart = $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) MERGE (p)-[rel:{relName}]->(c)";
+            var expectedResults = new List<string> {
+                $"MERGE (a:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{child.ItemId.ToString().ToLowerInvariant()}',a.Measure = '',a.skos__prefLabel = 2021,a.Employment = 0,a.CreatedDate = datetime('{child.CreatedDate:O}')",
+                $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) MERGE (p)-[rel:{relName}]->(c)",
+            };
 
             //act
             var results = cypherQueryBuilderService.BuildChildRelationship(parent, child, nodeName, relName);
 
             //assert
-            Assert.StartsWith(expectedResultFirstPart, results[0]);
-            Assert.Equal(expcetedResultSecondPart, results[1]);
+            Assert.Equal(expectedResults, results);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicBuildChildRelationshipReturnsExceptionForNullParent()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildChildRelationship(null, new GraphPredictedYearModel(), string.Empty, string.Empty));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'parent')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicBuildChildRelationshipReturnsExceptionForNullChild()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildChildRelationship(new GraphPredictedModel(), null, string.Empty, string.Empty));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'child')", exceptionResult.Message);
         }
 
         [Fact]
@@ -321,6 +454,30 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
 
             //assert
             Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicBuildRelationshipReturnsExceptionForNullParent()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildRelationship(string.Empty, string.Empty, string.Empty, null, new GraphPredictedYearModel()));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'parent')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicBuildRelationshipReturnsExceptionForNullChild()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildRelationship(string.Empty, string.Empty, string.Empty, new GraphPredictedModel(), null));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'child')", exceptionResult.Message);
         }
 
         [Fact]
@@ -354,6 +511,18 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
 
             //assert
             Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicBuildKeyPropertiesReturnsExceptionForNullItem()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildKeyProperties(null));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'item')", exceptionResult.Message);
         }
 
         [Fact]
@@ -391,6 +560,32 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
 
             //assert
             Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicGetPropertyValueReturnsExceptionForNullItem()
+        {
+            //arrange
+            var item = new GraphPredictedYearModel();
+            var propertyInfo = item.GetType().GetProperty(nameof(GraphPredictedYearModel.Soc));
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.GetPropertyValue(null, propertyInfo));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'item')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicBuildKeyPropertiesReturnsExceptionForNullPropertyInfo()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.GetPropertyValue(new GraphPredictedYearModel(), null));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'propertyInfo')", exceptionResult.Message);
         }
 
         [Theory]

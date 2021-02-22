@@ -5,7 +5,7 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
 {
     [ExcludeFromCodeCoverage]
     [GraphNode("LmiSocJobProfile")]
-    public class GraphJobProfileModel
+    public class GraphJobProfileModel : GraphBaseModel
     {
         [GraphProperty(nameof(CanonicalName), isKey: true, isPreferredLabel: true)]
         public string? CanonicalName { get; set; }

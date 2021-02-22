@@ -1,6 +1,7 @@
 ﻿using DFC.Api.Lmi.Import.Attributes;
 using DFC.Api.Lmi.Import.Contracts;
 using DFC.Api.Lmi.Import.Models;
+using DFC.Api.Lmi.Import.Models.GraphData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace DFC.Api.Lmi.Import.Services
             return $"MATCH (s:{nodeName}) DETACH DELETE s";
         }
 
-        public string BuildMerge(object item, string nodeName)
+        public string BuildMerge(GraphBaseModel? item, string nodeName)
         {
             _ = item ?? throw new ArgumentNullException(nameof(item));
 
@@ -72,15 +73,14 @@ namespace DFC.Api.Lmi.Import.Services
             return $"MATCH ({nodeAlias}:{nodeName} {{{keyValues}}})";
         }
 
-        public string BuildSetProperties<TModel>(string nodeAlias, string nodeName, TModel item)
-            where TModel : class
+        public string BuildSetProperties(string nodeAlias, string nodeName, GraphBaseModel? item)
         {
             _ = item ?? throw new ArgumentNullException(nameof(item));
 
             var sb = new StringBuilder();
             var type = item.GetType();
 
-            sb.Append(BuildSetUriProperty(nodeAlias, nodeName) + ",");
+            sb.Append(BuildSetUriProperty(nodeAlias, nodeName, item.ItemId) + ",");
 
             foreach (var propertyInfo in type.GetProperties())
             {
@@ -109,9 +109,9 @@ namespace DFC.Api.Lmi.Import.Services
             return result;
         }
 
-        public string BuildSetUriProperty(string nodeAlias, string nodeName)
+        public string BuildSetUriProperty(string nodeAlias, string nodeName, Guid itemId)
         {
-            return BuildSetProperty(nodeAlias, graphOptions.UriPropertyName, QuoteString($"{graphOptions.ContentApiUriPrefix}{nodeName}/{Guid.NewGuid()}".ToLowerInvariant()));
+            return BuildSetProperty(nodeAlias, graphOptions.UriPropertyName, QuoteString($"{graphOptions.ContentApiUriPrefix}{nodeName}/{itemId}".ToLowerInvariant()));
         }
 
         public string BuildSetProperty(string nodeAlias, string name, string? value)
@@ -119,7 +119,7 @@ namespace DFC.Api.Lmi.Import.Services
             return $"{nodeAlias}.{name} = {value}";
         }
 
-        public IList<string> BuildRelationships(object parent, string parentNodeName)
+        public IList<string> BuildRelationships(GraphBaseModel? parent, string parentNodeName)
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
 
@@ -134,8 +134,9 @@ namespace DFC.Api.Lmi.Import.Services
             return commands;
         }
 
-        public IList<string> BuildEqualRelationship(PropertyInfo? propertyInfo, object parent, string parentNodeName)
+        public IList<string> BuildEqualRelationship(PropertyInfo? propertyInfo, GraphBaseModel? parent, string parentNodeName)
         {
+            _ = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
 
             var commands = new List<string>();
@@ -143,7 +144,7 @@ namespace DFC.Api.Lmi.Import.Services
             var graphRelationshipRootAttribute = propertyInfo.GetCustomAttributes(typeof(GraphRelationshipRootAttribute), false).FirstOrDefault() as GraphRelationshipRootAttribute;
             if (graphRelationshipRootAttribute != null && !graphRelationshipRootAttribute.Ignore && !string.IsNullOrWhiteSpace(graphRelationshipRootAttribute.Name))
             {
-                var child = propertyInfo.GetValue(parent, null);
+                var child = propertyInfo.GetValue(parent, null) as GraphBaseModel;
 
                 if (child != null)
                 {
@@ -154,8 +155,9 @@ namespace DFC.Api.Lmi.Import.Services
             return commands;
         }
 
-        public IList<string> BuildChildRelationship(PropertyInfo? propertyInfo, object parent, string parentNodeName)
+        public IList<string> BuildChildRelationship(PropertyInfo? propertyInfo, GraphBaseModel? parent, string parentNodeName)
         {
+            _ = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
 
             var commands = new List<string>();
@@ -166,7 +168,7 @@ namespace DFC.Api.Lmi.Import.Services
                 var children = propertyInfo.GetValue(parent, null) as IEnumerable<object>;
                 if (children != null && children.Any())
                 {
-                    foreach (var child in children)
+                    foreach (GraphBaseModel child in children)
                     {
                         commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipAttribute.Name));
                     }
@@ -176,7 +178,7 @@ namespace DFC.Api.Lmi.Import.Services
             return commands;
         }
 
-        public IList<string> BuildChildRelationship(object parent, object child, string parentNodeName, string relationshipName)
+        public IList<string> BuildChildRelationship(GraphBaseModel? parent, GraphBaseModel? child, string parentNodeName, string relationshipName)
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
             _ = child ?? throw new ArgumentNullException(nameof(child));
@@ -195,7 +197,7 @@ namespace DFC.Api.Lmi.Import.Services
             return commands;
         }
 
-        public string BuildRelationship(string parentNode, string childNode, string relationshipName, object parent, object child)
+        public string BuildRelationship(string parentNode, string childNode, string relationshipName, GraphBaseModel? parent, GraphBaseModel? child)
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));
             _ = child ?? throw new ArgumentNullException(nameof(child));
@@ -219,8 +221,7 @@ namespace DFC.Api.Lmi.Import.Services
             return $"MERGE ({fromAlias})-[rel:{relationship}]->({toAlias})";
         }
 
-        public string BuildKeyProperties<TModel>(TModel item)
-            where TModel : class
+        public string BuildKeyProperties(GraphBaseModel? item)
         {
             _ = item ?? throw new ArgumentNullException(nameof(item));
 
@@ -251,9 +252,9 @@ namespace DFC.Api.Lmi.Import.Services
             return $"{name}: {value}";
         }
 
-        public string GetPropertyValue<TModel>(TModel item, PropertyInfo propertyInfo)
-            where TModel : class
+        public string GetPropertyValue(GraphBaseModel? item, PropertyInfo? propertyInfo)
         {
+            _ = item ?? throw new ArgumentNullException(nameof(item));
             _ = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             var value = propertyInfo.GetValue(item, null);

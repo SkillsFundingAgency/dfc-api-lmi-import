@@ -6,7 +6,7 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
 {
     [ExcludeFromCodeCoverage]
     [GraphNode("LmiSocBreakdownYear")]
-    public class GraphBreakdownYearModel : GraphBaseModel
+    public class GraphBreakdownYearModel : GraphBaseSocModel
     {
         [GraphProperty(nameof(Measure), isKey: true)]
         public string? Measure { get; set; }

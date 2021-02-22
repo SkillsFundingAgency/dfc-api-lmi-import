@@ -44,10 +44,10 @@ namespace DFC.Api.Lmi.Import.Services
                 foreach (var socJobProfileMapping in socJobProfileMappings)
                 {
                     var lmiSocDataset = await lmiSocImportService.ImportAsync(socJobProfileMapping).ConfigureAwait(false);
-                    var graphSocDatasetModel = mapLmiToGraphService.Map(lmiSocDataset);
-
-                    if (graphSocDatasetModel != null)
+                    if (lmiSocDataset != null)
                     {
+                        var graphSocDatasetModel = mapLmiToGraphService.Map(lmiSocDataset);
+
                         await graphService.ImportAsync(graphSocDatasetModel).ConfigureAwait(false);
                         importedToGraphCount++;
                     }
