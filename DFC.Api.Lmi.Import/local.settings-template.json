@@ -1,3 +1,70 @@
 {
-	
+	"IsEncrypted": false,
+	"Values": {
+		"AzureWebJobsStorage": "UseDevelopmentStorage=true",
+		"FUNCTIONS_WORKER_RUNTIME": "dotnet",
+		"APPINSIGHTS_INSTRUMENTATIONKEY": "__AppInsightsKey__",
+		"LmiImportTimerTriggerSchedule": "__TimerTriggerCron__",
+		"ApiSuffix": "__Environment__"
+	},
+	"Policies": {
+		"HttpCircuitBreaker": {
+			"DurationOfBreak": "00:01:00",
+			"ExceptionsAllowedBeforeBreaking": 3
+		},
+		"HttpRetry": {
+			"BackoffPower": 2,
+			"Count": 3
+		}
+	},
+	"Neo4j": {
+		"Endpoints": [
+			{
+				"Name": "__Neo4jInstance__",
+				"Uri": "__Neo4jBoltUri__",
+				"Username": "__Neo4jUsername__",
+				"Password": "__Neo4jPassword__",
+				"Enabled": true
+			}
+		],
+		"ReplicaSets": [
+			{
+				"ReplicaSetName": "__Neo4jReplicaSetName__",
+				"GraphInstances": [
+					{
+						"Endpoint": "__Neo4jInstance__",
+						"GraphName": "__GraphName__",
+						"DefaultGraph": true,
+						"Enabled": true
+					}
+				]
+			}
+		]
+	},
+	"GraphOptions": {
+		"PreferredLabelName": "__PreferredLabelName__",
+		"UriPropertyName": "__UriPropertyName__",
+		"ContentApiUriPrefix": "__ContentApiBasename__",
+		"ReplicaSetName": "__Neo4jReplicaSetName__"
+	},
+	"JobProfileApiClientOptions": {
+		"BaseAddress": "__JobProfilesApiSummaryEndpoint__",
+		"Version": "__JobProfilesVersion__",
+		"ApiKey": "__JobProfilesApimKey__",
+		"Timeout": "00:00:30",
+		"DeveloperModeMaxJobProfiles": "__ProcessMaxJobProfiles__"
+	},
+	"LmiApiClientOptions": {
+		"BaseAddress": "https://api.lmiforall.org.uk/api/v1/",
+		"ApiCalls": {
+			"SocDetail": "soc/code/{soc}",
+			"JobGrowth": "wf/predict?soc={soc}&minYear={minYear}&maxYear={maxYear}",
+			"QualificationLevel": "wf/predict/breakdown/qualification?soc={soc}&minYear={minYear}&maxYear={maxYear}",
+			"EmploymentByRegion": "wf/predict/breakdown/region?soc={soc}&minYear={minYear}&maxYear={maxYear}",
+			"TopIndustriesInJobGroup": "wf/predict/breakdown/industry?soc={soc}&minYear={minYear}&maxYear={maxYear}"
+		},
+		"MinYear": __LmiStartYear__,
+		"MaxYear": __LmiEndYear__,
+		"Timeout": "00:00:30"
+	}
 }
