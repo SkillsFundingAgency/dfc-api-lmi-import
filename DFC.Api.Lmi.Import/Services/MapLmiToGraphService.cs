@@ -20,10 +20,7 @@ namespace DFC.Api.Lmi.Import.Services
         {
             var graphSocDatasetModel = mapper.Map<GraphSocDatasetModel>(lmiSocDataset);
 
-            if (graphSocDatasetModel != null)
-            {
-                PropogateKeys(graphSocDatasetModel);
-            }
+            PropogateKeys(graphSocDatasetModel);
 
             return graphSocDatasetModel;
         }

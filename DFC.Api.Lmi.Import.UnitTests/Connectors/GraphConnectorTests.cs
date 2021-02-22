@@ -59,15 +59,15 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
             };
             var graphSocDataset = new GraphSocDatasetModel();
 
-            A.CallTo(() => fakeCypherQueryBuilderService.BuildMerge(A<object>.Ignored, A<string>.Ignored)).Returns("a string");
-            A.CallTo(() => fakeCypherQueryBuilderService.BuildRelationships(A<object>.Ignored, A<string>.Ignored)).Returns(someStrings);
+            A.CallTo(() => fakeCypherQueryBuilderService.BuildMerge(A<GraphBaseSocModel>.Ignored, A<string>.Ignored)).Returns("a string");
+            A.CallTo(() => fakeCypherQueryBuilderService.BuildRelationships(A<GraphBaseSocModel>.Ignored, A<string>.Ignored)).Returns(someStrings);
 
             // act
             var results = graphConnector.BuildImportCommands(graphSocDataset);
 
             // assert
-            A.CallTo(() => fakeCypherQueryBuilderService.BuildMerge(A<object>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeCypherQueryBuilderService.BuildRelationships(A<object>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeCypherQueryBuilderService.BuildMerge(A<GraphBaseSocModel>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeCypherQueryBuilderService.BuildRelationships(A<GraphBaseSocModel>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.True(results.Count >= 1);
         }
 
@@ -81,8 +81,8 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
             var exceptionResult = Assert.Throws<ArgumentNullException>(() => graphConnector.BuildImportCommands(graphSocDataset));
 
             // assert
-            A.CallTo(() => fakeCypherQueryBuilderService.BuildMerge(A<object>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeCypherQueryBuilderService.BuildRelationships(A<object>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeCypherQueryBuilderService.BuildMerge(A<GraphBaseSocModel>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeCypherQueryBuilderService.BuildRelationships(A<GraphBaseSocModel>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
             Assert.Equal("Value cannot be null. (Parameter 'parent')", exceptionResult.Message);
         }
 

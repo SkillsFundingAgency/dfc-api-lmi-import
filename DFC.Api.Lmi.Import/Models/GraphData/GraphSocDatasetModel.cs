@@ -7,7 +7,7 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
 {
     [ExcludeFromCodeCoverage]
     [GraphNode("LmiSoc")]
-    public class GraphSocDatasetModel : GraphBaseModel
+    public class GraphSocDatasetModel : GraphBaseSocModel
     {
         [GraphProperty(nameof(Soc), isKey: true, isPreferredLabel: true)]
         public new int Soc { get; set; }
