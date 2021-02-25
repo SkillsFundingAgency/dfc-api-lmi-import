@@ -40,7 +40,7 @@ This app uses the LMI API to retrieve LMI data. This app also uses the Job Profi
 LmiImportTimerTriggerSchedule | * * * * * * |
 ApiSuffix | dev | 
 Neo4j__Endpoints__0__Name | Published |
-Neo4j__Endpoints__0__Uri | Bold endpoint uri to Graph database |
+Neo4j__Endpoints__0__Uri | Bolt endpoint uri to Graph database |
 Neo4j__Endpoints__0__Username | username |
 Neo4j__Endpoints__0__Password | password |
 Neo4j__Endpoints__0__Enabled | true |
