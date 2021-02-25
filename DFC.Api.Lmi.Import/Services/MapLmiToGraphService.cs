@@ -79,15 +79,15 @@ namespace DFC.Api.Lmi.Import.Services
             }
         }
 
-        private static void PropogateKeys(int soc, string? measure, int year, IList<GraphBreakdownYearItemModel>? graphBreakdownYearItems)
+        private static void PropogateKeys(int soc, string? measure, int year, IList<GraphBreakdownYearValueModel>? graphBreakdownYearValues)
         {
-            if (graphBreakdownYearItems != null && graphBreakdownYearItems.Any())
+            if (graphBreakdownYearValues != null && graphBreakdownYearValues.Any())
             {
-                foreach (var graphBreakdownYearItem in graphBreakdownYearItems)
+                foreach (var graphBreakdownYearValue in graphBreakdownYearValues)
                 {
-                    graphBreakdownYearItem.Soc = soc;
-                    graphBreakdownYearItem.Measure = measure;
-                    graphBreakdownYearItem.Year = year;
+                    graphBreakdownYearValue.Soc = soc;
+                    graphBreakdownYearValue.Measure = measure;
+                    graphBreakdownYearValue.Year = year;
                 }
             }
         }

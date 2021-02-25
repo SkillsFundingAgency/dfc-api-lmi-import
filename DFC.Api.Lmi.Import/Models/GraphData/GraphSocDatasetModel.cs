@@ -29,7 +29,7 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
         public List<string>? AdditionalTitles { get; set; }
 
         [GraphRelationship("LinkedTo")]
-        public IList<GraphJobProfileModel>? JobProfiles { get; set; }
+        public List<GraphJobProfileModel>? JobProfiles { get; set; }
 
         [GraphRelationshipRoot("Predicted" + nameof(JobGrowth))]
         public GraphPredictedModel? JobGrowth { get; set; }

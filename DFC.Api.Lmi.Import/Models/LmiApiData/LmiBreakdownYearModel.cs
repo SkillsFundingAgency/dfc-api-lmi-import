@@ -8,6 +8,6 @@ namespace DFC.Api.Lmi.Import.Models.LmiApiData
     {
         public int Year { get; set; }
 
-        public IList<LmiBreakdownYearItemModel>? Breakdown { get; set; }
+        public List<LmiBreakdownYearValueModel>? Breakdown { get; set; }
     }
 }

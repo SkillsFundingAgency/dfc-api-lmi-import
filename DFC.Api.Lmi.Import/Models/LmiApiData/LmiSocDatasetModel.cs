@@ -21,7 +21,7 @@ namespace DFC.Api.Lmi.Import.Models.LmiApiData
         [JsonProperty(PropertyName = "add_titles")]
         public List<string>? AdditionalTitles { get; set; }
 
-        public IList<SocJobProfileItemModel>? JobProfiles { get; set; }
+        public List<SocJobProfileItemModel>? JobProfiles { get; set; }
 
         public LmiPredictedModel? JobGrowth { get; set; }
 

@@ -15,6 +15,6 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
         public string? Measure { get; set; }
 
         [GraphRelationship("Breakdown" + nameof(PredictedEmployment))]
-        public IList<GraphBreakdownYearModel>? PredictedEmployment { get; set; }
+        public List<GraphBreakdownYearModel>? PredictedEmployment { get; set; }
     }
 }

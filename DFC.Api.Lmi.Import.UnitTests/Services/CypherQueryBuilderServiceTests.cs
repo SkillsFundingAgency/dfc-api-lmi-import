@@ -21,8 +21,8 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         private readonly IList<string> definedGraphNodeNames = new List<string>
         {
             "LmiSocBreakdown",
-            "LmiSocBreakdownYearItem",
             "LmiSocBreakdownYear",
+            "LmiSocBreakdownYearValue",
             "LmiSocJobProfile",
             "LmiSocPredicted",
             "LmiSocPredictedYear",
@@ -396,7 +396,8 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             const string relName = "relNme";
             var parent = new GraphPredictedModel { Soc = soc };
             var child = new GraphPredictedYearModel { Soc = soc, Year = year };
-            var expectedResults = new List<string> {
+            var expectedResults = new List<string>
+            {
                 $"MERGE (a:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{child.ItemId.ToString().ToLowerInvariant()}',a.Measure = '',a.skos__prefLabel = 2021,a.Employment = 0,a.CreatedDate = datetime('{child.CreatedDate:O}')",
                 $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) MERGE (p)-[rel:{relName}]->(c)",
             };
@@ -497,7 +498,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         public void CypherQueryBuilderServiceBuildKeyPropertiesReturnsSuccess()
         {
             //arrange
-            var item = new GraphBreakdownYearItemModel
+            var item = new GraphBreakdownYearValueModel
             {
                 Soc = 3231,
                 Year = 2021,

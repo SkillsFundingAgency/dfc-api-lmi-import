@@ -31,7 +31,7 @@ namespace DFC.Api.Lmi.Import.AutoMapperProfiles
                 .ForMember(d => d.Soc, s => s.Ignore())
                 .ForMember(d => d.Measure, s => s.Ignore());
 
-            CreateMap<LmiBreakdownYearItemModel, GraphBreakdownYearItemModel>()
+            CreateMap<LmiBreakdownYearValueModel, GraphBreakdownYearValueModel>()
                 .ForMember(d => d.Soc, s => s.Ignore())
                 .ForMember(d => d.Measure, s => s.Ignore())
                 .ForMember(d => d.Year, s => s.Ignore());
