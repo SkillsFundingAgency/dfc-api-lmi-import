@@ -3,7 +3,7 @@
 
 This function app is used to retrieve Job Profile information from the National Careers Service API. The Job Profiles each contain a SOC value, which is subsequently used to retrieve LMI data from the LMI API.
 The LMI API is provided by http://api.lmiforall.org.uk/.
-This functon app collates the Job Profile / LMI data and stores in a Graph database to subsequent processing.
+This function app collates the Job Profile / LMI data and stores in a Graph database to subsequent processing.
 
 ## Getting Started
 
