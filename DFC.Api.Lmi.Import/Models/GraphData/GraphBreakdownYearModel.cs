@@ -15,6 +15,6 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
         public int Year { get; set; }
 
         [GraphRelationship("BreakdownYears")]
-        public IList<GraphBreakdownYearItemModel>? Breakdown { get; set; }
+        public List<GraphBreakdownYearValueModel>? Breakdown { get; set; }
     }
 }

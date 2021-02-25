@@ -8,6 +8,6 @@ namespace DFC.Api.Lmi.Import.Models.SocJobProfileMapping
     {
         public int? Soc { get; set; }
 
-        public IList<SocJobProfileItemModel>? JobProfiles { get; set; }
+        public List<SocJobProfileItemModel>? JobProfiles { get; set; }
     }
 }

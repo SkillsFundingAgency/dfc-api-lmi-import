@@ -3,7 +3,7 @@
 namespace DFC.Api.Lmi.Import.Models.LmiApiData
 {
     [ExcludeFromCodeCoverage]
-    public class LmiBreakdownYearItemModel
+    public class LmiBreakdownYearValueModel
     {
         public int Code { get; set; }
 

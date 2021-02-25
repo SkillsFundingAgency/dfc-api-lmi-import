@@ -105,9 +105,9 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                         new LmiBreakdownYearModel
                         {
                             Year = DateTime.UtcNow.Year,
-                            Breakdown = new List<LmiBreakdownYearItemModel>
+                            Breakdown = new List<LmiBreakdownYearValueModel>
                             {
-                                new LmiBreakdownYearItemModel
+                                new LmiBreakdownYearValueModel
                                 {
                                     Code = 1,
                                     Note = "a note",
@@ -127,9 +127,9 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                         new LmiBreakdownYearModel
                         {
                             Year = DateTime.UtcNow.Year,
-                            Breakdown = new List<LmiBreakdownYearItemModel>
+                            Breakdown = new List<LmiBreakdownYearValueModel>
                             {
-                                new LmiBreakdownYearItemModel
+                                new LmiBreakdownYearValueModel
                                 {
                                     Code = 2,
                                     Note = "b note",
@@ -150,9 +150,9 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                         new LmiBreakdownYearModel
                         {
                             Year = DateTime.UtcNow.Year,
-                            Breakdown = new List<LmiBreakdownYearItemModel>
+                            Breakdown = new List<LmiBreakdownYearValueModel>
                             {
-                                new LmiBreakdownYearItemModel
+                                new LmiBreakdownYearValueModel
                                 {
                                     Code = 3,
                                     Note = "c note",
@@ -203,9 +203,9 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                         new GraphBreakdownYearModel
                         {
                             Year = DateTime.UtcNow.Year,
-                            Breakdown = new List<GraphBreakdownYearItemModel>
+                            Breakdown = new List<GraphBreakdownYearValueModel>
                             {
-                                new GraphBreakdownYearItemModel
+                                new GraphBreakdownYearValueModel
                                 {
                                     Code = 1,
                                     Note = "a note",
@@ -225,9 +225,9 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                         new GraphBreakdownYearModel
                         {
                             Year = DateTime.UtcNow.Year,
-                            Breakdown = new List<GraphBreakdownYearItemModel>
+                            Breakdown = new List<GraphBreakdownYearValueModel>
                             {
-                                new GraphBreakdownYearItemModel
+                                new GraphBreakdownYearValueModel
                                 {
                                     Code = 2,
                                     Note = "b note",
@@ -247,9 +247,9 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                         new GraphBreakdownYearModel
                         {
                             Year = DateTime.UtcNow.Year,
-                            Breakdown = new List<GraphBreakdownYearItemModel>
+                            Breakdown = new List<GraphBreakdownYearValueModel>
                             {
-                                new GraphBreakdownYearItemModel
+                                new GraphBreakdownYearValueModel
                                 {
                                     Code = 3,
                                     Note = "c note",

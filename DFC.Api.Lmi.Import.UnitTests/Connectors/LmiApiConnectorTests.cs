@@ -1,7 +1,5 @@
 ﻿using DFC.Api.Lmi.Import.Connectors;
 using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Enums;
-using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.UnitTests.TestModels;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -17,13 +15,12 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
     {
         private readonly ILogger<LmiApiConnector> fakeLogger = A.Fake<ILogger<LmiApiConnector>>();
         private readonly HttpClient httpClient = new HttpClient();
-        private readonly LmiApiClientOptions lmiApiClientOptions = new LmiApiClientOptions { BaseAddress = new Uri("https://somewhere.com/", UriKind.Absolute) };
         private readonly IApiDataConnector fakeApiDataConnector = A.Fake<IApiDataConnector>();
         private readonly ILmiApiConnector lmiApiConnector;
 
         public LmiApiConnectorTests()
         {
-            lmiApiConnector = new LmiApiConnector(fakeLogger, httpClient, lmiApiClientOptions, fakeApiDataConnector);
+            lmiApiConnector = new LmiApiConnector(fakeLogger, httpClient, fakeApiDataConnector);
         }
 
         [Fact]
@@ -39,7 +36,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
             A.CallTo(() => fakeApiDataConnector.GetAsync<ApiTestModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResult);
 
             // act
-            var result = await lmiApiConnector.ImportAsync<ApiTestModel>(3231, LmiApiQuery.JobGrowth).ConfigureAwait(false);
+            var result = await lmiApiConnector.ImportAsync<ApiTestModel>(new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeApiDataConnector.GetAsync<ApiTestModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
@@ -55,7 +52,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
             A.CallTo(() => fakeApiDataConnector.GetAsync<ApiTestModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(default(ApiTestModel));
 
             // act
-            var result = await lmiApiConnector.ImportAsync<ApiTestModel>(3231, LmiApiQuery.JobGrowth).ConfigureAwait(false);
+            var result = await lmiApiConnector.ImportAsync<ApiTestModel>(new Uri("https://somewhere.com", UriKind.Absolute)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeApiDataConnector.GetAsync<ApiTestModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();

@@ -8,6 +8,6 @@ namespace DFC.Api.Lmi.Import.Models.LmiApiData
     {
         public int Soc { get; set; }
 
-        public IList<LmiPredictedYearModel>? PredictedEmployment { get; set; }
+        public List<LmiPredictedYearModel>? PredictedEmployment { get; set; }
     }
 }

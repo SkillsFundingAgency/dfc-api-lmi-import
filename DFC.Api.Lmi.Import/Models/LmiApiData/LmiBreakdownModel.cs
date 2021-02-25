@@ -13,6 +13,6 @@ namespace DFC.Api.Lmi.Import.Models.LmiApiData
 
         public string? Breakdown { get; set; }
 
-        public IList<LmiBreakdownYearModel>? PredictedEmployment { get; set; }
+        public List<LmiBreakdownYearModel>? PredictedEmployment { get; set; }
     }
 }
