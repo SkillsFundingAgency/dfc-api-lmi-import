@@ -48,8 +48,10 @@ namespace DFC.Api.Lmi.Import.Services
                     {
                         var graphSocDatasetModel = mapLmiToGraphService.Map(lmiSocDataset);
 
-                        await graphService.ImportAsync(graphSocDatasetModel).ConfigureAwait(false);
-                        importedToGraphCount++;
+                        if (await graphService.ImportAsync(graphSocDatasetModel).ConfigureAwait(false))
+                        {
+                            importedToGraphCount++;
+                        }
                     }
                 }
 
