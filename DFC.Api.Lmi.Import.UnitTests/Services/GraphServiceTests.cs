@@ -26,17 +26,18 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         public async Task GraphServiceImportReturnsSuccess()
         {
             // arrange
+            const bool expectedResult = true;
             var graphSocDataset = A.Dummy<GraphSocDatasetModel>();
 
             A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).Returns(A.CollectionOfDummy<string>(2));
 
             // act
-            await graphService.ImportAsync(graphSocDataset).ConfigureAwait(false);
+            var result = await graphService.ImportAsync(graphSocDataset).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustHaveHappenedOnceExactly();
-            Assert.True(true);
+            Assert.Equal(expectedResult, result);
         }
 
         [Fact]
@@ -51,6 +52,24 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustNotHaveHappened();
             Assert.Equal("Value cannot be null. (Parameter 'graphSocDataset')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public async Task GraphServiceImportReturnsCatchesException()
+        {
+            // arrange
+            const bool expectedResult = false;
+            var graphSocDataset = A.Dummy<GraphSocDatasetModel>();
+
+            A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).ThrowsAsync(new Exception());
+
+            // act
+            var result = await graphService.ImportAsync(graphSocDataset).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustHaveHappenedOnceExactly();
+            Assert.Equal(expectedResult, result);
         }
 
         [Fact]

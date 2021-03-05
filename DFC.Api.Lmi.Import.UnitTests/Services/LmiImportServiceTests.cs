@@ -33,6 +33,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             A.CallTo(() => fakeJobProfileService.GetMappingsAsync()).Returns(A.CollectionOfDummy<SocJobProfileMappingModel>(jobProfileMappingsCount));
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<SocJobProfileMappingModel>.Ignored)).Returns(A.Dummy<LmiSocDatasetModel>());
             A.CallTo(() => fakeMapLmiToGraphService.Map(A<LmiSocDatasetModel>.Ignored)).Returns(A.Dummy<GraphSocDatasetModel>());
+            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).Returns(true);
 
             // act
             await lmiImportService.ImportAsync().ConfigureAwait(false);
