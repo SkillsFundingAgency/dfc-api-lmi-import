@@ -8,5 +8,7 @@ namespace DFC.Api.Lmi.Import.Contracts
         Task<bool> ImportAsync(GraphSocDatasetModel? graphSocDataset);
 
         Task PurgeAsync();
+
+        Task PurgeSocAsync(int soc);
     }
 }

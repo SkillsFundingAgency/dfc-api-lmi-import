@@ -35,6 +35,11 @@ namespace DFC.Api.Lmi.Import.Connectors
             return cypherQueryBuilderService.BuildPurgeCommands();
         }
 
+        public IList<string> BuildPurgeCommandsForInitialKey(string key)
+        {
+            return cypherQueryBuilderService.BuildPurgeCommandsForInitialKey(key);
+        }
+
         public IList<string> BuildImportCommands(GraphBaseSocModel? parent)
         {
             _ = parent ?? throw new ArgumentNullException(nameof(parent));

@@ -9,7 +9,11 @@ namespace DFC.Api.Lmi.Import.Contracts
     {
         IList<string> BuildPurgeCommands();
 
+        IList<string> BuildPurgeCommandsForInitialKey(string key);
+
         string BuildPurgeCommand(string nodeName);
+
+        string BuildPurgeCommandForInitialKey(string nodeName, string? keyValues);
 
         string BuildMerge(GraphBaseModel? item, string nodeName);
 
@@ -35,7 +39,13 @@ namespace DFC.Api.Lmi.Import.Contracts
 
         string BuildKeyProperties(GraphBaseModel? item);
 
+        string BuildKeyProperty(string name, string? value);
+
+        string BuildInitialKeyProperties(Type? type, string key);
+
         string GetPropertyValue(GraphBaseModel? item, PropertyInfo? propertyInfo);
+
+        string EncodeValue(PropertyInfo? propertyInfo, object? value);
 
         string QuoteString(string? value);
 

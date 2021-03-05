@@ -86,5 +86,20 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.True(true);
         }
+
+        [Fact]
+        public async Task GraphServicePurgeSocAsyncReturnsSuccess()
+        {
+            // arrange
+            A.CallTo(() => fakeGraphConnector.BuildPurgeCommandsForInitialKey(A<string>.Ignored)).Returns(A.CollectionOfDummy<string>(2));
+
+            // act
+            await graphService.PurgeSocAsync(1234).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeGraphConnector.BuildPurgeCommandsForInitialKey(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustHaveHappenedOnceExactly();
+            Assert.True(true);
+        }
     }
 }

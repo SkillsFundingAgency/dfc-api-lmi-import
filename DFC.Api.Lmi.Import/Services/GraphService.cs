@@ -2,6 +2,7 @@
 using DFC.Api.Lmi.Import.Models.GraphData;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Services
@@ -55,6 +56,19 @@ namespace DFC.Api.Lmi.Import.Services
             await graphConnector.RunAsync(commands).ConfigureAwait(false);
 
             logger.LogInformation("Purged Graph of LMI data");
+        }
+
+        public async Task PurgeSocAsync(int soc)
+        {
+            logger.LogInformation($"Purging Graph of LMI data for SOC {soc}");
+
+            var commands = graphConnector.BuildPurgeCommandsForInitialKey(soc.ToString(CultureInfo.InvariantCulture));
+
+            logger.LogInformation("Purging Graph of LMI data for SOC {soc}: executing commands");
+
+            await graphConnector.RunAsync(commands).ConfigureAwait(false);
+
+            logger.LogInformation("Purged Graph of LMI data for SOC {soc}");
         }
     }
 }

@@ -18,15 +18,15 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
     {
         private const string HttpContentApi = "https://content.api.com/";
         private readonly CypherQueryBuilderService cypherQueryBuilderService;
-        private readonly IList<string> definedGraphNodeNames = new List<string>
+        private readonly Dictionary<string, string> definedGraphNodeNames = new Dictionary<string, string>
         {
-            "LmiSocBreakdown",
-            "LmiSocBreakdownYear",
-            "LmiSocBreakdownYearValue",
-            "LmiSocJobProfile",
-            "LmiSocPredicted",
-            "LmiSocPredictedYear",
-            "LmiSoc",
+            { "LmiSocBreakdown", "Soc" },
+            { "LmiSocBreakdownYear", "Soc" },
+            { "LmiSocBreakdownYearValue", "Soc" },
+            { "LmiSocJobProfile", "CanonicalName" },
+            { "LmiSocPredicted", "Soc" },
+            { "LmiSocPredictedYear", "Soc" },
+            { "LmiSoc", "Soc" },
         };
 
         public CypherQueryBuilderServiceTests()
@@ -44,6 +44,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             foreach (var graphNodeType in Utilities.AttributeUtilies.GetTypesWithAttribute(Assembly.GetAssembly(typeof(WebJobsExtensionStartup)), typeof(GraphNodeAttribute)))
             {
                 //arrange
+                int intialKeyCount = 0;
                 int keyCount = 0;
                 int preferredLabelCount = 0;
 
@@ -51,6 +52,11 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 foreach (var propertyInfo in graphNodeType!.GetProperties())
                 {
                     var graphPropertyAttribute = propertyInfo.GetCustomAttributes(typeof(GraphPropertyAttribute), false).FirstOrDefault() as GraphPropertyAttribute;
+                    if (graphPropertyAttribute != null && graphPropertyAttribute.IsInitialKey && !graphPropertyAttribute.Ignore)
+                    {
+                        intialKeyCount++;
+                    }
+
                     if (graphPropertyAttribute != null && graphPropertyAttribute.IsKey && !graphPropertyAttribute.Ignore)
                     {
                         keyCount++;
@@ -63,6 +69,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 }
 
                 //assert
+                Assert.Equal(1, intialKeyCount);
                 Assert.NotEqual(0, keyCount);
                 Assert.Equal(1, preferredLabelCount);
             }
@@ -72,10 +79,23 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         public void CypherQueryBuilderServiceBuildPurgeCommandsReturnsSuccess()
         {
             //arrange
-            var expectedResults = (from a in definedGraphNodeNames select $"MATCH (s:{a}) DETACH DELETE s").ToList();
+            var expectedResults = (from a in definedGraphNodeNames.Keys select $"MATCH (s:{a}) DETACH DELETE s").ToList();
 
             //act
             var results = cypherQueryBuilderService.BuildPurgeCommands();
+
+            //assert
+            Assert.Equal(expectedResults, results);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildPurgeCommandsForInitialSocKeyReturnsSuccess()
+        {
+            //arrange
+            var expectedResults = (from a in definedGraphNodeNames.Keys select $"MATCH (s:{a} {{{definedGraphNodeNames[a]}: {(definedGraphNodeNames[a] == "Soc" ? "1234" : "'1234'")}}}) DETACH DELETE s").ToList();
+
+            //act
+            var results = cypherQueryBuilderService.BuildPurgeCommandsForInitialKey("1234");
 
             //assert
             Assert.Equal(expectedResults, results);
@@ -89,6 +109,19 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
 
             //act
             var result = cypherQueryBuilderService.BuildPurgeCommand("NodeName");
+
+            //assert
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildPurgeCommandForInitialKeyReturnsSuccess()
+        {
+            //arrange
+            const string expectedResult = "MATCH (s:NodeName {key='value'}) DETACH DELETE s";
+
+            //act
+            var result = cypherQueryBuilderService.BuildPurgeCommandForInitialKey("NodeName", "key='value'");
 
             //assert
             Assert.Equal(expectedResult, result);
@@ -339,8 +372,8 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             var propertyInfo = item.GetType().GetProperty(nameof(GraphPredictedModel.PredictedEmployment));
             var expectedResults = new List<string>
             {
-                $"MERGE (a:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{item.PredictedEmployment.First().ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.PredictedEmployment.First().Measure:O}',a.skos__prefLabel = {year},a.Employment = 1234.5678,a.CreatedDate = datetime('{item.PredictedEmployment.First().CreatedDate:O}')",
-                $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) MERGE (p)-[rel:PredictedEmployment]->(c)",
+                $"MERGE (a:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{item.PredictedEmployment.First().ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.PredictedEmployment.First().Measure:O}',a.skos__prefLabel = {year},a.Employment = 1234.5678,a.CreatedDate = datetime('{item.PredictedEmployment.First().CreatedDate:O}')",
+                $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) MERGE (p)-[rel:PredictedEmployment]->(c)",
             };
 
             //act
@@ -398,8 +431,8 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             var child = new GraphPredictedYearModel { Soc = soc, Year = year };
             var expectedResults = new List<string>
             {
-                $"MERGE (a:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{child.ItemId.ToString().ToLowerInvariant()}',a.Measure = '',a.skos__prefLabel = 2021,a.Employment = 0,a.CreatedDate = datetime('{child.CreatedDate:O}')",
-                $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Year: {year},Soc: {soc}}}) MERGE (p)-[rel:{relName}]->(c)",
+                $"MERGE (a:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{child.ItemId.ToString().ToLowerInvariant()}',a.Measure = '',a.skos__prefLabel = 2021,a.Employment = 0,a.CreatedDate = datetime('{child.CreatedDate:O}')",
+                $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) MERGE (p)-[rel:{relName}]->(c)",
             };
 
             //act
@@ -445,7 +478,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             var sb = new StringBuilder();
             sb.Append($"MATCH (p:parent {{Soc: {soc}}})");
             sb.Append(space);
-            sb.Append($"MATCH (c:child {{Year: {year},Soc: {soc}}})");
+            sb.Append($"MATCH (c:child {{Soc: {soc},Year: {year}}})");
             sb.Append(space);
             sb.Append("MERGE (p)-[rel:relName]->(c)");
             var expectedResult = sb.ToString();
@@ -505,7 +538,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 Measure = "a measure",
                 Code = 1,
             };
-            var expectedResult = $"Measure: '{item.Measure}',Year: {item.Year},Code: {item.Code},Soc: {item.Soc}";
+            var expectedResult = $"Code: {item.Code},Measure: '{item.Measure}',Soc: {item.Soc},Year: {item.Year}";
 
             //act
             var result = cypherQueryBuilderService.BuildKeyProperties(item);
@@ -524,6 +557,38 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
 
             //assert
             Assert.Equal("Value cannot be null. (Parameter 'item')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServiceBuildInitialKeyPropertiesReturnsSuccess()
+        {
+            //arrange
+            var item = new GraphBreakdownYearValueModel
+            {
+                Soc = 3231,
+                Year = 2021,
+                Measure = "a measure",
+                Code = 1,
+            };
+            var expectedResult = $"Soc: {item.Soc}";
+
+            //act
+            var result = cypherQueryBuilderService.BuildInitialKeyProperties(item.GetType(), item.Soc.ToString(CultureInfo.InvariantCulture));
+
+            //assert
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicBuildInitialKeyPropertiesReturnsExceptionForNullItem()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.BuildInitialKeyProperties(null, "a-key"));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'type')", exceptionResult.Message);
         }
 
         [Fact]
@@ -557,7 +622,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             var propertyInfo = item.GetType().GetProperty(fieldName);
 
             //act
-            var result = cypherQueryBuilderService.GetPropertyValue(item, propertyInfo!);
+            var result = cypherQueryBuilderService.GetPropertyValue(item, propertyInfo);
 
             //assert
             Assert.Equal(expectedResult, result);
@@ -578,12 +643,49 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         }
 
         [Fact]
-        public void CypherQueryBuilderServicBuildKeyPropertiesReturnsExceptionForNullPropertyInfo()
+        public void CypherQueryBuilderServicGetPropertyValueReturnsExceptionForNullPropertyInfo()
         {
             //arrange
 
             //act
             var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.GetPropertyValue(new GraphPredictedYearModel(), null));
+
+            //assert
+            Assert.Equal("Value cannot be null. (Parameter 'propertyInfo')", exceptionResult.Message);
+        }
+
+        [Theory]
+        [InlineData(3231, "2021-02-19 10:55:13", "1234.5678", "a measure", nameof(GraphPredictedYearModel.Soc), "3231")]
+        [InlineData(3231, "2021-02-19 10:55:13", "1234.5678", "a measure", nameof(GraphPredictedYearModel.CreatedDate), "datetime('2021-02-19T10:55:13.0000000')")]
+        [InlineData(3231, "2021-02-19 10:55:13", "1234.5678", "a measure", nameof(GraphPredictedYearModel.Employment), "1234.5678")]
+        [InlineData(3231, "2021-02-19 10:55:13", "1234.5678", "a measure", nameof(GraphPredictedYearModel.Measure), "'a measure'")]
+        public void CypherQueryBuilderServiceEncodeValueReturnsSuccess(int soc, string createdDate, string employment, string measure, string fieldName, string expectedResult)
+        {
+            //arrange
+            var item = new GraphPredictedYearModel
+            {
+                Soc = soc,
+                CreatedDate = DateTime.Parse(createdDate, CultureInfo.InvariantCulture),
+                Employment = decimal.Parse(employment, CultureInfo.InvariantCulture),
+                Measure = measure,
+            };
+            var propertyInfo = item.GetType().GetProperty(fieldName);
+            var value = propertyInfo!.GetValue(item, null);
+
+            //act
+            var result = cypherQueryBuilderService.EncodeValue(propertyInfo, value);
+
+            //assert
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void CypherQueryBuilderServicEncodeValueReturnsExceptionForNullPropertyInfo()
+        {
+            //arrange
+
+            //act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => cypherQueryBuilderService.EncodeValue(null, "a-value"));
 
             //assert
             Assert.Equal("Value cannot be null. (Parameter 'propertyInfo')", exceptionResult.Message);

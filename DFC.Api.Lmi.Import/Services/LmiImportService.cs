@@ -1,5 +1,7 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,20 +45,30 @@ namespace DFC.Api.Lmi.Import.Services
 
                 foreach (var socJobProfileMapping in socJobProfileMappings)
                 {
-                    var lmiSocDataset = await lmiSocImportService.ImportAsync(socJobProfileMapping).ConfigureAwait(false);
-                    if (lmiSocDataset != null)
+                    if (await ImportItemAsync(socJobProfileMapping.Soc!.Value, socJobProfileMapping.JobProfiles).ConfigureAwait(false))
                     {
-                        var graphSocDatasetModel = mapLmiToGraphService.Map(lmiSocDataset);
-
-                        if (await graphService.ImportAsync(graphSocDatasetModel).ConfigureAwait(false))
-                        {
-                            importedToGraphCount++;
-                        }
+                        importedToGraphCount++;
                     }
                 }
 
                 logger.LogInformation($"Imported to Graph {importedToGraphCount} of {socJobProfileMappings.Count} SOC mappings");
             }
+        }
+
+        public async Task<bool> ImportItemAsync(int soc, List<SocJobProfileItemModel>? jobProfiles)
+        {
+            var lmiSocDataset = await lmiSocImportService.ImportAsync(soc, jobProfiles).ConfigureAwait(false);
+            if (lmiSocDataset != null)
+            {
+                var graphSocDatasetModel = mapLmiToGraphService.Map(lmiSocDataset);
+
+                if (await graphService.ImportAsync(graphSocDatasetModel).ConfigureAwait(false))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
