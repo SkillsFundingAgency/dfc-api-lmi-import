@@ -14,12 +14,12 @@ namespace DFC.Api.Lmi.Import.Functions
 {
     public class GraphRefreshSocHttpTrigger
     {
-        private readonly ILogger<GraphRefreshHttpTrigger> logger;
+        private readonly ILogger<GraphRefreshSocHttpTrigger> logger;
         private readonly IGraphService graphService;
         private readonly ILmiImportService lmiImportService;
 
         public GraphRefreshSocHttpTrigger(
-           ILogger<GraphRefreshHttpTrigger> logger,
+           ILogger<GraphRefreshSocHttpTrigger> logger,
            IGraphService graphService,
            ILmiImportService lmiImportService)
         {
