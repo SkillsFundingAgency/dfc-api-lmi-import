@@ -7,7 +7,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -40,18 +39,9 @@ namespace DFC.Api.Lmi.Import.Functions
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/refresh/{soc}")] HttpRequest? request, int soc)
         {
-            Activity? activity = null;
-
             try
             {
                 logger.LogInformation("Received graph refresh  for SOC {soc} request");
-
-                //TODO: ian: need to initialize the telemetry properly
-                if (Activity.Current == null)
-                {
-                    activity = new Activity(nameof(GraphRefreshHttpTrigger)).Start();
-                    activity.SetParentId(Guid.NewGuid().ToString());
-                }
 
                 await graphService.PurgeSocAsync(soc).ConfigureAwait(false);
                 await lmiImportService.ImportItemAsync(soc, null).ConfigureAwait(false);
@@ -64,10 +54,6 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 logger.LogError(ex.ToString());
                 return new StatusCodeResult((int)HttpStatusCode.InternalServerError);
-            }
-            finally
-            {
-                activity?.Dispose();
             }
         }
     }
