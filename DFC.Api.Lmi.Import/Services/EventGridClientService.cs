@@ -1,5 +1,4 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Models.ClientOptions;
 using Microsoft.Azure.EventGrid;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Extensions.Logging;
@@ -14,12 +13,10 @@ namespace DFC.Api.Lmi.Import.Services
     public class EventGridClientService : IEventGridClientService
     {
         private readonly ILogger<EventGridClientService> logger;
-        private readonly EventGridClientOptions eventGridClientOptions;
 
-        public EventGridClientService(ILogger<EventGridClientService> logger, EventGridClientOptions eventGridClientOptions)
+        public EventGridClientService(ILogger<EventGridClientService> logger)
         {
             this.logger = logger;
-            this.eventGridClientOptions = eventGridClientOptions;
         }
 
         public async Task SendEventAsync(List<EventGridEvent>? eventGridEvents, string? topicEndpoint, string? topicKey, string? logMessage)
