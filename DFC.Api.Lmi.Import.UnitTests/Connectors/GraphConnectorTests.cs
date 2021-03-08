@@ -49,6 +49,27 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
         }
 
         [Fact]
+        public void GraphConnectorBuildPurgeCommandsForInitialKeyReturnsSuccess()
+        {
+            // arrange
+            var expectedResults = new List<string>
+            {
+                "string one",
+                "string two",
+            };
+
+            A.CallTo(() => fakeCypherQueryBuilderService.BuildPurgeCommandsForInitialKey(A<string>.Ignored)).Returns(expectedResults);
+
+            // act
+            var results = graphConnector.BuildPurgeCommandsForInitialKey("a-key");
+
+            // assert
+            A.CallTo(() => fakeCypherQueryBuilderService.BuildPurgeCommandsForInitialKey(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            Assert.NotNull(results);
+            Assert.Equal(expectedResults, results);
+        }
+
+        [Fact]
         public void GraphConnectorBuildImportCommandsReturnsSuccess()
         {
             // arrange

@@ -34,15 +34,15 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 Soc = 3231,
                 JobProfiles = A.CollectionOfDummy<SocJobProfileItemModel>(2).ToList(),
             };
+            var dummyLmiPredictedModel = A.Dummy<LmiPredictedModel>();
+            dummyLmiPredictedModel.PredictedEmployment = A.CollectionOfDummy<LmiPredictedYearModel>(2).ToList();
 
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiSocDatasetModel>(A<Uri>.Ignored)).Returns(A.Dummy<LmiSocDatasetModel>());
-            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiPredictedModel>(A<Uri>.Ignored)).Returns(A.Dummy<LmiPredictedModel>());
-            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).Returns(A.Dummy<LmiBreakdownModel>());
-            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).Returns(A.Dummy<LmiBreakdownModel>());
+            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiPredictedModel>(A<Uri>.Ignored)).Returns(dummyLmiPredictedModel);
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).Returns(A.Dummy<LmiBreakdownModel>());
 
             // act
-            var result = await lmiSocImportService.ImportAsync(socJobProfileMapping).ConfigureAwait(false);
+            var result = await lmiSocImportService.ImportAsync(socJobProfileMapping.Soc.Value, socJobProfileMapping.JobProfiles).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiSocDatasetModel>(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
@@ -54,21 +54,6 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             Assert.NotNull(result.QualificationLevel);
             Assert.NotNull(result.EmploymentByRegion);
             Assert.NotNull(result.TopIndustriesInJobGroup);
-        }
-
-        [Fact]
-        public async Task LmiSocImportServiceImportReturnsExceptionForNullJobProfileSummaries()
-        {
-            // arrange
-
-            // act
-            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await lmiSocImportService.ImportAsync(null).ConfigureAwait(false)).ConfigureAwait(false);
-
-            // assert
-            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiSocDatasetModel>(A<Uri>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiPredictedModel>(A<Uri>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).MustNotHaveHappened();
-            Assert.Equal("Value cannot be null. (Parameter 'socJobProfileMappingModel')", exceptionResult.Message);
         }
     }
 }

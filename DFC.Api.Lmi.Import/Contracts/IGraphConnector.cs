@@ -8,6 +8,8 @@ namespace DFC.Api.Lmi.Import.Contracts
     {
         IList<string> BuildPurgeCommands();
 
+        IList<string> BuildPurgeCommandsForInitialKey(string key);
+
         IList<string> BuildImportCommands(GraphBaseSocModel? parent);
 
         Task RunAsync(IList<string>? commands);

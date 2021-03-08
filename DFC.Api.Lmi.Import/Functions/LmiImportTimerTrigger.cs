@@ -18,7 +18,7 @@ namespace DFC.Api.Lmi.Import.Functions
             this.lmiImportService = lmiImportService;
         }
 
-        [FunctionName("GetLmiImportTimerTrigger")]
+        [FunctionName("LmiImportTimerTrigger")]
         public async Task Run([TimerTrigger("%LmiImportTimerTriggerSchedule%")] TimerInfo myTimer)
         {
             await lmiImportService.ImportAsync().ConfigureAwait(false);

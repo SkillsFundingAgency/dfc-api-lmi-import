@@ -42,9 +42,36 @@ namespace DFC.Api.Lmi.Import.Services
             return commands;
         }
 
+        public IList<string> BuildPurgeCommandsForInitialKey(string key)
+        {
+            var commands = new List<string>();
+
+            var graphNodeClasses = Utilities.AttributeUtilies.GetTypesWithAttribute(Assembly.GetExecutingAssembly(), typeof(GraphNodeAttribute));
+
+            if (graphNodeClasses != null && graphNodeClasses.Any())
+            {
+                foreach (var graphNodeClass in graphNodeClasses)
+                {
+                    var graphNodeAttribute = Utilities.AttributeUtilies.GetAttribute<GraphNodeAttribute>(graphNodeClass);
+
+                    if (graphNodeAttribute != null)
+                    {
+                        commands.Add(BuildPurgeCommandForInitialKey(graphNodeAttribute.Name, BuildInitialKeyProperties(graphNodeClass, key)));
+                    }
+                }
+            }
+
+            return commands;
+        }
+
         public string BuildPurgeCommand(string nodeName)
         {
             return $"MATCH (s:{nodeName}) DETACH DELETE s";
+        }
+
+        public string BuildPurgeCommandForInitialKey(string nodeName, string? keyValues)
+        {
+            return $"MATCH (s:{nodeName} {{{keyValues}}}) DETACH DELETE s";
         }
 
         public string BuildMerge(GraphBaseModel? item, string nodeName)
@@ -228,12 +255,37 @@ namespace DFC.Api.Lmi.Import.Services
             var sb = new StringBuilder();
             var type = item.GetType();
 
-            foreach (var propertyInfo in type.GetProperties())
+            foreach (var propertyInfo in type.GetProperties().OrderBy(o => o.Name))
             {
                 var graphPropertyAttribute = propertyInfo.GetCustomAttributes(typeof(GraphPropertyAttribute), false).FirstOrDefault() as GraphPropertyAttribute;
                 if (graphPropertyAttribute != null && graphPropertyAttribute.IsKey && !graphPropertyAttribute.Ignore)
                 {
                     sb.Append(BuildKeyProperty(graphPropertyAttribute.Name, GetPropertyValue(item, propertyInfo)) + ",");
+                }
+            }
+
+            var result = sb.ToString();
+
+            if (result.EndsWith(",", StringComparison.OrdinalIgnoreCase))
+            {
+                result = result[0..^1];
+            }
+
+            return result;
+        }
+
+        public string BuildInitialKeyProperties(Type? type, string key)
+        {
+            _ = type ?? throw new ArgumentNullException(nameof(type));
+
+            var sb = new StringBuilder();
+
+            foreach (var propertyInfo in type.GetProperties())
+            {
+                var graphPropertyAttribute = propertyInfo.GetCustomAttributes(typeof(GraphPropertyAttribute), false).FirstOrDefault() as GraphPropertyAttribute;
+                if (graphPropertyAttribute != null && graphPropertyAttribute.IsInitialKey && !graphPropertyAttribute.Ignore)
+                {
+                    sb.Append(BuildKeyProperty(graphPropertyAttribute.Name, EncodeValue(propertyInfo, key)) + ",");
                 }
             }
 
@@ -258,6 +310,13 @@ namespace DFC.Api.Lmi.Import.Services
             _ = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             var value = propertyInfo.GetValue(item, null);
+
+            return EncodeValue(propertyInfo, value);
+        }
+
+        public string EncodeValue(PropertyInfo? propertyInfo, object? value)
+        {
+            _ = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
 
             switch (Type.GetTypeCode(propertyInfo.PropertyType))
             {

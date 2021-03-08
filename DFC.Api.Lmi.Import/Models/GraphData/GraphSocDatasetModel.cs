@@ -9,7 +9,7 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
     [GraphNode("LmiSoc")]
     public class GraphSocDatasetModel : GraphBaseSocModel
     {
-        [GraphProperty(nameof(Soc), isKey: true, isPreferredLabel: true)]
+        [GraphProperty(nameof(Soc), isInitialKey: true, isKey: true, isPreferredLabel: true)]
         public new int Soc { get; set; }
 
         [GraphProperty(nameof(Title))]

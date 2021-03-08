@@ -1,4 +1,5 @@
-﻿using DFC.Api.Lmi.Import.Connectors;
+﻿using AzureFunctions.Extensions.Swashbuckle;
+using DFC.Api.Lmi.Import.Connectors;
 using DFC.Api.Lmi.Import.Contracts;
 using DFC.Api.Lmi.Import.Extensions;
 using DFC.Api.Lmi.Import.HttpClientPolicies;
@@ -7,12 +8,14 @@ using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.Services;
 using DFC.Api.Lmi.Import.Startup;
 using DFC.ServiceTaxonomy.Neo4j.Configuration;
+using DFC.Swagger.Standard;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 [assembly: WebJobsStartup(typeof(WebJobsExtensionStartup), "Web Jobs Extension Startup")]
 
@@ -33,13 +36,16 @@ namespace DFC.Api.Lmi.Import.Startup
                 .AddEnvironmentVariables()
                 .Build();
 
+            builder.AddSwashBuckle(Assembly.GetExecutingAssembly());
             builder.Services.AddHttpClient();
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
+            builder.Services.AddSingleton(configuration.GetSection(nameof(EventGridClientOptions)).Get<EventGridClientOptions>() ?? new EventGridClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(LmiApiClientOptions)).Get<LmiApiClientOptions>() ?? new LmiApiClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(JobProfileApiClientOptions)).Get<JobProfileApiClientOptions>() ?? new JobProfileApiClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(GraphOptions)).Get<GraphOptions>() ?? new GraphOptions());
             builder.Services.AddGraphCluster(options => configuration.GetSection(Neo4jOptions.Neo4j).Bind(options));
+            builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
             builder.Services.AddTransient<IApiConnector, ApiConnector>();
             builder.Services.AddTransient<IApiDataConnector, ApiDataConnector>();
             builder.Services.AddTransient<IGraphConnector, GraphConnector>();
@@ -50,6 +56,8 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddTransient<IJobProfilesToSocMappingService, JobProfilesToSocMappingService>();
             builder.Services.AddTransient<IGraphService, GraphService>();
             builder.Services.AddTransient<IMapLmiToGraphService, MapLmiToGraphService>();
+            builder.Services.AddTransient<IEventGridService, EventGridService>();
+            builder.Services.AddTransient<IEventGridClientService, EventGridClientService>();
 
             var policyOptions = configuration.GetSection(AppSettingsPolicies).Get<PolicyOptions>() ?? new PolicyOptions();
             var policyRegistry = builder.Services.AddPolicyRegistry();

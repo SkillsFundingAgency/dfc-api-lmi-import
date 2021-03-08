@@ -26,17 +26,18 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         public async Task GraphServiceImportReturnsSuccess()
         {
             // arrange
+            const bool expectedResult = true;
             var graphSocDataset = A.Dummy<GraphSocDatasetModel>();
 
             A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).Returns(A.CollectionOfDummy<string>(2));
 
             // act
-            await graphService.ImportAsync(graphSocDataset).ConfigureAwait(false);
+            var result = await graphService.ImportAsync(graphSocDataset).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustHaveHappenedOnceExactly();
-            Assert.True(true);
+            Assert.Equal(expectedResult, result);
         }
 
         [Fact]
@@ -54,6 +55,24 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         }
 
         [Fact]
+        public async Task GraphServiceImportReturnsCatchesException()
+        {
+            // arrange
+            const bool expectedResult = false;
+            var graphSocDataset = A.Dummy<GraphSocDatasetModel>();
+
+            A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).ThrowsAsync(new Exception());
+
+            // act
+            var result = await graphService.ImportAsync(graphSocDataset).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustHaveHappenedOnceExactly();
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
         public async Task GraphServicePurgeReturnsSuccess()
         {
             // arrange
@@ -64,6 +83,21 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
 
             // assert
             A.CallTo(() => fakeGraphConnector.BuildPurgeCommands()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustHaveHappenedOnceExactly();
+            Assert.True(true);
+        }
+
+        [Fact]
+        public async Task GraphServicePurgeSocAsyncReturnsSuccess()
+        {
+            // arrange
+            A.CallTo(() => fakeGraphConnector.BuildPurgeCommandsForInitialKey(A<string>.Ignored)).Returns(A.CollectionOfDummy<string>(2));
+
+            // act
+            await graphService.PurgeSocAsync(1234).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeGraphConnector.BuildPurgeCommandsForInitialKey(A<string>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.True(true);
         }

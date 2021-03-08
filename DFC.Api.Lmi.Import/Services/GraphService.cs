@@ -2,6 +2,7 @@
 using DFC.Api.Lmi.Import.Models.GraphData;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Services
@@ -19,19 +20,29 @@ namespace DFC.Api.Lmi.Import.Services
             this.graphConnector = graphConnector;
         }
 
-        public async Task ImportAsync(GraphSocDatasetModel? graphSocDataset)
+        public async Task<bool> ImportAsync(GraphSocDatasetModel? graphSocDataset)
         {
             _ = graphSocDataset ?? throw new ArgumentNullException(nameof(graphSocDataset));
 
-            logger.LogInformation($"Importing SOC dataset to Graph: {graphSocDataset.Soc}");
+            try
+            {
+                logger.LogInformation($"Importing SOC dataset to Graph: {graphSocDataset.Soc}");
 
-            var commands = graphConnector.BuildImportCommands(graphSocDataset);
+                var commands = graphConnector.BuildImportCommands(graphSocDataset);
 
-            logger.LogInformation($"Importing SOC dataset to Graph: {graphSocDataset.Soc}: executing commands");
+                logger.LogInformation($"Importing SOC dataset to Graph: {graphSocDataset.Soc}: executing commands");
 
-            await graphConnector.RunAsync(commands).ConfigureAwait(false);
+                await graphConnector.RunAsync(commands).ConfigureAwait(false);
 
-            logger.LogInformation($"Imported SOC dataset to Graph: {graphSocDataset.Soc}");
+                logger.LogInformation($"Imported SOC dataset to Graph: {graphSocDataset.Soc}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Error received importing data to graphs database for LMI SOC: {graphSocDataset.Soc}");
+                return false;
+            }
         }
 
         public async Task PurgeAsync()
@@ -45,6 +56,19 @@ namespace DFC.Api.Lmi.Import.Services
             await graphConnector.RunAsync(commands).ConfigureAwait(false);
 
             logger.LogInformation("Purged Graph of LMI data");
+        }
+
+        public async Task PurgeSocAsync(int soc)
+        {
+            logger.LogInformation($"Purging Graph of LMI data for SOC {soc}");
+
+            var commands = graphConnector.BuildPurgeCommandsForInitialKey(soc.ToString(CultureInfo.InvariantCulture));
+
+            logger.LogInformation("Purging Graph of LMI data for SOC {soc}: executing commands");
+
+            await graphConnector.RunAsync(commands).ConfigureAwait(false);
+
+            logger.LogInformation("Purged Graph of LMI data for SOC {soc}");
         }
     }
 }

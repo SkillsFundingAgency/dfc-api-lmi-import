@@ -1,5 +1,4 @@
 using DFC.Api.Lmi.Import.Connectors;
-using DFC.Api.Lmi.Import.Contracts;
 using DFC.Api.Lmi.Import.UnitTests.FakeHttpHandlers;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;

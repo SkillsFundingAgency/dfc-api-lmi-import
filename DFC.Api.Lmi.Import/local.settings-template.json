@@ -54,6 +54,12 @@
 		"Timeout": "00:00:30",
 		"DeveloperModeMaxJobProfiles": "__ProcessMaxJobProfiles__"
 	},
+	"EventGridClientOptions": {
+		"TopicEndpoint": "__EventGridTopicEndpoint__/api/events",
+		"SubjectPrefix": "/dfc-api-lmi-import/",
+		"TopicKey": "__EventGridTopicKey__",
+		"ApiEndpoint": "__ContentApiEndpoint__/api/execute/lmisoc"
+	},
 	"LmiApiClientOptions": {
 		"BaseAddress": "https://api.lmiforall.org.uk/api/v1/",
 		"ApiCalls": {
@@ -63,8 +69,8 @@
 			"EmploymentByRegion": "wf/predict/breakdown/region?soc={soc}&minYear={minYear}&maxYear={maxYear}",
 			"TopIndustriesInJobGroup": "wf/predict/breakdown/industry?soc={soc}&minYear={minYear}&maxYear={maxYear}"
 		},
-		"MinYear": __LmiStartYear__,
-		"MaxYear": __LmiEndYear__,
+		"MinYear": "__LmiStartYear__",
+		"MaxYear": "__LmiEndYear__",
 		"Timeout": "00:00:30"
 	}
 }
