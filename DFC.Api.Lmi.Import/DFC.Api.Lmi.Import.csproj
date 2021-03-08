@@ -13,6 +13,7 @@
 
   <ItemGroup>
 	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+	  <PackageReference Include="Microsoft.Azure.EventGrid" Version="3.2.0" />
 	  <PackageReference Include="AzureFunctions.Extensions.Swashbuckle" Version="1.4.5-preview5" />
 	  <PackageReference Include="DFC.ServiceTaxonomy.Neo4j" Version="0.409.0" />
 	  <PackageReference Include="DFC.Swagger.Standard" Version="0.1.20" />

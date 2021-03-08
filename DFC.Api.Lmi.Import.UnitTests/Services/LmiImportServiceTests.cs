@@ -1,10 +1,14 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
+using DFC.Api.Lmi.Import.Models;
+using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.Models.GraphData;
 using DFC.Api.Lmi.Import.Models.LmiApiData;
 using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
 using DFC.Api.Lmi.Import.Services;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,11 +24,19 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         private readonly IJobProfileService fakeJobProfileService = A.Fake<IJobProfileService>();
         private readonly ILmiSocImportService fakeLmiSocImportService = A.Fake<ILmiSocImportService>();
         private readonly IGraphService fakeGraphService = A.Fake<IGraphService>();
+        private readonly IEventGridService fakeEventGridService = A.Fake<IEventGridService>();
         private readonly LmiImportService lmiImportService;
+        private readonly EventGridClientOptions eventGridClientOptions = new EventGridClientOptions
+        {
+            ApiEndpoint = new Uri("https://somewhere.com", UriKind.Absolute),
+            SubjectPrefix = "SubjectPrefix",
+            TopicEndpoint = "TopicEndpoint",
+            TopicKey = "TopicKey",
+        };
 
         public LmiImportServiceTests()
         {
-            lmiImportService = new LmiImportService(fakeLogger, fakeMapLmiToGraphService, fakeJobProfileService, fakeLmiSocImportService, fakeGraphService);
+            lmiImportService = new LmiImportService(fakeLogger, fakeMapLmiToGraphService, fakeJobProfileService, fakeLmiSocImportService, fakeGraphService, fakeEventGridService, eventGridClientOptions);
         }
 
         [Fact]
@@ -49,6 +61,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappened(jobProfileMappingsCount, Times.Exactly);
             A.CallTo(() => fakeMapLmiToGraphService.Map(A<LmiSocDatasetModel>.Ignored)).MustHaveHappened(jobProfileMappingsCount, Times.Exactly);
             A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).MustHaveHappened(jobProfileMappingsCount, Times.Exactly);
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<WebhookCacheOperation>.Ignored, A<EventGridEventData>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.True(true);
         }
 

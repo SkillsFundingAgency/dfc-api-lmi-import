@@ -1,6 +1,10 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
+using DFC.Api.Lmi.Import.Models;
+using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,19 +18,25 @@ namespace DFC.Api.Lmi.Import.Services
         private readonly IJobProfileService jobProfileService;
         private readonly ILmiSocImportService lmiSocImportService;
         private readonly IGraphService graphService;
+        private readonly IEventGridService eventGridService;
+        private readonly EventGridClientOptions eventGridClientOptions;
 
         public LmiImportService(
             ILogger<LmiImportService> logger,
             IMapLmiToGraphService mapLmiToGraphService,
             IJobProfileService jobProfileService,
             ILmiSocImportService lmiSocImportService,
-            IGraphService graphService)
+            IGraphService graphService,
+            IEventGridService eventGridService,
+            EventGridClientOptions eventGridClientOptions)
         {
             this.logger = logger;
             this.mapLmiToGraphService = mapLmiToGraphService;
             this.jobProfileService = jobProfileService;
             this.lmiSocImportService = lmiSocImportService;
             this.graphService = graphService;
+            this.eventGridService = eventGridService;
+            this.eventGridClientOptions = eventGridClientOptions;
         }
 
         public async Task ImportAsync()
@@ -50,6 +60,17 @@ namespace DFC.Api.Lmi.Import.Services
                         importedToGraphCount++;
                     }
                 }
+
+                var eventGridEventData = new EventGridEventData
+                {
+                    ItemId = Guid.NewGuid().ToString(),
+                    Api = $"{eventGridClientOptions.ApiEndpoint}",
+                    DisplayText = "LMI Import refreshed",
+                    VersionId = Guid.NewGuid().ToString(),
+                    Author = eventGridClientOptions.SubjectPrefix,
+                };
+
+                await eventGridService.SendEventAsync(WebhookCacheOperation.CreateOrUpdate, eventGridEventData, eventGridClientOptions.SubjectPrefix).ConfigureAwait(false);
 
                 logger.LogInformation($"Imported to Graph {importedToGraphCount} of {socJobProfileMappings.Count} SOC mappings");
             }

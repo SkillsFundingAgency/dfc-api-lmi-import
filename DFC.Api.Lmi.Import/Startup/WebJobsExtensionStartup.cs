@@ -40,6 +40,7 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddHttpClient();
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
+            builder.Services.AddSingleton(configuration.GetSection(nameof(EventGridClientOptions)).Get<EventGridClientOptions>() ?? new EventGridClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(LmiApiClientOptions)).Get<LmiApiClientOptions>() ?? new LmiApiClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(JobProfileApiClientOptions)).Get<JobProfileApiClientOptions>() ?? new JobProfileApiClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(GraphOptions)).Get<GraphOptions>() ?? new GraphOptions());
@@ -55,6 +56,8 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddTransient<IJobProfilesToSocMappingService, JobProfilesToSocMappingService>();
             builder.Services.AddTransient<IGraphService, GraphService>();
             builder.Services.AddTransient<IMapLmiToGraphService, MapLmiToGraphService>();
+            builder.Services.AddTransient<IEventGridService, EventGridService>();
+            builder.Services.AddTransient<IEventGridClientService, EventGridClientService>();
 
             var policyOptions = configuration.GetSection(AppSettingsPolicies).Get<PolicyOptions>() ?? new PolicyOptions();
             var policyRegistry = builder.Services.AddPolicyRegistry();

@@ -54,6 +54,11 @@ GraphOptions__ReplicaSetName | published |
 JobProfileApiClientOptions__BaseAddress | Job Profiles summary API endpoint |
 JobProfileApiClientOptions__Version | v1 |
 JobProfileApiClientOptions__ApiKey | APIM key for PP JobProfiles api |
+EventGridClientOptions__TopicEndpoint | Event grid topic endpoint |
+EventGridClientOptions__SubjectPrefix | Message subject prefix |
+EventGridClientOptions__TopicKey | Event grid topic key |
+EventGridClientOptions__ApiEndpoint | Content API endpoint |
+LmiApiClientOptions__BaseAddress | https://api.lmiforall.org.uk/api/v1/ |
 
 ## Running locally
 
