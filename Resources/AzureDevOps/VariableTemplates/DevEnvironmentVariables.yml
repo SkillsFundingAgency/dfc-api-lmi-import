@@ -50,6 +50,6 @@ variables:
 - name: EventGridClientOptionsTopicKey
   value: $(EventGridAegSasKey)
 - name: ApiEventGridClientOptionsApiEndpointSuffix
-  value: $(ContentApiAddress)/api/execute/lmisoc
+  value: https://dfc-dev-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
 - name: SubscriptionPosturi
   value: https://dfc-dev-api-appRegistry-fa.$(appServiceDomain)/subscription/
