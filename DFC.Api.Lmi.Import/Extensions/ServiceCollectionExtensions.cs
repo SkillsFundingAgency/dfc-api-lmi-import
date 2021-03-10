@@ -46,7 +46,6 @@ namespace DFC.Api.Lmi.Import.Extensions
 
         public static IServiceCollection AddHttpClient<TClient, TImplementation, TClientOptions>(
             this IServiceCollection services,
-            IConfiguration configuration,
             string configurationSectionName,
             string retryPolicyName,
             string circuitBreakerPolicyName)
@@ -55,11 +54,10 @@ namespace DFC.Api.Lmi.Import.Extensions
             where TClientOptions : ClientOptionsModel, new()
         {
             return services
-                    .Configure<TClientOptions>(configuration?.GetSection(configurationSectionName))
                     .AddHttpClient<TClient, TImplementation>()
                     .ConfigureHttpClient((sp, options) =>
                     {
-                        var httpClientOptions = sp.GetRequiredService<IOptions<TClientOptions>>().Value;
+                        var httpClientOptions = sp.GetRequiredService<TClientOptions>();
                         options.BaseAddress = httpClientOptions.BaseAddress;
                         options.Timeout = httpClientOptions.Timeout;
 

@@ -1,7 +1,8 @@
-﻿using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Functions;
+﻿using DFC.Api.Lmi.Import.Functions;
 using FakeItEasy;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
@@ -14,42 +15,44 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
     public class GraphPurgeHttpTriggerTests
     {
         private readonly ILogger<GraphPurgeHttpTrigger> fakeLogger = A.Fake<ILogger<GraphPurgeHttpTrigger>>();
-        private readonly IGraphService fakeGraphService = A.Fake<IGraphService>();
+        private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
         private readonly GraphPurgeHttpTrigger graphPurgeHttpTrigger;
 
         public GraphPurgeHttpTriggerTests()
         {
-            graphPurgeHttpTrigger = new GraphPurgeHttpTrigger(fakeLogger, fakeGraphService);
+            graphPurgeHttpTrigger = new GraphPurgeHttpTrigger(fakeLogger);
         }
 
         [Fact]
-        public async Task LmiImportTimerTriggerRunFunctionIsSuccessful()
+        public async Task LGraphPurgeHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.OK;
+            const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
+
+            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
             // Act
-            var result = await graphPurgeHttpTrigger.Run(null).ConfigureAwait(false);
+            var result = await graphPurgeHttpTrigger.Run(null, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeGraphService.PurgeAsync()).MustHaveHappenedOnceExactly();
-            var statusResult = Assert.IsType<OkResult>(result);
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            var statusResult = Assert.IsType<AcceptedResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
-        public async Task PostReturnsUnprocessableEntityWhenUpsertRaisesException()
+        public async Task GraphPurgeHttpTriggerReturnsUnprocessableEntityWhenStartNewAsyncRaisesException()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
 
-            A.CallTo(() => fakeGraphService.PurgeAsync()).Throws<Exception>();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<string>.Ignored)).Throws<Exception>();
 
             // Act
-            var result = await graphPurgeHttpTrigger.Run(null).ConfigureAwait(false);
+            var result = await graphPurgeHttpTrigger.Run(null, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeGraphService.PurgeAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<StatusCodeResult>(result);
 

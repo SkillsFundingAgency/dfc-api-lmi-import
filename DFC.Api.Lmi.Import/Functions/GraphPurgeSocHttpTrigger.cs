@@ -1,8 +1,9 @@
-﻿using DFC.Api.Lmi.Import.Contracts;
+﻿using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,14 +16,10 @@ namespace DFC.Api.Lmi.Import.Functions
     public class GraphPurgeSocHttpTrigger
     {
         private readonly ILogger<GraphPurgeSocHttpTrigger> logger;
-        private readonly IGraphService graphService;
 
-        public GraphPurgeSocHttpTrigger(
-           ILogger<GraphPurgeSocHttpTrigger> logger,
-           IGraphService graphService)
+        public GraphPurgeSocHttpTrigger(ILogger<GraphPurgeSocHttpTrigger> logger)
         {
             this.logger = logger;
-            this.graphService = graphService;
         }
 
         [FunctionName("GraphPurgeSoc")]
@@ -34,17 +31,20 @@ namespace DFC.Api.Lmi.Import.Functions
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/purge/{soc}")] HttpRequest? request, int soc)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/purge/{soc}")] HttpRequest? request,
+            int soc,
+            [DurableClient] IDurableOrchestrationClient starter)
         {
             try
             {
                 logger.LogInformation($"Received graph purge for SOC {soc} request");
 
-                await graphService.PurgeSocAsync(soc).ConfigureAwait(false);
+                var socRequest = new SocRequestModel { Soc = soc };
+                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocOrchestrator), socRequest).ConfigureAwait(false);
 
-                logger.LogInformation($"Graph purge for SOC {soc} request completed");
+                logger.LogInformation($"Started orchestration with ID = '{instanceId}' for SOC {soc}.");
 
-                return new OkResult();
+                return starter.CreateCheckStatusResponse(request, instanceId);
             }
             catch (Exception ex)
             {

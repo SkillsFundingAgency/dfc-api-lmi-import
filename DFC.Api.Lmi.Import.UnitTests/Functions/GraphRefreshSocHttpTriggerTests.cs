@@ -1,11 +1,11 @@
-﻿using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Functions;
-using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
+﻿using DFC.Api.Lmi.Import.Functions;
+using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using FakeItEasy;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
@@ -16,45 +16,44 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
     public class GraphRefreshSocHttpTriggerTests
     {
         private readonly ILogger<GraphRefreshSocHttpTrigger> fakeLogger = A.Fake<ILogger<GraphRefreshSocHttpTrigger>>();
-        private readonly IGraphService fakeGraphService = A.Fake<IGraphService>();
-        private readonly ILmiImportService fakeLmiImportService = A.Fake<ILmiImportService>();
+        private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
         private readonly GraphRefreshSocHttpTrigger graphRefreshSocHttpTrigger;
 
         public GraphRefreshSocHttpTriggerTests()
         {
-            graphRefreshSocHttpTrigger = new GraphRefreshSocHttpTrigger(fakeLogger, fakeGraphService, fakeLmiImportService);
+            graphRefreshSocHttpTrigger = new GraphRefreshSocHttpTrigger(fakeLogger);
         }
 
         [Fact]
-        public async Task LmiImportTimerTriggerRunFunctionIsSuccessful()
+        public async Task GraphRefreshSocHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.OK;
+            const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
+
+            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
             // Act
-            var result = await graphRefreshSocHttpTrigger.Run(null, 3231).ConfigureAwait(false);
+            var result = await graphRefreshSocHttpTrigger.Run(null, 3231, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeGraphService.PurgeSocAsync(A<int>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeLmiImportService.ImportItemAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappenedOnceExactly();
-            var statusResult = Assert.IsType<OkResult>(result);
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
+            var statusResult = Assert.IsType<AcceptedResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
-        public async Task PostReturnsUnprocessableEntityWhenUpsertRaisesException()
+        public async Task GraphRefreshSocHttpTriggertReturnsUnprocessableEntityWhenStartNewAsyncRaisesException()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
 
-            A.CallTo(() => fakeLmiImportService.ImportItemAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).Throws<Exception>();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).Throws<Exception>();
 
             // Act
-            var result = await graphRefreshSocHttpTrigger.Run(null, 3231).ConfigureAwait(false);
+            var result = await graphRefreshSocHttpTrigger.Run(null, 3231, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeGraphService.PurgeSocAsync(A<int>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeLmiImportService.ImportItemAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<StatusCodeResult>(result);
 
