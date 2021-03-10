@@ -11,6 +11,15 @@ parameters:
   ResourceGroup: ''
   FunctionAppDomain: ''
   EnvironmentName: ''
+  DFCAzureDevOpsProjectGuid: ''
+  DfcContentTestsBuildId: ''
+  ApimImportScript: ''
+  SpecificationPath: ''
+  SharedResourceGroup: ''
+  ApimServiceName: ''
+  ApimPolicyPath: ''
+  ApimProductName: ''
+  ApimApiName: ''
   Apis: []
 
 jobs:
@@ -51,3 +60,10 @@ jobs:
                 FunctionAppDomain: '${{ parameters.FunctionAppDomain }}'
                 PackageFile: '${{ parameters.PackageFile }}'
                 ResourceGroup: '${{ parameters.ResourceGroup }}'
+                SharedResourceGroup: '${{ parameters.SharedResourceGroup }}'
+                ApimServiceName: '${{ parameters.ApimServiceName }}'
+                ApimImportScript: '${{ parameters.ApimImportScript }}'
+                SpecificationPath:  '${{ parameters.SpecificationPath }}'
+                APIMPolicyPath: '${{ parameters.ApimPolicyPath }}'
+                APIMProductName: '${{ parameters.ApimProductName }}'
+                APIMApiName: '${{ parameters.ApimApiName }}'

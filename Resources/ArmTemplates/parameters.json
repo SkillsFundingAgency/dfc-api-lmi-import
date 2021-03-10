@@ -35,6 +35,21 @@
     "FunctionAppName": {
       "value": "__FunctionAppName__"
     },
+    "apimLoggerName": {
+      "value": "__apimLoggerName__"
+    },
+    "apimResourceGroup": {
+      "value": "__SharedResourceGroupName__"
+    },
+    "apimServiceName": {
+      "value": "__ApimServiceName__"
+    },
+    "apimProductName": {
+      "value": "__apimProductName__"
+    },
+    "apimApiName": {
+      "value": "__apimApiName__"
+    },
     "LmiImportTimerTriggerSchedule": {
       "value": "__LmiImportTimerTriggerSchedule__"
     },

@@ -17,6 +17,12 @@ variables:
   value: $(WebAppPrefix)-api-lmiimport-rg
 - name: appServicePlanName
   value: $(WebAppPrefix)-api-lmiimport-asp
+- name: apimLoggerName
+  value: LMI-logger
+- name: apimProductName
+  value: LMI
+- name: apimApiName
+  value: Import-draft
 - name: LmiImportTimerTriggerSchedule
   value: 0 0 4 1 * *
 - name: ApiSuffix

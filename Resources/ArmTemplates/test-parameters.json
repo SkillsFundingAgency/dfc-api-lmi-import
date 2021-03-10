@@ -27,10 +27,25 @@
       "value": "FOO"
     },
     "FunctionAppInsightName": {
-      "value": "dfc-dev-funcapp-v1-ai"
+      "value": "FunctionAppInsightName"
     },
     "FunctionAppName": {
-      "value": "dfc-dev-funcapp-v1-fa"
+      "value": "FunctionAppName"
+    },
+    "apimLoggerName": {
+      "value": "apimLoggerName"
+    },
+    "apimResourceGroup": {
+      "value": "apimResourceGroup"
+    },
+    "apimServiceName": {
+      "value": "apimServiceName"
+    },
+    "apimProductName": {
+      "value": "apimProductName"
+    },
+    "apimApiName": {
+      "value": "apimApiName"
     },
     "LmiImportTimerTriggerSchedule": {
       "value": "LmiImportTimerTriggerSchedule"
