@@ -27,10 +27,10 @@
       "value": "FOO"
     },
     "FunctionAppInsightName": {
-      "value": "FunctionAppInsightName"
+      "value": "dfc-dev-funcapp-v1-ai"
     },
     "FunctionAppName": {
-      "value": "FunctionAppName"
+      "value": "dfc-dev-funcapp-v1-fa"
     },
     "apimLoggerName": {
       "value": "apimLoggerName"
