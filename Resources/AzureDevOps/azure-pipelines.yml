@@ -61,7 +61,7 @@ stages:
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-dev
   - group: dfc-app-shared-dev
-  #- group: 'KeyVault - dfc-dev-shared-kv'
+  - group: 'KeyVault - dfc-dev-shared-kv'
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -91,7 +91,7 @@ stages:
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-dev
   - group: dfc-app-shared-dev
-  #- group: 'KeyVault - dfc-dev-shared-kv'
+  - group: 'KeyVault - dfc-dev-shared-kv'
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -121,7 +121,7 @@ stages:
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-sit
   - group: dfc-app-shared-sit
-  #- group: 'KeyVault - dfc-sit-shared-kv'
+  - group: 'KeyVault - dfc-sit-shared-kv'
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -151,7 +151,7 @@ stages:
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-sit
   - group: dfc-app-shared-sit
-  #- group: 'KeyVault - dfc-sit-shared-kv'
+  - group: 'KeyVault - dfc-sit-shared-kv'
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
