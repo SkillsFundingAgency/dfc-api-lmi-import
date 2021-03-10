@@ -71,7 +71,7 @@ stages:
       # The inner level -'s defines an array of mappings.
       Apis: 
         -
-          - name: api-LmiImport
+          - name: LmiImport
             azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmiimport-fa'
 
 - stage: DeployToDevDraftApiLmiImport
