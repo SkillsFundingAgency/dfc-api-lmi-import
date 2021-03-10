@@ -39,8 +39,10 @@ variables:
   value: $(ContentApiAddress)/api/execute
 - name: GraphOptionsReplicaSetName
   value: published
+#- name: JobProfileApiClientOptionsBaseAddress
+#  value: $(ApimProxyAddress)/job-profiles/summary
 - name: JobProfileApiClientOptionsBaseAddress
-  value: $(ApimProxyAddress)/job-profiles/summary
+  value: https://pp.api.nationalcareers.service.gov.uk/job-profiles/summary
 - name: JobProfileApiClientOptionsApiKey
   value: $(ApimJobProfilesKey)
 - name: EventGridClientOptionsTopicEndpoint
