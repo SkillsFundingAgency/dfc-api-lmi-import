@@ -51,8 +51,6 @@ steps:
 - powershell: |
     Write-Host "##vso[task.setvariable variable=FunctionAppUrl]https://${{ parameters.WebAppName }}.${{ parameters.FunctionAppDomain }}"
   displayName: "Set full hostname as variable"
-  variables:
-  SubscriptionPosturi: 'https://$(FunctionAppName).azurewebsites.net/subscription/'
 
 - task: AzurePowerShell@5
   displayName: 'Send a post request to /subscription'
