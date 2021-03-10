@@ -18,13 +18,13 @@
       "value": "Standard"
     },
     "aseHostingEnvironmentName": {
-      "value": "Standard"
+      "value": "__AseServiceName__"
     },
     "aseResourceGroup": {
-      "value": "Standard"
+      "value": "__aseResourceGroup__"
     },
     "Environment": {
-      "value": "FOO"
+      "value": "dev"
     },
     "FunctionAppInsightName": {
       "value": "dfc-dev-funcapp-v1-ai"
@@ -33,19 +33,19 @@
       "value": "dfc-dev-funcapp-v1-fa"
     },
     "apimLoggerName": {
-      "value": "apimLoggerName"
+      "value": "LMI-logger"
     },
     "apimResourceGroup": {
-      "value": "apimResourceGroup"
+      "value": "dfc-test-template-rg"
     },
     "apimServiceName": {
-      "value": "apimServiceName"
+      "value": "an-apim-instance"
     },
     "apimProductName": {
-      "value": "apimProductName"
+      "value": "LMI"
     },
     "apimApiName": {
-      "value": "apimApiName"
+      "value": "api-name"
     },
     "LmiImportTimerTriggerSchedule": {
       "value": "LmiImportTimerTriggerSchedule"
