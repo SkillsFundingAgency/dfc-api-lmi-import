@@ -36,7 +36,7 @@ variables:
 - name: Neo4jReplicaSets0GraphInstances0GraphName
   value: draft
 - name: GraphOptionsContentApiUriPrefix
-  value: $(ContentApiAddress)/api/execute
+  value: https://dfc-dev-draft-api-cont-fa.$(appServiceDomain)/api/execute
 - name: GraphOptionsReplicaSetName
   value: draft
 #- name: JobProfileApiClientOptionsBaseAddress
