@@ -50,7 +50,6 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddTransient<IApiDataConnector, ApiDataConnector>();
             builder.Services.AddTransient<IGraphConnector, GraphConnector>();
             builder.Services.AddTransient<ICypherQueryBuilderService, CypherQueryBuilderService>();
-            builder.Services.AddTransient<ILmiImportService, LmiImportService>();
             builder.Services.AddTransient<ILmiSocImportService, LmiSocImportService>();
             builder.Services.AddTransient<IJobProfileService, JobProfileService>();
             builder.Services.AddTransient<IJobProfilesToSocMappingService, JobProfilesToSocMappingService>();
@@ -64,11 +63,11 @@ namespace DFC.Api.Lmi.Import.Startup
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(LmiApiClientOptions), policyOptions)
-                .AddHttpClient<ILmiApiConnector, LmiApiConnector, LmiApiClientOptions>(configuration, nameof(LmiApiClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
+                .AddHttpClient<ILmiApiConnector, LmiApiConnector, LmiApiClientOptions>(nameof(LmiApiClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(JobProfileApiClientOptions), policyOptions)
-                .AddHttpClient<IJobProfileApiConnector, JobProfileApiConnector, JobProfileApiClientOptions>(configuration, nameof(JobProfileApiClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
+                .AddHttpClient<IJobProfileApiConnector, JobProfileApiConnector, JobProfileApiClientOptions>(nameof(JobProfileApiClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
         }
     }
 }

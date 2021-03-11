@@ -25,7 +25,7 @@ namespace DFC.Api.Lmi.Import.Services
             this.lmiApiConnector = lmiApiConnector;
         }
 
-        public async Task<LmiSocDatasetModel> ImportAsync(int soc, List<SocJobProfileItemModel>? jobProfiles)
+        public async Task<LmiSocDatasetModel?> ImportAsync(int soc, List<SocJobProfileItemModel>? jobProfiles)
         {
             logger.LogInformation($"Importing SOC '{soc}' with data from LMI API");
 

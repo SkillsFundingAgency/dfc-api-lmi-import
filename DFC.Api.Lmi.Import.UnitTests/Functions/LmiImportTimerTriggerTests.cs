@@ -1,7 +1,7 @@
-﻿using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Functions;
+﻿using DFC.Api.Lmi.Import.Functions;
 using FakeItEasy;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Timers;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,13 +14,13 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
     public class LmiImportTimerTriggerTests
     {
         private readonly ILogger<LmiImportTimerTrigger> fakeLogger = A.Fake<ILogger<LmiImportTimerTrigger>>();
-        private readonly ILmiImportService fakeLmiImportService = A.Fake<ILmiImportService>();
+        private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
         private readonly TimerInfo timerInfo = new TimerInfo(new ConstantSchedule(new TimeSpan(1)), new ScheduleStatus());
         private readonly LmiImportTimerTrigger lmiImportTimerTrigger;
 
         public LmiImportTimerTriggerTests()
         {
-            lmiImportTimerTrigger = new LmiImportTimerTrigger(fakeLogger, fakeLmiImportService);
+            lmiImportTimerTrigger = new LmiImportTimerTrigger(fakeLogger);
         }
 
         [Fact]
@@ -29,10 +29,10 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Arrange
 
             // Act
-            await lmiImportTimerTrigger.Run(timerInfo).ConfigureAwait(false);
+            await lmiImportTimerTrigger.Run(timerInfo, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeLmiImportService.ImportAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
         }
     }
 }
