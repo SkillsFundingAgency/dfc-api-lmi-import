@@ -51,12 +51,6 @@ stages:
         PublishWebApp: true
         TestSuffix: UnitTests
 
-    - task: PublishPipelineArtifact@1
-      displayName: Publish Apim Policy
-      inputs:
-        targetPath: "$(System.DefaultWorkingDirectory)/Resources/ApimPolicy"
-        artifactName: $(SolutionBaseName).Resources.ApimPolicies
-
 - stage: DeployToDevApiLmiImport
   #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   condition: succeeded()
@@ -83,15 +77,12 @@ stages:
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       ApimProductName: "$(ApimProductName)"
-      ApimImportScript: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.Scripts/Import-ApimOpenApiDefinitionFromFile.ps1"
-      SpecificationPath: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.OpenApiDocs"
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
-      APIMPolicyPath: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ApimPolicies"
       ApimApiName: $(ApimApiName)
       Apis:
         -
-          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmiimport-fa'
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToDevDraftApiLmiImport
   condition: succeeded()
@@ -118,15 +109,12 @@ stages:
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       ApimProductName: "$(ApimProductName)"
-      ApimImportScript: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.Scripts/Import-ApimOpenApiDefinitionFromFile.ps1"
-      SpecificationPath: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.OpenApiDocs"
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
-      APIMPolicyPath: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.ApimPolicies"
       ApimApiName: $(ApimApiName)
       Apis:
         -
-          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmiimport-fa'
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToSitApiLmiImport
   condition: succeeded()
@@ -153,15 +141,12 @@ stages:
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       ApimProductName: "$(ApimProductName)"
-      ApimImportScript: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.Scripts/Import-ApimOpenApiDefinitionFromFile.ps1"
-      SpecificationPath: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.OpenApiDocs"
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
-      APIMPolicyPath: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.ApimPolicies"
       ApimApiName: $(ApimApiName)
       Apis:
         -
-          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmiimport-fa'
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToSitDraftApiLmiImport
   condition: succeeded()
@@ -188,13 +173,10 @@ stages:
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       ApimProductName: "$(ApimProductName)"
-      ApimImportScript: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.Scripts/Import-ApimOpenApiDefinitionFromFile.ps1"
-      SpecificationPath: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.OpenApiDocs"
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
-      APIMPolicyPath: "$(Pipeline.Workspace)/DFC.Api.EventGridSubscriptions.Resources.ApimPolicies"
       ApimApiName: $(ApimApiName)
       Apis: 
         -
           - name: import
-            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmiimport-fa'
+            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'

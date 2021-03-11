@@ -6,9 +6,6 @@ parameters:
   PackageFile: ''
   SharedResourceGroup: ''
   ApimServiceName: ''
-  ApimImportScript: ''
-  SpecificationPath: ''
-  ApimPolicyPath: ''
   ApimProductName: ''
   ApimApiName: ''
 
@@ -65,20 +62,6 @@ steps:
     azureSubscription: '${{ parameters.AzureSubscription }}'
     ScriptPath: '$(Agent.BuildDirectory)/s/dfc-devops//PSCoreScripts/Import-ApimSwaggerApiDefinition.ps1'
     ScriptArguments: ' -ApimResourceGroup ${{ parameters.SharedResourceGroup }} -InstanceName ${{ parameters.ApimServiceName }} -ApiName ${{ parameters.ApimProductName }}-${{ parameters.ApimApiName }} -ApiPath ${{ parameters.ApimProductName }}-${{ parameters.ApimApiName }} -SwaggerSpecificationUrl https://${{ parameters.WebAppName }}.${{ parameters.FunctionAppDomain }}/swagger/json -OutputFilePath $(Agent.BuildDirectory)/SwaggerFile -Verbose'
-    azurePowerShellVersion: LatestVersion
-
-- task: esfadevops.Tokenization.custom-build-task.Tokenization@0
-  displayName: 'Tokenization: Rate Limit APIM Policy'
-  inputs:
-    SourcePath: '${{ parameters.ApimPolicyPath }}'
-    TargetFileNames: 'ApimPolicy-RateLimit.xml'
-
-- task: AzurePowerShell@5
-  displayName: 'Apply Rate Limit APIM Policy'
-  inputs:
-    azureSubscription: '${{ parameters.AzureSubscription }}'
-    ScriptPath: '$(Agent.BuildDirectory)/s/dfc-devops/PSCoreScripts/Set-ApimPolicy.ps1'
-    ScriptArguments: '-PolicyScope api -ApimResourceGroup ${{ parameters.SharedResourceGroup }} -ApimServiceName ${{ parameters.ApimServiceName }} -PolicyFilePath "$(Agent.BuildDirectory)/DFC.Api.Lmi.Import.Resources.ApimPolicies/ApimPolicy-RateLimit.xml" -ApiId composite-ui-subscriptions'
     azurePowerShellVersion: LatestVersion
 
 - task: AzurePowerShell@5
