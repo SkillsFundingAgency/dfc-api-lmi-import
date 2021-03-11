@@ -23,7 +23,7 @@ namespace DFC.Api.Lmi.Import.Services
             this.eventGridClientOptions = eventGridClientOptions;
         }
 
-        public async Task SendEventAsync(WebhookCacheOperation webhookCacheOperation, EventGridEventData? eventGridEventData, string? subject)
+        public async Task SendEventAsync(WebhookCacheOperation webhookCacheOperation, EventGridEventData? eventGridEventData, string? subject, string? eventType)
         {
             _ = eventGridEventData ?? throw new ArgumentNullException(nameof(eventGridEventData));
 
@@ -42,8 +42,8 @@ namespace DFC.Api.Lmi.Import.Services
                     Id = Guid.NewGuid().ToString(),
                     Subject = subject,
                     Data = eventGridEventData,
-                    EventType = webhookCacheOperation == WebhookCacheOperation.Delete ? "deleted" : "published",
-                    EventTime = DateTime.Now,
+                    EventType = eventType,
+                    EventTime = DateTime.UtcNow,
                     DataVersion = "1.0",
                 },
             };

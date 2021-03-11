@@ -1,8 +1,9 @@
-﻿using DFC.Api.Lmi.Import.Contracts;
+﻿using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,14 +16,10 @@ namespace DFC.Api.Lmi.Import.Functions
     public class GraphPurgeHttpTrigger
     {
         private readonly ILogger<GraphPurgeHttpTrigger> logger;
-        private readonly IGraphService graphService;
 
-        public GraphPurgeHttpTrigger(
-           ILogger<GraphPurgeHttpTrigger> logger,
-           IGraphService graphService)
+        public GraphPurgeHttpTrigger(ILogger<GraphPurgeHttpTrigger> logger)
         {
             this.logger = logger;
-            this.graphService = graphService;
         }
 
         [FunctionName("GraphPurge")]
@@ -34,17 +31,22 @@ namespace DFC.Api.Lmi.Import.Functions
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/purge")] HttpRequest? request)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/purge")] HttpRequest? request,
+            [DurableClient] IDurableOrchestrationClient starter)
         {
             try
             {
                 logger.LogInformation("Received graph purge request");
 
-                await graphService.PurgeAsync().ConfigureAwait(false);
+                var orchestratorRequestModel = new OrchestratorRequestModel
+                {
+                    IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix")),
+                };
+                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
 
-                logger.LogInformation("Graph purge request completed");
+                logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
-                return new OkResult();
+                return starter.CreateCheckStatusResponse(request, instanceId);
             }
             catch (Exception ex)
             {

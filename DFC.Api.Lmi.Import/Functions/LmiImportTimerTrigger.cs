@@ -1,6 +1,8 @@
-﻿using DFC.Api.Lmi.Import.Contracts;
+﻿using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Functions
@@ -8,20 +10,24 @@ namespace DFC.Api.Lmi.Import.Functions
     public class LmiImportTimerTrigger
     {
         private readonly ILogger<LmiImportTimerTrigger> logger;
-        private readonly ILmiImportService lmiImportService;
 
-        public LmiImportTimerTrigger(
-            ILogger<LmiImportTimerTrigger> logger,
-            ILmiImportService lmiImportService)
+        public LmiImportTimerTrigger(ILogger<LmiImportTimerTrigger> logger)
         {
             this.logger = logger;
-            this.lmiImportService = lmiImportService;
         }
 
         [FunctionName("LmiImportTimerTrigger")]
-        public async Task Run([TimerTrigger("%LmiImportTimerTriggerSchedule%")] TimerInfo myTimer)
+        public async Task Run(
+            [TimerTrigger("%LmiImportTimerTriggerSchedule%")] TimerInfo myTimer,
+            [DurableClient] IDurableOrchestrationClient starter)
         {
-            await lmiImportService.ImportAsync().ConfigureAwait(false);
+            var orchestratorRequestModel = new OrchestratorRequestModel
+            {
+                IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix")),
+            };
+            string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
+
+            logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
             logger.LogTrace($"Next run of {nameof(LmiImportTimerTrigger)}is {myTimer?.ScheduleStatus?.Next}");
         }

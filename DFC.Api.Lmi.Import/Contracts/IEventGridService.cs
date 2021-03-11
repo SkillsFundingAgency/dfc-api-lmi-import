@@ -7,7 +7,7 @@ namespace DFC.Api.Lmi.Import.Contracts
 {
     public interface IEventGridService
     {
-        Task SendEventAsync(WebhookCacheOperation webhookCacheOperation, EventGridEventData? eventGridEventData, string? subject);
+        Task SendEventAsync(WebhookCacheOperation webhookCacheOperation, EventGridEventData? eventGridEventData, string? subject, string? eventType);
 
         bool IsValidEventGridClientOptions(EventGridClientOptions? eventGridClientOptions);
     }

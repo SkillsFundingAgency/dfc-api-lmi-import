@@ -64,11 +64,11 @@ namespace DFC.Api.Lmi.Import.Services
 
             var commands = graphConnector.BuildPurgeCommandsForInitialKey(soc.ToString(CultureInfo.InvariantCulture));
 
-            logger.LogInformation("Purging Graph of LMI data for SOC {soc}: executing commands");
+            logger.LogInformation($"Purging Graph of LMI data for SOC {soc}: executing commands");
 
             await graphConnector.RunAsync(commands).ConfigureAwait(false);
 
-            logger.LogInformation("Purged Graph of LMI data for SOC {soc}");
+            logger.LogInformation($"Purged Graph of LMI data for SOC {soc}");
         }
     }
 }
