@@ -40,7 +40,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Arrange
             const bool expectedResult = true;
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).Returns(new SocRequestModel { Soc = 3435 });
-            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(true);
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(expectedResult);
 
             // Act
             var result = await lmiImportOrchestrationTrigger.GraphRefreshSocOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
@@ -49,6 +49,26 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocActivity), A<int>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public async Task LmiImportOrchestrationTriggerGraphRefreshSocOrchestratorReturnsFalse()
+        {
+            // Arrange
+            const bool expectedResult = false;
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).Returns(new SocRequestModel { Soc = 3435 });
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(expectedResult);
+
+            // Act
+            var result = await lmiImportOrchestrationTrigger.GraphRefreshSocOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocActivity), A<int>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustNotHaveHappened();
             Assert.Equal(expectedResult, result);
         }
 
@@ -64,6 +84,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Assert
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocActivity), A<int>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -76,6 +97,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]

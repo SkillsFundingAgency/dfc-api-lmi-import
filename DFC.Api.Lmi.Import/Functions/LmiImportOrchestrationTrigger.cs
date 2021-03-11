@@ -56,7 +56,21 @@ namespace DFC.Api.Lmi.Import.Functions
 
             await context.CallActivityAsync(nameof(GraphPurgeSocActivity), socRequest.Soc).ConfigureAwait(true);
 
-            return await context.CallActivityAsync<bool>(nameof(ImportSocItemActivity), socJobProfileMapping).ConfigureAwait(true);
+            if (await context.CallActivityAsync<bool>(nameof(ImportSocItemActivity), socJobProfileMapping).ConfigureAwait(true))
+            {
+                var eventGridPostRequest = new EventGridPostRequestModel
+                {
+                    Soc = socRequest.Soc,
+                    DisplayText = "LMI SOC refreshed",
+                    EventType = IsDraftEnvironment() ? EventTypeForDraft : EventTypeForPublished,
+                };
+
+                await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
+
+                return true;
+            }
+
+            return false;
         }
 
         [FunctionName(nameof(GraphPurgeSocOrchestrator))]
@@ -65,12 +79,29 @@ namespace DFC.Api.Lmi.Import.Functions
             var socRequest = context.GetInput<SocRequestModel>();
 
             await context.CallActivityAsync(nameof(GraphPurgeSocActivity), socRequest.Soc).ConfigureAwait(true);
+
+            var eventGridPostRequest = new EventGridPostRequestModel
+            {
+                Soc = socRequest.Soc,
+                DisplayText = "LMI SOC purged",
+                EventType = IsDraftEnvironment() ? EventTypeForDraftDiscarded : EventTypeForDeleted,
+            };
+
+            await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
         }
 
         [FunctionName(nameof(GraphPurgeOrchestrator))]
         public async Task GraphPurgeOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             await context.CallActivityAsync(nameof(GraphPurgeActivity), null).ConfigureAwait(true);
+
+            var eventGridPostRequest = new EventGridPostRequestModel
+            {
+                DisplayText = "LMI Import purged",
+                EventType = IsDraftEnvironment() ? EventTypeForDraftDiscarded : EventTypeForDeleted,
+            };
+
+            await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
         }
 
         [FunctionName(nameof(GraphRefreshOrchestrator))]
