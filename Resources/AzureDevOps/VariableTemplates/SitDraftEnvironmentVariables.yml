@@ -58,4 +58,4 @@ variables:
 - name: ApiEventGridClientOptionsApiEndpointSuffix
   value: https://dfc-sit-draft-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
 - name: SubscriptionPosturi
-  value: https://dfc-sit-draft-api-appRegistry-fa.$(appServiceDomain)/subscription/
+  value: https://$(FunctionAppName).$(appServiceDomain)/subscription/
