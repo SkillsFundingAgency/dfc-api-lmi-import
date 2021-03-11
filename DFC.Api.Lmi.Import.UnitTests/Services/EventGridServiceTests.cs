@@ -1,5 +1,4 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.Services;
@@ -39,7 +38,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             var dummyEventGridEventData = A.Dummy<EventGridEventData>();
 
             // act
-            await eventGridService.SendEventAsync(WebhookCacheOperation.CreateOrUpdate, dummyEventGridEventData, "a subject", "an event type").ConfigureAwait(false);
+            await eventGridService.SendEventAsync(dummyEventGridEventData, "a subject", "an event type").ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeEventGridClientService.SendEventAsync(A<List<EventGridEvent>>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
@@ -53,7 +52,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             eventGridClientOptions.ApiEndpoint = null;
 
             // act
-            await eventGridService.SendEventAsync(WebhookCacheOperation.CreateOrUpdate, dummyEventGridEventData, "a subject", "an event type").ConfigureAwait(false);
+            await eventGridService.SendEventAsync(dummyEventGridEventData, "a subject", "an event type").ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeEventGridClientService.SendEventAsync(A<List<EventGridEvent>>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
@@ -66,7 +65,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             EventGridEventData? nullEventGridEventData = null;
 
             // act
-            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await eventGridService.SendEventAsync(WebhookCacheOperation.CreateOrUpdate, nullEventGridEventData, "a subject", "an event type").ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await eventGridService.SendEventAsync(nullEventGridEventData, "a subject", "an event type").ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeEventGridClientService.SendEventAsync(A<List<EventGridEvent>>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
