@@ -92,8 +92,8 @@
     "EventGridClientOptionsTopicKey": {
       "value": "EventGridClientOptionsTopicKey"
     },
-    "ApiEventGridClientOptionsApiEndpointSuffix": {
-      "value": "ApiEventGridClientOptionsApiEndpointSuffix"
+    "EventGridClientOptionsApiEndpointSuffix": {
+      "value": "EventGridClientOptionsApiEndpointSuffix"
     }
   }
 }
