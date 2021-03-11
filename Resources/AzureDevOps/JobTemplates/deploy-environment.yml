@@ -11,6 +11,7 @@ parameters:
   ResourceGroup: ''
   FunctionAppDomain: ''
   EnvironmentName: ''
+  SubscriptionPosturi: ''
   DFCAzureDevOpsProjectGuid: ''
   DfcContentTestsBuildId: ''
   SharedResourceGroup: ''
@@ -61,3 +62,4 @@ jobs:
                 ApimServiceName: '${{ parameters.ApimServiceName }}'
                 APIMProductName: '${{ parameters.ApimProductName }}'
                 APIMApiName: '${{ parameters.ApimApiName }}'
+                SubscriptionPosturi: '${{ parameters.SubscriptionPosturi }}'

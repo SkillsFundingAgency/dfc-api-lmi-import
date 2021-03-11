@@ -74,6 +74,7 @@ stages:
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
       FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: DEV_ApiLmiImport
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       ApimProductName: "$(ApimProductName)"
