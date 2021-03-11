@@ -102,7 +102,7 @@
     "appServicePlanName": "[concat(variables('resourcePrefix'), '-asp')]",
     "appServicePlanResourceGroup": "[concat(variables('resourcePrefix'),'-rg')]",
     "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-    "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-api-lmiimport'))]"
+    "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-api-lmi-import'))]"
   },
   "resources": [
     {
