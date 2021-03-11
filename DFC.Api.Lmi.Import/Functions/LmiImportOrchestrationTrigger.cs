@@ -86,7 +86,7 @@ namespace DFC.Api.Lmi.Import.Functions
             var eventGridPostRequest = new EventGridPostRequestModel
             {
                 Soc = socRequest.Soc,
-                DisplayText = "LMI SOC purged: {socRequest.Soc}",
+                DisplayText = $"LMI SOC purged: {socRequest.Soc}",
                 EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
             };
 
