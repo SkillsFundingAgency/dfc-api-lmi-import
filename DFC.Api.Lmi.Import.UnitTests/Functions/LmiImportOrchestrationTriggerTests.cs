@@ -1,5 +1,4 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Functions;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
@@ -260,7 +259,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             await lmiImportOrchestrationTrigger.PostGraphEventActivity(eventGridPostRequest).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeEventGridService.SendEventAsync(A<WebhookCacheOperation>.Ignored, A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
         }
     }
 }
