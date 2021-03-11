@@ -3,8 +3,8 @@
 namespace DFC.Api.Lmi.Import.Models.FunctionRequestModels
 {
     [ExcludeFromCodeCoverage]
-    public class SocRequestModel : OrchestratorRequestModel
+    public class OrchestratorRequestModel
     {
-        public int Soc { get; set; }
+        public bool IsDraftEnvironment { get; set; }
     }
 }

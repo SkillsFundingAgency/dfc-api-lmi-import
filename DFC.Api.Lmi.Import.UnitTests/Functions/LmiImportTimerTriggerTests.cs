@@ -1,4 +1,5 @@
 ﻿using DFC.Api.Lmi.Import.Functions;
+using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using FakeItEasy;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -32,7 +33,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             await lmiImportTimerTrigger.Run(timerInfo, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
     }
 }

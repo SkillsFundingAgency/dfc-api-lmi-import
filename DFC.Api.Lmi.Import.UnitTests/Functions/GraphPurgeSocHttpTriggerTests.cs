@@ -37,6 +37,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustHaveHappened();
             var statusResult = Assert.IsType<AcceptedResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
@@ -54,9 +55,8 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
-
+            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
             var statusResult = Assert.IsType<StatusCodeResult>(result);
-
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
     }

@@ -39,7 +39,11 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 logger.LogInformation($"Received graph purge for SOC {soc} request");
 
-                var socRequest = new SocRequestModel { Soc = soc };
+                var socRequest = new SocRequestModel
+                {
+                    Soc = soc,
+                    IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix")),
+                };
                 string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocOrchestrator), socRequest).ConfigureAwait(false);
 
                 logger.LogInformation($"Started orchestration with ID = '{instanceId}' for SOC {soc}.");
