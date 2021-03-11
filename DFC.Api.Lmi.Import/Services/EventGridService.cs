@@ -1,5 +1,4 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
 using Microsoft.Azure.EventGrid.Models;
@@ -23,7 +22,7 @@ namespace DFC.Api.Lmi.Import.Services
             this.eventGridClientOptions = eventGridClientOptions;
         }
 
-        public async Task SendEventAsync(WebhookCacheOperation webhookCacheOperation, EventGridEventData? eventGridEventData, string? subject, string? eventType)
+        public async Task SendEventAsync(EventGridEventData? eventGridEventData, string? subject, string? eventType)
         {
             _ = eventGridEventData ?? throw new ArgumentNullException(nameof(eventGridEventData));
 
