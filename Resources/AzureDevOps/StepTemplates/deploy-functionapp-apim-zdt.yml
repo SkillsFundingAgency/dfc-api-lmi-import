@@ -63,8 +63,8 @@ steps:
   displayName: 'Import OpenAPI specification'
   inputs:
     azureSubscription: '${{ parameters.AzureSubscription }}'
-    ScriptPath: '${{ parameters.ApimImportScript }}'
-    ScriptArguments: "-ApimResourceGroup '${{ parameters.SharedResourceGroup }}' -InstanceName '${{ parameters.ApimServiceName }}' -ApiName '${{ parameters.ApimProductName }}-${{ parameters.ApimApiName }}' -OpenApiSpecificationFile '${{ parameters.SpecificationPath }}/OpenApi.txt' -ApiPath '${{ parameters.ApimProductName }}/${{ parameters.ApimApiName }}'"
+    ScriptPath: '$(System.DefaultWorkingDirectory)/_SkillsFundingAgency_dfc-devops/PSCoreScripts/Import-ApimSwaggerApiDefinition.ps1'
+    ScriptArguments: ' -ApimResourceGroup '${{ parameters.SharedResourceGroup }}' -InstanceName '${{ parameters.ApimServiceName }}' -ApiName '${{ parameters.ApimProductName }}-${{ parameters.ApimApiName }}' -ApiPath '${{ parameters.ApimProductName }}-${{ parameters.ApimApiName }}' -SwaggerSpecificationUrl "https://${{ parameters.WebAppName }}.${{ parameters.FunctionAppDomain }}/swagger/json" -OutputFilePath $(System.DefaultWorkingDirectory)/SwaggerFile -Verbose'
     azurePowerShellVersion: LatestVersion
 
 - task: esfadevops.Tokenization.custom-build-task.Tokenization@0

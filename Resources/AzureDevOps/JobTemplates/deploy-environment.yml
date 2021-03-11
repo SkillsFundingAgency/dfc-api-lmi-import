@@ -53,7 +53,7 @@ jobs:
         runOnce:
           deploy:
             steps:
-            - template: ../StepTemplates/deploy-azure-function.yml
+            - template: ../StepTemplates/deploy-functionapp-apim-zdt.yml
               parameters:
                 WebAppName: '${{ api.azureFunctionName }}'
                 AzureSubscription: '${{ parameters.AzureSubscription }}'

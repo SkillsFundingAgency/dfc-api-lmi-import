@@ -52,18 +52,6 @@ stages:
         TestSuffix: UnitTests
 
     - task: PublishPipelineArtifact@1
-      displayName: Publish OpenAPI docs to Pipeline Artifact
-      inputs:
-        targetPath: "$(System.DefaultWorkingDirectory)/$(SolutionBaseName)/OpenAPIDocs"
-        artifactName: $(SolutionBaseName).Resources.OpenAPIDocs
-
-    - task: PublishPipelineArtifact@1
-      displayName: Publish API import script to Pipeline Artifact
-      inputs:
-        targetPath: "$(System.DefaultWorkingDirectory)/Resources/Scripts"
-        artifactName: $(SolutionBaseName).Resources.Scripts
-
-    - task: PublishPipelineArtifact@1
       displayName: Publish Apim Policy
       inputs:
         targetPath: "$(System.DefaultWorkingDirectory)/Resources/ApimPolicy"
