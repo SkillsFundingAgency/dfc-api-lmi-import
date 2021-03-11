@@ -67,15 +67,6 @@ steps:
     ScriptArguments: ' -ApimResourceGroup ${{ parameters.SharedResourceGroup }} -InstanceName ${{ parameters.ApimServiceName }} -ApiName ${{ parameters.ApimProductName }}-${{ parameters.ApimApiName }} -ApiPath ${{ parameters.ApimProductName }}-${{ parameters.ApimApiName }} -SwaggerSpecificationUrl https://${{ parameters.WebAppName }}.${{ parameters.FunctionAppDomain }}/swagger/json -OutputFilePath $(Agent.BuildDirectory)/SwaggerFile -Verbose'
     azurePowerShellVersion: LatestVersion
 
-- task: example
-  displayName: 'Azure PowerShell script: Import Swagger File'
-  inputs:
-    azureSubscription: '$(ArmSubscription)'
-    ScriptPath: '$(System.DefaultWorkingDirectory)/_SkillsFundingAgency_dfc-devops/PSCoreScripts/Import-ApimSwaggerApiDefinition.ps1'
-    ScriptArguments: ' -ApimResourceGroup "$(SharedResourceGroupName)" -InstanceName "$(ApimServiceName)" -ApiName "$(ApimProductInstanceName)-$(ApiName)" -ApiPath $(ApiPath) -SwaggerSpecificationUrl "https://$(FunctionAppName).$(FunctionAppDomain)/$(ApiDefinitionPath)" -SwaggerSpecificationFile -OutputFilePath $(System.DefaultWorkingDirectory)/SwaggerFile -Verbose'
-    azurePowerShellVersion: LatestVersion
-  condition: and(succeeded(),eq(variables['ApiVersion'],'None'))
-
 - task: esfadevops.Tokenization.custom-build-task.Tokenization@0
   displayName: 'Tokenization: Rate Limit APIM Policy'
   inputs:
