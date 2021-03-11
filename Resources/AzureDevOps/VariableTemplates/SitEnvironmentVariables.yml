@@ -10,13 +10,13 @@ variables:
 - name: WebAppPrefix
   value: dfc-sit
 - name: FunctionAppInsightName
-  value: $(WebAppPrefix)-api-lmiimport-ai
+  value: $(WebAppPrefix)-api-lmi-import-ai
 - name: FunctionAppName
-  value: $(WebAppPrefix)-api-lmiimport-fa
+  value: $(WebAppPrefix)-api-lmi-import-fa
 - name: ResourceGroup
-  value: $(WebAppPrefix)-api-lmiimport-rg
+  value: $(WebAppPrefix)-api-lmi-import-rg
 - name: appServicePlanName
-  value: $(WebAppPrefix)-api-lmiimport-asp
+  value: $(WebAppPrefix)-api-lmi-import-asp
 - name: apimLoggerName
   value: LMI-logger
 - name: apimProductName
