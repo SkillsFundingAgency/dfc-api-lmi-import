@@ -45,10 +45,8 @@ variables:
   value: https://dfc-dev-draft-api-cont-fa.$(appServiceDomain)/api/execute
 - name: GraphOptionsReplicaSetName
   value: draft
-#- name: JobProfileApiClientOptionsBaseAddress
-#  value: $(ApimProxyAddress)/job-profiles/summary
 - name: JobProfileApiClientOptionsBaseAddress
-  value: https://pp.api.nationalcareers.service.gov.uk/job-profiles/summary
+  value: $(ApimProxyAddress)/job-profiles/summary
 - name: JobProfileApiClientOptionsApiKey
   value: $(ApimJobProfilesKey)
 - name: EventGridClientOptionsTopicEndpoint
