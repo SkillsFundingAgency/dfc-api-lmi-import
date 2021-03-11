@@ -1,4 +1,5 @@
-﻿using DFC.Swagger.Standard.Annotations;
+﻿using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
+using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -37,7 +38,11 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 logger.LogInformation("Received graph refresh request");
 
-                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), null).ConfigureAwait(false);
+                var orchestratorRequestModel = new OrchestratorRequestModel
+                {
+                    IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix")),
+                };
+                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
 
                 logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 

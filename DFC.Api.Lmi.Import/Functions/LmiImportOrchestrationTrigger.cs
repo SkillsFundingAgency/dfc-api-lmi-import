@@ -19,7 +19,6 @@ namespace DFC.Api.Lmi.Import.Functions
         private const string EventTypeForDraft = "draft";
         private const string EventTypeForPublished = "published";
         private const string EventTypeForDraftDiscarded = "draft-discarded";
-        private const string EventTypeForUnpublished = "unpublished";
         private const string EventTypeForDeleted = "deleted";
 
         private readonly ILogger<LmiImportOrchestrationTrigger> logger;
@@ -51,6 +50,8 @@ namespace DFC.Api.Lmi.Import.Functions
         [FunctionName(nameof(GraphRefreshSocOrchestrator))]
         public async Task<bool> GraphRefreshSocOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
+            _ = context ?? throw new ArgumentNullException(nameof(context));
+
             var socRequest = context.GetInput<SocRequestModel>();
             var socJobProfileMapping = new SocJobProfileMappingModel { Soc = socRequest.Soc };
 
@@ -61,8 +62,8 @@ namespace DFC.Api.Lmi.Import.Functions
                 var eventGridPostRequest = new EventGridPostRequestModel
                 {
                     Soc = socRequest.Soc,
-                    DisplayText = "LMI SOC refreshed",
-                    EventType = IsDraftEnvironment() ? EventTypeForDraft : EventTypeForPublished,
+                    DisplayText = $"LMI SOC refreshed: {socRequest.Soc}",
+                    EventType = socRequest.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
                 };
 
                 await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
@@ -76,6 +77,8 @@ namespace DFC.Api.Lmi.Import.Functions
         [FunctionName(nameof(GraphPurgeSocOrchestrator))]
         public async Task GraphPurgeSocOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
+            _ = context ?? throw new ArgumentNullException(nameof(context));
+
             var socRequest = context.GetInput<SocRequestModel>();
 
             await context.CallActivityAsync(nameof(GraphPurgeSocActivity), socRequest.Soc).ConfigureAwait(true);
@@ -83,8 +86,8 @@ namespace DFC.Api.Lmi.Import.Functions
             var eventGridPostRequest = new EventGridPostRequestModel
             {
                 Soc = socRequest.Soc,
-                DisplayText = "LMI SOC purged",
-                EventType = IsDraftEnvironment() ? EventTypeForDraftDiscarded : EventTypeForDeleted,
+                DisplayText = "LMI SOC purged: {socRequest.Soc}",
+                EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
             };
 
             await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
@@ -93,12 +96,15 @@ namespace DFC.Api.Lmi.Import.Functions
         [FunctionName(nameof(GraphPurgeOrchestrator))]
         public async Task GraphPurgeOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
+            _ = context ?? throw new ArgumentNullException(nameof(context));
+
+            var orchestratorRequestModel = context.GetInput<OrchestratorRequestModel>();
             await context.CallActivityAsync(nameof(GraphPurgeActivity), null).ConfigureAwait(true);
 
             var eventGridPostRequest = new EventGridPostRequestModel
             {
                 DisplayText = "LMI Import purged",
-                EventType = IsDraftEnvironment() ? EventTypeForDraftDiscarded : EventTypeForDeleted,
+                EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
             };
 
             await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
@@ -108,8 +114,11 @@ namespace DFC.Api.Lmi.Import.Functions
         [Timeout("01:00:00")]
         public async Task GraphRefreshOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
+            _ = context ?? throw new ArgumentNullException(nameof(context));
+
             logger.LogInformation("Start importing of LMI data from API");
 
+            var orchestratorRequestModel = context.GetInput<OrchestratorRequestModel>();
             var socJobProfileMappings = await context.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(GetJobProfileSocMappingsActivity), null).ConfigureAwait(true);
 
             if (socJobProfileMappings != null && socJobProfileMappings.Any())
@@ -130,7 +139,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 var eventGridPostRequest = new EventGridPostRequestModel
                 {
                     DisplayText = "LMI Import refreshed",
-                    EventType = IsDraftEnvironment() ? EventTypeForDraft : EventTypeForPublished,
+                    EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
                 };
 
                 await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
@@ -172,6 +181,8 @@ namespace DFC.Api.Lmi.Import.Functions
         [FunctionName(nameof(ImportSocItemActivity))]
         public async Task<bool> ImportSocItemActivity([ActivityTrigger] SocJobProfileMappingModel socJobProfileMapping)
         {
+            _ = socJobProfileMapping ?? throw new ArgumentNullException(nameof(socJobProfileMapping));
+
             logger.LogInformation($"Importing SOC: {socJobProfileMapping.Soc}");
 
             var lmiSocDataset = await lmiSocImportService.ImportAsync(socJobProfileMapping.Soc!.Value, socJobProfileMapping.JobProfiles).ConfigureAwait(false);
@@ -189,8 +200,12 @@ namespace DFC.Api.Lmi.Import.Functions
         }
 
         [FunctionName(nameof(PostGraphEventActivity))]
-        public async Task PostGraphEventActivity([ActivityTrigger] EventGridPostRequestModel eventGridPostRequest)
+        public async Task PostGraphEventActivity([ActivityTrigger] EventGridPostRequestModel? eventGridPostRequest)
         {
+            _ = eventGridPostRequest ?? throw new ArgumentNullException(nameof(eventGridPostRequest));
+
+            logger.LogInformation($"Posting to event grid for: {eventGridPostRequest.DisplayText}: {eventGridPostRequest.EventType}");
+
             var eventGridEventData = new EventGridEventData
             {
                 ItemId = Guid.NewGuid().ToString(),
@@ -201,12 +216,6 @@ namespace DFC.Api.Lmi.Import.Functions
             };
 
             await eventGridService.SendEventAsync(WebhookCacheOperation.CreateOrUpdate, eventGridEventData, eventGridClientOptions.SubjectPrefix, eventGridPostRequest.EventType).ConfigureAwait(false);
-        }
-
-        //TODO: ian: need to get this passed into the orchestrators from the individual trigger functions
-        private static bool IsDraftEnvironment()
-        {
-            return !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix"));
         }
     }
 }

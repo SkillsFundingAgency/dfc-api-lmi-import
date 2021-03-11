@@ -91,11 +91,13 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         public async Task LmiImportOrchestrationTriggerGraphPurgeOrchestratorIsSuccessful()
         {
             // Arrange
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true });
 
             // Act
             await lmiImportOrchestrationTrigger.GraphPurgeOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
 
             // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
@@ -106,6 +108,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Arrange
             const int mappingItemsCount = 2;
             var dummyMappings = A.CollectionOfDummy<SocJobProfileMappingModel>(mappingItemsCount);
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true });
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).Returns(dummyMappings);
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(true);
 
@@ -113,6 +116,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             await lmiImportOrchestrationTrigger.GraphRefreshOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
 
             // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), null)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappened(mappingItemsCount, Times.Exactly);
@@ -125,12 +129,14 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Arrange
             const int mappingItemsCount = 0;
             var dummyMappings = A.CollectionOfDummy<SocJobProfileMappingModel>(mappingItemsCount);
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true });
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).Returns(dummyMappings);
 
             // Act
             await lmiImportOrchestrationTrigger.GraphRefreshOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
 
             // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), null)).MustNotHaveHappened();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustNotHaveHappened();
@@ -142,12 +148,14 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         {
             // Arrange
             List<SocJobProfileMappingModel>? nullMappings = null;
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true });
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).Returns(nullMappings);
 
             // Act
             await lmiImportOrchestrationTrigger.GraphRefreshOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
 
             // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), null)).MustNotHaveHappened();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustNotHaveHappened();

@@ -1,6 +1,8 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Functions
@@ -19,7 +21,11 @@ namespace DFC.Api.Lmi.Import.Functions
             [TimerTrigger("%LmiImportTimerTriggerSchedule%")] TimerInfo myTimer,
             [DurableClient] IDurableOrchestrationClient starter)
         {
-            string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), null).ConfigureAwait(false);
+            var orchestratorRequestModel = new OrchestratorRequestModel
+            {
+                IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix")),
+            };
+            string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
 
             logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
