@@ -16,6 +16,12 @@ namespace DFC.Api.Lmi.Import.Functions
 {
     public class LmiImportOrchestrationTrigger
     {
+        private const string EventTypeForDraft = "draft";
+        private const string EventTypeForPublished = "published";
+        private const string EventTypeForDraftDiscarded = "draft-discarded";
+        private const string EventTypeForUnpublished = "unpublished";
+        private const string EventTypeForDeleted = "deleted";
+
         private readonly ILogger<LmiImportOrchestrationTrigger> logger;
         private readonly IJobProfileService jobProfileService;
         private readonly IMapLmiToGraphService mapLmiToGraphService;
@@ -90,7 +96,13 @@ namespace DFC.Api.Lmi.Import.Functions
 
                 await Task.WhenAll(parallelTasks).ConfigureAwait(true);
 
-                await context.CallActivityAsync(nameof(PostGraphSocRefreshedActivity), "LMI Import refreshed").ConfigureAwait(true);
+                var eventGridPostRequest = new EventGridPostRequestModel
+                {
+                    DisplayText = "LMI Import refreshed",
+                    EventType = IsDraftEnvironment() ? EventTypeForDraft : EventTypeForPublished,
+                };
+
+                await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
 
                 int importedToGraphCount = parallelTasks.Count(t => t.Result);
 
@@ -145,19 +157,25 @@ namespace DFC.Api.Lmi.Import.Functions
             return false;
         }
 
-        [FunctionName(nameof(PostGraphSocRefreshedActivity))]
-        public async Task PostGraphSocRefreshedActivity([ActivityTrigger] string displayText)
+        [FunctionName(nameof(PostGraphEventActivity))]
+        public async Task PostGraphEventActivity([ActivityTrigger] EventGridPostRequestModel eventGridPostRequest)
         {
             var eventGridEventData = new EventGridEventData
             {
                 ItemId = Guid.NewGuid().ToString(),
-                Api = $"{eventGridClientOptions.ApiEndpoint}",
-                DisplayText = displayText,
+                Api = $"{eventGridClientOptions.ApiEndpoint}" + (eventGridPostRequest.Soc.HasValue ? $"/{eventGridPostRequest.Soc.Value}" : string.Empty),
+                DisplayText = eventGridPostRequest.DisplayText,
                 VersionId = Guid.NewGuid().ToString(),
                 Author = eventGridClientOptions.SubjectPrefix,
             };
 
-            await eventGridService.SendEventAsync(WebhookCacheOperation.CreateOrUpdate, eventGridEventData, eventGridClientOptions.SubjectPrefix).ConfigureAwait(false);
+            await eventGridService.SendEventAsync(WebhookCacheOperation.CreateOrUpdate, eventGridEventData, eventGridClientOptions.SubjectPrefix, eventGridPostRequest.EventType).ConfigureAwait(false);
+        }
+
+        //TODO: ian: need to get this passed into the orchestrators from the individual trigger functions
+        private static bool IsDraftEnvironment()
+        {
+            return !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix"));
         }
     }
 }

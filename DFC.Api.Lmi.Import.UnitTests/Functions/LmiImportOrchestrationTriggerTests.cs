@@ -94,7 +94,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), null)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappened(mappingItemsCount, Times.Exactly);
-            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphSocRefreshedActivity), A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), null)).MustNotHaveHappened();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphSocRefreshedActivity), A<string>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustNotHaveHappened();
         }
 
         [Fact]
@@ -129,7 +129,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), null)).MustNotHaveHappened();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphSocRefreshedActivity), A<string>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustNotHaveHappened();
         }
 
         [Fact]
@@ -216,15 +216,21 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         }
 
         [Fact]
-        public async Task LmiImportOrchestrationTriggerPostGraphSocRefreshedActivityIsSuccessful()
+        public async Task LmiImportOrchestrationTriggerPostGraphEventActivityIsSuccessful()
         {
             // Arrange
+            var eventGridPostRequest = new EventGridPostRequestModel
+            {
+                Soc = 1234,
+                DisplayText = "Display text",
+                EventType = "published",
+            };
 
             // Act
-            await lmiImportOrchestrationTrigger.PostGraphSocRefreshedActivity("display text").ConfigureAwait(false);
+            await lmiImportOrchestrationTrigger.PostGraphEventActivity(eventGridPostRequest).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeEventGridService.SendEventAsync(A<WebhookCacheOperation>.Ignored, A<EventGridEventData>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeEventGridService.SendEventAsync(A<WebhookCacheOperation>.Ignored, A<EventGridEventData>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
         }
     }
 }
