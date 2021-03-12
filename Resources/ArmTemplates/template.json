@@ -94,7 +94,7 @@
     "EventGridClientOptionsTopicKey": {
       "type": "string"
     },
-    "EventGridClientOptionsApiEndpointSuffix": {
+    "EventGridClientOptionsApiEndpoint": {
       "type": "string"
     }
   },
@@ -369,8 +369,8 @@
                 "value": "[parameters('EventGridClientOptionsTopicKey')]"
               },
               {
-                "name": "EventGridClientOptions__ApiEndpointSuffix",
-                "value": "[parameters('EventGridClientOptionsApiEndpointSuffix')]"
+                "name": "EventGridClientOptions__ApiEndpoint",
+                "value": "[parameters('EventGridClientOptionsApiEndpoint')]"
               },
               {
                 "name": "LmiApiClientOptions__BaseAddress",

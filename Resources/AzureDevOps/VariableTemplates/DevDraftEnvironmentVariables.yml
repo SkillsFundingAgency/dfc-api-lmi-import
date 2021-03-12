@@ -53,5 +53,5 @@ variables:
   value: $(EventGridTopicUrl)
 - name: EventGridClientOptionsTopicKey
   value: $(EventGridAegSasKey)
-- name: EventGridClientOptionsApiEndpointSuffix
+- name: EventGridClientOptionsApiEndpoint
   value: https://dfc-dev-draft-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
