@@ -371,6 +371,10 @@
               {
                 "name": "EventGridClientOptions__ApiEndpointSuffix",
                 "value": "[parameters('EventGridClientOptionsApiEndpointSuffix')]"
+              },
+              {
+                "name": "LmiApiClientOptions__BaseAddress",
+                "value": "https://api.lmiforall.org.uk/api/v1/"
               }
             ]
           }
