@@ -1,0 +1,114 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appSharedResourceGroup": {
+      "value": "__appSharedResourceGroup__"
+    },
+    "appSharedStorageAccountName": {
+      "value": "__appSharedStorageAccountName__"
+    },
+    "aspInstances": {
+      "value": __aspInstances__
+    },
+    "aspSize": {
+      "value": "__aspSize__"
+    },
+    "aspTier": {
+      "value": "__aspTier__"
+    },
+    "aseHostingEnvironmentName": {
+      "value": "__AseServiceName__"
+    },
+    "aseResourceGroup": {
+      "value": "__aseResourceGroup__"
+    },
+    "environment": {
+      "value": "__ReleaseEnvironmentName__",
+      "metadata": {
+        "comment": "Bug in tokenisation task prevents referencing Release.EnvironmentName directly.  https://github.com/TotalALM/VSTS-Tasks/issues/29"
+      }
+    },
+    "FunctionAppInsightName": {
+      "value": "__FunctionAppInsightName__"
+    },
+    "FunctionAppName": {
+      "value": "__FunctionAppName__"
+    },
+    "enableAlerts": {
+      "value": __EnableAzureMonitorAlerting__
+    },
+    "ExceptionCountThreshold": {
+      "value": "__ExceptionCountThreshold__"
+    },
+    "MemoryPercentageThreshold": {
+      "value": "__MemoryPercentageThreshold__"
+    },
+    "CPUPercentageThreshold": {
+      "value": "__CPUPercentageThreshold__"
+    },
+    "apimLoggerName": {
+      "value": "__apimLoggerName__"
+    },
+    "apimResourceGroup": {
+      "value": "__SharedResourceGroupName__"
+    },
+    "apimServiceName": {
+      "value": "__ApimServiceName__"
+    },
+    "apimProductName": {
+      "value": "__apimProductName__"
+    },
+    "apimApiName": {
+      "value": "__apimApiName__"
+    },
+    "LmiImportTimerTriggerSchedule": {
+      "value": "__LmiImportTimerTriggerSchedule__"
+    },
+    "ApiSuffix": {
+      "value": "__ApiSuffix__"
+    },
+    "Neo4jEndpoints0Name": {
+      "value": "__Neo4jEndpoints0Name__"
+    },
+    "Neo4jEndpoints0Uri": {
+      "value": "__Neo4jEndpoints0Uri__"
+    },
+    "Neo4jEndpoints0Username": {
+      "value": "__Neo4jEndpoints0Username__"
+    },
+    "Neo4jEndpoints0Password": {
+      "value": "__Neo4jEndpoints0Password__"
+    },
+    "Neo4jReplicaSets0ReplicaSetName": {
+      "value": "__Neo4jReplicaSets0ReplicaSetName__"
+    },
+    "Neo4jReplicaSets0GraphInstances0Endpoint": {
+      "value": "__Neo4jReplicaSets0GraphInstances0Endpoint__"
+    },
+    "Neo4jReplicaSets0GraphInstances0GraphName": {
+      "value": "__Neo4jReplicaSets0GraphInstances0GraphName__"
+    },
+    "GraphOptionsContentApiUriPrefix": {
+      "value": "__GraphOptionsContentApiUriPrefix__"
+    },
+    "GraphOptionsReplicaSetName": {
+      "value": "__GraphOptionsReplicaSetName__"
+    },
+    "JobProfileApiClientOptionsBaseAddress": {
+      "value": "__JobProfileApiClientOptionsBaseAddress__"
+    },
+    "JobProfileApiClientOptionsApiKey": {
+      "value": "__JobProfileApiClientOptionsApiKey__"
+    },
+    "EventGridClientOptionsTopicEndpoint": {
+      "value": "__EventGridClientOptionsTopicEndpoint__"
+    },
+    "EventGridClientOptionsTopicKey": {
+      "value": "__EventGridClientOptionsTopicKey__"
+    },
+    "EventGridClientOptionsApiEndpoint": {
+      "value": "__EventGridClientOptionsApiEndpoint__"
+    }
+  }
+}

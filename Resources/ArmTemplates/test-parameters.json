@@ -1,0 +1,111 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appSharedResourceGroup": {
+      "value": "dfc-dev-app-sharedresources-rg"
+    },
+    "appSharedStorageAccountName": {
+      "value": "dfcdevappsharedstr"
+    },
+    "aspInstances": {
+      "value": 2
+    },
+    "aspSize": {
+      "value": "2"
+    },
+    "aspTier": {
+      "value": "Standard"
+    },
+    "aseHostingEnvironmentName": {
+      "value": "__AseServiceName__"
+    },
+    "aseResourceGroup": {
+      "value": "__aseResourceGroup__"
+    },
+    "Environment": {
+      "value": "dev"
+    },
+    "FunctionAppInsightName": {
+      "value": "dfc-dev-funcapp-v1-ai"
+    },
+    "FunctionAppName": {
+      "value": "dfc-dev-funcapp-v1-fa"
+    },
+    "enableAlerts": {
+      "value": false
+    },
+    "ExceptionCountThreshold": {
+      "value": "0"
+    },
+    "MemoryPercentageThreshold": {
+      "value": "0"
+    },
+    "CPUPercentageThreshold": {
+      "value": "0"
+    },
+    "apimLoggerName": {
+      "value": "LMI-logger"
+    },
+    "apimResourceGroup": {
+      "value": "dfc-test-template-rg"
+    },
+    "apimServiceName": {
+      "value": "an-apim-instance"
+    },
+    "apimProductName": {
+      "value": "LMI"
+    },
+    "apimApiName": {
+      "value": "api-name"
+    },
+    "LmiImportTimerTriggerSchedule": {
+      "value": "LmiImportTimerTriggerSchedule"
+    },
+    "ApiSuffix": {
+      "value": "ApiSuffix"
+    },
+    "Neo4jEndpoints0Name": {
+      "value": "Neo4jEndpoints0Name"
+    },
+    "Neo4jEndpoints0Uri": {
+      "value": "Neo4jEndpoints0Uri"
+    },
+    "Neo4jEndpoints0Username": {
+      "value": "Neo4jEndpoints0Username"
+    },
+    "Neo4jEndpoints0Password": {
+      "value": "Neo4jEndpoints0Password"
+    },
+    "Neo4jReplicaSets0ReplicaSetName": {
+      "value": "Neo4jReplicaSets0ReplicaSetName"
+    },
+    "Neo4jReplicaSets0GraphInstances0Endpoint": {
+      "value": "Neo4jReplicaSets0GraphInstances0Endpoint"
+    },
+    "Neo4jReplicaSets0GraphInstances0GraphName": {
+      "value": "Neo4jReplicaSets0GraphInstances0GraphName"
+    },
+    "GraphOptionsContentApiUriPrefix": {
+      "value": "GraphOptionsContentApiUriPrefix"
+    },
+    "GraphOptionsReplicaSetName": {
+      "value": "GraphOptionsReplicaSetName"
+    },
+    "JobProfileApiClientOptionsBaseAddress": {
+      "value": "JobProfileApiClientOptionsBaseAddress"
+    },
+    "JobProfileApiClientOptionsApiKey": {
+      "value": "JobProfileApiClientOptionsApiKey"
+    },
+    "EventGridClientOptionsTopicEndpoint": {
+      "value": "EventGridClientOptionsTopicEndpoint"
+    },
+    "EventGridClientOptionsTopicKey": {
+      "value": "EventGridClientOptionsTopicKey"
+    },
+    "EventGridClientOptionsApiEndpoint": {
+      "value": "EventGridClientOptionsApiEndpoint"
+    }
+  }
+}

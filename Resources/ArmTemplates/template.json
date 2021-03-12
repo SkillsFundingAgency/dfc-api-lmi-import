@@ -1,0 +1,594 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appSharedResourceGroup": {
+      "type": "string"
+    },
+    "appSharedStorageAccountName": {
+      "type": "string"
+    },
+    "aspInstances": {
+      "type": "int"
+    },
+    "aspSize": {
+      "type": "string"
+    },
+    "aspTier": {
+      "type": "string"
+    },
+    "aseHostingEnvironmentName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "aseResourceGroup": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "environment": {
+      "type": "string"
+    },
+    "FunctionAppInsightName": {
+      "type": "string"
+    },
+    "FunctionAppName": {
+      "type": "string"
+    },
+    "enableAlerts": {
+      "type": "bool",
+      "metadata": {
+        "description": "Enable or disable alerting"
+      }
+    },
+    "ExceptionCountThreshold": {
+      "type": "string"
+    },
+    "CPUPercentageThreshold": {
+      "type": "string"
+    },
+    "MemoryPercentageThreshold": {
+      "type": "string"
+    },
+    "apimLoggerName": {
+      "type": "string"
+    },
+    "apimResourceGroup": {
+      "type": "string"
+    },
+    "apimServiceName": {
+      "type": "string"
+    },
+    "apimProductName": {
+      "type": "string"
+    },
+    "apimApiName": {
+      "type": "string"
+    },
+    "LmiImportTimerTriggerSchedule": {
+      "type": "string"
+    },
+    "ApiSuffix": {
+      "type": "string"
+    },
+    "Neo4jEndpoints0Name": {
+      "type": "string"
+    },
+    "Neo4jEndpoints0Uri": {
+      "type": "string"
+    },
+    "Neo4jEndpoints0Username": {
+      "type": "string"
+    },
+    "Neo4jEndpoints0Password": {
+      "type": "string"
+    },
+    "Neo4jReplicaSets0ReplicaSetName": {
+      "type": "string"
+    },
+    "Neo4jReplicaSets0GraphInstances0Endpoint": {
+      "type": "string"
+    },
+    "Neo4jReplicaSets0GraphInstances0GraphName": {
+      "type": "string"
+    },
+    "GraphOptionsContentApiUriPrefix": {
+      "type": "string"
+    },
+    "GraphOptionsReplicaSetName": {
+      "type": "string"
+    },
+    "JobProfileApiClientOptionsBaseAddress": {
+      "type": "string"
+    },
+    "JobProfileApiClientOptionsApiKey": {
+      "type": "string"
+    },
+    "EventGridClientOptionsTopicEndpoint": {
+      "type": "string"
+    },
+    "EventGridClientOptionsTopicKey": {
+      "type": "string"
+    },
+    "EventGridClientOptionsApiEndpoint": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-api-lmi-import'))]",
+    "appServicePlanName": "[concat(variables('resourcePrefix'), '-asp')]",
+    "appServicePlanResourceGroup": "[concat(variables('resourcePrefix'),'-rg')]",
+    "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
+    "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-app-sharedresources-actgrp')]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('apimLoggerName')]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('apimResourceGroup')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'APIM/apim-logger.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "apimServiceName": {
+            "value": "[parameters('apimServiceName')]"
+          },
+          "productDisplayName": {
+            "value": "[parameters('apimProductName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[parameters('apimProductName')]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('apimResourceGroup')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'APIM/apim-product.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "allowAnonymousAccess": {
+            "value": false
+          },
+          "apimServiceName": {
+            "value": "[parameters('apimServiceName')]"
+          },
+          "productDisplayName": {
+            "value": "[parameters('apimProductName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[parameters('apimApiName')]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('apimResourceGroup')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'APIM/apim-api.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "apimLoggerName": {
+            "value": "[parameters('apimLoggerName')]"
+          },
+          "apimProductInstanceName": {
+            "value": "[parameters('apimProductName')]"
+          },
+          "apimServiceName": {
+            "value": "[parameters('apimServiceName')]"
+          },
+          "apiName": {
+            "value": "[parameters('apimApiName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[parameters('apimProductName')]",
+        "[parameters('apimLoggerName')]"
+        ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[variables('appServicePlanName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'app-service-plan.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServicePlanName": {
+            "value": "[variables('appServicePlanName')]"
+          },
+          "aseHostingEnvironmentName": {
+            "value": "[parameters('aseHostingEnvironmentName')]"
+          },
+          "aseResourceGroup": {
+            "value": "[parameters('aseResourceGroup')]"
+          },
+          "aspSize": {
+            "value": "[parameters('aspSize')]"
+          },
+          "aspInstances": {
+            "value": "[parameters('aspInstances')]"
+          },
+          "nonASETier": {
+            "value": "[parameters('aspTier')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[parameters('FunctionAppInsightName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'application-insights.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appInsightsName": {
+            "value": "[parameters('FunctionAppInsightName')]"
+          },
+          "attachedService": {
+            "value": ""
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[parameters('FunctionAppName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'app-service.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appServiceName": {
+            "value": "[parameters('FunctionAppName')]"
+          },
+          "appServicePlanName": {
+            "value": "[variables('appServicePlanName')]"
+          },
+          "appServicePlanResourceGroup": {
+            "value": "[variables('appServicePlanResourceGroup')]"
+          },
+          "appServiceType": {
+            "value": "functionapp"
+          },
+          "deployStagingSlot": {
+            "value": true
+          },
+          "clientAffinity": {
+            "value": true
+          },
+          "appServiceAppSettings": {
+            "value": [
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~3"
+              },
+              {
+                "name": "FUNCTIONS_WORKER_RUNTIME",
+                "value": "dotnet"
+              },
+              {
+                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                "value": "1"
+              },
+              {
+                "name": "WEBSITE_RUN_FROM_PACKAGE",
+                "value": "1"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('appSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('appSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference(parameters('FunctionAppInsightName')).outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "LmiImportTimerTriggerSchedule",
+                "value": "[parameters('LmiImportTimerTriggerSchedule')]"
+              },
+              {
+                "name": "ApiSuffix",
+                "value": "[parameters('ApiSuffix')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__0__Name",
+                "value": "[parameters('Neo4jEndpoints0Name')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__0__Uri",
+                "value": "[parameters('Neo4jEndpoints0Uri')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__0__Username",
+                "value": "[parameters('Neo4jEndpoints0Username')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__0__Password",
+                "value": "[parameters('Neo4jEndpoints0Password')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__0__Enabled",
+                "value": "true"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__0__ReplicaSetName",
+                "value": "[parameters('Neo4jReplicaSets0ReplicaSetName')]"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__0__GraphInstances__0__Endpoint",
+                "value": "[parameters('Neo4jReplicaSets0GraphInstances0Endpoint')]"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__0__GraphInstances__0__GraphName",
+                "value": "[parameters('Neo4jReplicaSets0GraphInstances0GraphName')]"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__0__GraphInstances__0__DefaultGraph",
+                "value": "true"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__0__GraphInstances__0__Enabled",
+                "value": "true"
+              },
+              {
+                "name": "GraphOptions__ContentApiUriPrefix",
+                "value": "[parameters('GraphOptionsContentApiUriPrefix')]"
+              },
+              {
+                "name": "GraphOptions__ReplicaSetName",
+                "value": "[parameters('GraphOptionsReplicaSetName')]"
+              },
+              {
+                "name": "JobProfileApiClientOptions__BaseAddress",
+                "value": "[parameters('JobProfileApiClientOptionsBaseAddress')]"
+              },
+              {
+                "name": "JobProfileApiClientOptions__Version",
+                "value": "v1"
+              },
+              {
+                "name": "JobProfileApiClientOptions__ApiKey",
+                "value": "[parameters('JobProfileApiClientOptionsApiKey')]"
+              },
+              {
+                "name": "EventGridClientOptions__TopicEndpoint",
+                "value": "[parameters('EventGridClientOptionsTopicEndpoint')]"
+              },
+              {
+                "name": "EventGridClientOptions__SubjectPrefix",
+                "value": "/dfc-api-lmi-import/"
+              },
+              {
+                "name": "EventGridClientOptions__TopicKey",
+                "value": "[parameters('EventGridClientOptionsTopicKey')]"
+              },
+              {
+                "name": "EventGridClientOptions__ApiEndpoint",
+                "value": "[parameters('EventGridClientOptionsApiEndpoint')]"
+              },
+              {
+                "name": "LmiApiClientOptions__BaseAddress",
+                "value": "https://api.lmiforall.org.uk/api/v1/"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[parameters('FunctionAppInsightName')]",
+        "[variables('appServicePlanName')]"
+      ]
+    },
+    {
+      "apiVersion": "2019-05-01",
+      "name": "[concat(parameters('FunctionAppInsightName'), '-metric-exceptions')]",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "[parameters('FunctionAppInsightName')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/metric-alerts.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "enabled": {
+            "value": "[parameters('enableAlerts')]"
+          },
+          "alertName": {
+            "value": "[concat(parameters('FunctionAppInsightName'), '-metric-exceptions')]"
+          },
+          "alertSeverity": {
+            "value": 3
+          },
+          "metricName": {
+            "value": "exceptions/count"
+          },
+          "operator": {
+            "value": "GreaterThan"
+          },
+          "threshold": {
+            "value": "[parameters('ExceptionCountThreshold')]"
+          },
+          "aggregation": {
+            "value": "Count"
+          },
+          "windowSize": {
+            "value": "PT5M"
+          },
+          "evaluationFrequency": {
+            "value": "PT1M"
+          },
+          "actionGroupName": {
+            "value": "[variables('ActionGroupName')]"
+          },
+          "actionGroupResourceGroup": {
+            "value": "[parameters('appSharedResourceGroup')]"
+          },
+          "resourceId": {
+            "value": "[resourceId('Microsoft.Insights/Components', parameters('FunctionAppInsightName'))]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2019-05-01",
+      "name": "[concat(parameters('FunctionAppInsightName'), '-failure-anomaly-v2')]",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "[parameters('FunctionAppInsightName')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/failure-anomaly-rule.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "alertName": {
+            "value": "[concat(parameters('FunctionAppInsightName'), '-failure-anomaly-v2')]"
+          },
+          "enabled": {
+            "value": "[parameters('enableAlerts')]"
+          },
+          "resourceId": {
+            "value": "[resourceId('Microsoft.Insights/Components', parameters('FunctionAppInsightName'))]"
+          },
+          "actionGroupId": {
+            "value": "[resourceId(parameters('appSharedResourceGroup'), 'microsoft.insights/actionGroups', variables('ActionGroupName'))]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2019-05-01",
+      "name": "[concat(variables('AppServicePlanName'), '-CPUPercentage')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/metric-alerts.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "enabled": {
+            "value": "[parameters('enableAlerts')]"
+          },
+          "alertName": {
+            "value": "[concat(variables('AppServicePlanName'), '-metric-CPUPercentage')]"
+          },
+          "alertSeverity": {
+            "value": 3
+          },
+          "metricName": {
+            "value": "CpuPercentage"
+          },
+          "operator": {
+            "value": "GreaterThanOrEqual"
+          },
+          "threshold": {
+            "value": "[parameters('CPUPercentageThreshold')]"
+          },
+          "aggregation": {
+            "value": "Average"
+          },
+          "windowSize": {
+            "value": "PT5M"
+          },
+          "evaluationFrequency": {
+            "value": "PT1M"
+          },
+          "actionGroupName": {
+            "value": "[variables('ActionGroupName')]"
+          },
+          "actionGroupResourceGroup": {
+            "value": "[parameters('appSharedResourceGroup')]"
+          },
+          "resourceId": {
+            "value": "[resourceId('Microsoft.Web/serverFarms', variables('AppServicePlanName'))]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[variables('AppServicePlanName')]"
+      ]
+    },
+    {
+      "apiVersion": "2019-05-01",
+      "name": "[concat(variables('AppServicePlanName'), '-MemoryPercentage')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/metric-alerts.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "enabled": {
+            "value": "[parameters('enableAlerts')]"
+          },
+          "alertName": {
+            "value": "[concat(variables('AppServicePlanName'), '-metric-MemoryPercentage')]"
+          },
+          "alertSeverity": {
+            "value": 3
+          },
+          "metricName": {
+            "value": "MemoryPercentage"
+          },
+          "operator": {
+            "value": "GreaterThanOrEqual"
+          },
+          "threshold": {
+            "value": "[parameters('MemoryPercentageThreshold')]"
+          },
+          "aggregation": {
+            "value": "Average"
+          },
+          "windowSize": {
+            "value": "PT5M"
+          },
+          "evaluationFrequency": {
+            "value": "PT1M"
+          },
+          "actionGroupName": {
+            "value": "[variables('ActionGroupName')]"
+          },
+          "actionGroupResourceGroup": {
+            "value": "[parameters('appSharedResourceGroup')]"
+          },
+          "resourceId": {
+            "value": "[resourceId('Microsoft.Web/serverFarms', variables('AppServicePlanName'))]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[variables('AppServicePlanName')]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

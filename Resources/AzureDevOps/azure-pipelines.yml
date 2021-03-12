@@ -1,5 +1,6 @@
 variables:
     SolutionBaseName: 'DFC.Api.Lmi.Import'
+    ArmTemplateRoot: "$(System.DefaultWorkingDirectory)/Resources/ArmTemplates"
     BuildPlatform: 'any cpu'
     BuildConfiguration: 'release'
 
@@ -12,20 +13,170 @@ resources:
     ref: refs/tags/v1.11.2
     endpoint: 'SkillsFundingAgency'
 
+pool:
+  name: NCS - CI and CD
+  demands:
+  - msbuild
+  - visualstudio
+
+trigger: 
+  branches:
+    include: 
+    - dev
+    - master
+
+pr:
+  branches:
+    include: 
+    - dev
+    - master
+
 stages:
 - stage: Build
-  displayName: Build, Test and Analyze
   jobs:
-  - job: BuildTestAndAnalyze
-    pool:
-      name: NCS - CI and CD
-      demands:
-      - msbuild
-      - visualstudio
+  - job:
+    displayName: Build and test application & templates"
     steps:
+    - template: /AzureDevOpsTemplates/Build/StepTemplates/dfc-arm-build.yml@dfc-devops
+      parameters:
+        ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
+        SolutionBaseName: '${{ variables.SolutionBaseName }}'
+
     - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
       parameters:
         SolutionBaseName: $(SolutionBaseName)
         BuildPlatform: $(BuildPlatform)
         BuildConfiguration: $(BuildConfiguration)
         DotNetCoreVersion: '3.1.100'
+        PublishWebApp: true
+        TestSuffix: UnitTests
+
+- stage: DeployToDevApiLmiImport
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+  #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: Deploy to DEV_ApiLmiImport
+  variables:
+  - template: VariableTemplates/DevEnvironmentVariables.yml
+  - group: dfc-shared-dev
+  - group: dfc-app-shared-all
+  - group: dfc-stax-shared-dev
+  - group: dfc-app-shared-dev
+  - group: 'KeyVault - dfc-dev-shared-kv'
+  jobs:
+  - template: JobTemplates/deploy-environment.yml
+    parameters:
+      AzureSubscription: 'SFA-CDH-Dev/Test (962cae10-2950-412a-93e3-d8ae92b17896)'
+      EnvironmentTag: '$(EnvironmentTag)'
+      ParentBusiness: '$(ParentBusiness)'
+      ServiceOffering: '$(ServiceOffering)'
+      ResourceGroup: '$(ResourceGroup)'
+      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
+      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
+      FunctionAppDomain: '$(FunctionAppDomain)'
+      EnvironmentName: DEV_ApiLmiImport
+      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
+      ApimLoggerName: "$(ApimLoggerName)"
+      ApimProductName: "$(ApimProductName)"
+      SharedResourceGroup: "$(SharedResourceGroup)"
+      ApimServiceName: "$(ApimServiceName)"
+      ApimApiName: $(ApimApiName)
+      Apis:
+        -
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+
+- stage: DeployToDevDraftApiLmiImport
+  condition: succeeded()
+  displayName: Deploy to DEV-DRAFT_ApiLmiImport
+  variables:
+  - template: VariableTemplates/DevDraftEnvironmentVariables.yml
+  - group: dfc-shared-dev
+  - group: dfc-app-shared-all
+  - group: dfc-stax-shared-dev
+  - group: dfc-app-shared-dev
+  - group: 'KeyVault - dfc-dev-shared-kv'
+  jobs:
+  - template: JobTemplates/deploy-environment.yml
+    parameters:
+      AzureSubscription: 'SFA-CDH-Dev/Test (962cae10-2950-412a-93e3-d8ae92b17896)'
+      EnvironmentTag: '$(EnvironmentTag)'
+      ParentBusiness: '$(ParentBusiness)'
+      ServiceOffering: '$(ServiceOffering)'
+      ResourceGroup: '$(ResourceGroup)'
+      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
+      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
+      FunctionAppDomain: '$(FunctionAppDomain)'
+      EnvironmentName: DEV-DRAFT_ApiLmiImport
+      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
+      ApimLoggerName: "$(ApimLoggerName)"
+      ApimProductName: "$(ApimProductName)"
+      SharedResourceGroup: "$(SharedResourceGroup)"
+      ApimServiceName: "$(ApimServiceName)"
+      ApimApiName: $(ApimApiName)
+      Apis:
+        -
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+
+- stage: DeployToSitApiLmiImport
+  condition: succeeded()
+  displayName: Deploy to SIT_ApiLmiImport
+  variables:
+  - template: VariableTemplates/SitEnvironmentVariables.yml
+  - group: dfc-shared-sit
+  - group: dfc-app-shared-all
+  - group: dfc-stax-shared-sit
+  - group: dfc-app-shared-sit
+  - group: 'KeyVault - dfc-sit-shared-kv'
+  jobs:
+  - template: JobTemplates/deploy-environment.yml
+    parameters:
+      AzureSubscription: 'SFA-CDH-Dev/Test (962cae10-2950-412a-93e3-d8ae92b17896)'
+      EnvironmentTag: '$(EnvironmentTag)'
+      ParentBusiness: '$(ParentBusiness)'
+      ServiceOffering: '$(ServiceOffering)'
+      ResourceGroup: '$(ResourceGroup)'
+      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
+      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
+      FunctionAppDomain: '$(FunctionAppDomain)'
+      EnvironmentName: SIT_ApiLmiImport
+      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
+      ApimLoggerName: "$(ApimLoggerName)"
+      ApimProductName: "$(ApimProductName)"
+      SharedResourceGroup: "$(SharedResourceGroup)"
+      ApimServiceName: "$(ApimServiceName)"
+      ApimApiName: $(ApimApiName)
+      Apis:
+        -
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+
+- stage: DeployToSitDraftApiLmiImport
+  condition: succeeded()
+  displayName: Deploy to SIT-DRAFT_ApiLmiImport
+  variables:
+  - template: VariableTemplates/SitDraftEnvironmentVariables.yml
+  - group: dfc-shared-sit
+  - group: dfc-app-shared-all
+  - group: dfc-stax-shared-sit
+  - group: dfc-app-shared-sit
+  - group: 'KeyVault - dfc-sit-shared-kv'
+  jobs:
+  - template: JobTemplates/deploy-environment.yml
+    parameters:
+      AzureSubscription: 'SFA-CDH-Dev/Test (962cae10-2950-412a-93e3-d8ae92b17896)'
+      EnvironmentTag: '$(EnvironmentTag)'
+      ParentBusiness: '$(ParentBusiness)'
+      ServiceOffering: '$(ServiceOffering)'
+      ResourceGroup: '$(ResourceGroup)'
+      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
+      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
+      FunctionAppDomain: '$(FunctionAppDomain)'
+      EnvironmentName: SIT-draft_ApiLmiImport
+      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
+      ApimLoggerName: "$(ApimLoggerName)"
+      ApimProductName: "$(ApimProductName)"
+      SharedResourceGroup: "$(SharedResourceGroup)"
+      ApimServiceName: "$(ApimServiceName)"
+      ApimApiName: $(ApimApiName)
+      Apis: 
+        -
+          - name: import
+            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
