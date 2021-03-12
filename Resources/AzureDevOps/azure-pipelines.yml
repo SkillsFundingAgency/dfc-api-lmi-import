@@ -53,7 +53,7 @@ stages:
 
 - stage: DeployToDevApiLmiImport
   #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
-  condition: succeeded()
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   displayName: Deploy to DEV_ApiLmiImport
   variables:
   - template: VariableTemplates/DevEnvironmentVariables.yml
