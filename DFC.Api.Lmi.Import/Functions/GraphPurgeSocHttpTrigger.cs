@@ -31,8 +31,9 @@ namespace DFC.Api.Lmi.Import.Functions
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/purge/{soc}")] HttpRequest? request,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/purge/{soc}/{socId}")] HttpRequest? request,
             int soc,
+            Guid socId,
             [DurableClient] IDurableOrchestrationClient starter)
         {
             try
@@ -42,6 +43,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 var socRequest = new SocRequestModel
                 {
                     Soc = soc,
+                    SocId = socId,
                     IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix")),
                 };
                 string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocOrchestrator), socRequest).ConfigureAwait(false);
