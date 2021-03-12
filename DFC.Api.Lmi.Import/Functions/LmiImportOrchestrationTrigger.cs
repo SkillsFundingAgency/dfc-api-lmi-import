@@ -65,11 +65,13 @@ namespace DFC.Api.Lmi.Import.Functions
 
             await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostPurgeRequest).ConfigureAwait(true);
 
-            if (await context.CallActivityAsync<bool>(nameof(ImportSocItemActivity), socJobProfileMapping).ConfigureAwait(true))
+            var itemId = await context.CallActivityAsync<Guid?>(nameof(ImportSocItemActivity), socJobProfileMapping).ConfigureAwait(true);
+
+            if (itemId != null)
             {
                 var eventGridPostRequest = new EventGridPostRequestModel
                 {
-                    ItemId = socRequest.SocId,
+                    ItemId = itemId,
                     DisplayText = $"LMI SOC refreshed: {socRequest.Soc}",
                     EventType = socRequest.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
                 };
@@ -189,7 +191,7 @@ namespace DFC.Api.Lmi.Import.Functions
         }
 
         [FunctionName(nameof(ImportSocItemActivity))]
-        public async Task<bool> ImportSocItemActivity([ActivityTrigger] SocJobProfileMappingModel socJobProfileMapping)
+        public async Task<Guid?> ImportSocItemActivity([ActivityTrigger] SocJobProfileMappingModel socJobProfileMapping)
         {
             _ = socJobProfileMapping ?? throw new ArgumentNullException(nameof(socJobProfileMapping));
 
@@ -202,11 +204,11 @@ namespace DFC.Api.Lmi.Import.Functions
 
                 if (await graphService.ImportAsync(graphSocDataset).ConfigureAwait(false))
                 {
-                    return true;
+                    return graphSocDataset!.ItemId;
                 }
             }
 
-            return false;
+            return null;
         }
 
         [FunctionName(nameof(PostGraphEventActivity))]

@@ -40,7 +40,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Arrange
             const bool expectedResult = true;
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).Returns(new SocRequestModel { Soc = 3435 });
-            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(Guid.NewGuid());
 
             // Act
             var result = await lmiImportOrchestrationTrigger.GraphRefreshSocOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
@@ -48,18 +48,19 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Assert
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocActivity), A<int>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedTwiceExactly();
             Assert.Equal(expectedResult, result);
         }
 
         [Fact]
-        public async Task LmiImportOrchestrationTriggerGraphRefreshSocOrchestratorReturnsFalse()
+        public async Task LmiImportOrchestrationTriggerGraphRefreshSocOrchestratorReturnsNullItemId()
         {
             // Arrange
             const bool expectedResult = false;
+            Guid? nullGuid = null;
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).Returns(new SocRequestModel { Soc = 3435 });
-            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(nullGuid);
 
             // Act
             var result = await lmiImportOrchestrationTrigger.GraphRefreshSocOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
@@ -67,7 +68,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Assert
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocActivity), A<int>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<bool>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.Equal(expectedResult, result);
         }
@@ -206,14 +207,13 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         public async Task LmiImportOrchestrationTriggerImportSocItemActivityIsSuccessful()
         {
             // Arrange
-            const bool expectedResult = true;
             var dummyLmiSocDatasetModel = A.Dummy<LmiSocDatasetModel>();
             var dummyGraphSocDatasetModel = A.Dummy<GraphSocDatasetModel>();
             var socJobProfileMapping = new SocJobProfileMappingModel { Soc = 1234 };
 
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).Returns(dummyLmiSocDatasetModel);
             A.CallTo(() => fakeMapLmiToGraphService.Map(A<LmiSocDatasetModel>.Ignored)).Returns(dummyGraphSocDatasetModel);
-            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).Returns(true);
 
             // Act
             var result = await lmiImportOrchestrationTrigger.ImportSocItemActivity(socJobProfileMapping).ConfigureAwait(false);
@@ -222,14 +222,13 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapLmiToGraphService.Map(A<LmiSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
-            Assert.Equal(expectedResult, result);
+            Assert.NotNull(result);
         }
 
         [Fact]
-        public async Task LmiImportOrchestrationTriggerImportSocItemActivityReturnsFalse()
+        public async Task LmiImportOrchestrationTriggerImportSocItemActivityReturnsNullItemId()
         {
             // Arrange
-            const bool expectedResult = false;
             LmiSocDatasetModel? nullLmiSocDatasetModel = null;
             var socJobProfileMapping = new SocJobProfileMappingModel { Soc = 1234 };
 
@@ -242,7 +241,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapLmiToGraphService.Map(A<LmiSocDatasetModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).MustNotHaveHappened();
-            Assert.Equal(expectedResult, result);
+            Assert.Null(result);
         }
 
         [Fact]
