@@ -32,6 +32,18 @@
     "FunctionAppName": {
       "value": "dfc-dev-funcapp-v1-fa"
     },
+    "enableAlerts": {
+      "value": false
+    },
+    "ExceptionCountThreshold": {
+      "value": "0"
+    },
+    "MemoryPercentageThreshold": {
+      "value": "0"
+    },
+    "CPUPercentageThreshold": {
+      "value": "0"
+    },
     "apimLoggerName": {
       "value": "LMI-logger"
     },

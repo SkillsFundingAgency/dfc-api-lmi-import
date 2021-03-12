@@ -5,6 +5,14 @@ variables:
   value: 2
 - name: aspTier
   value: Standard
+- name: ExceptionCountThreshold
+  value: 10
+- name: MemoryPercentageThreshold
+  value: 75
+- name: CPUPercentageThreshold
+  value: 75
+- name: EnableAzureMonitorAlerting
+  value: true
 - name: ReleaseEnvironmentName
   value: dev
 - name: WebAppPrefix
