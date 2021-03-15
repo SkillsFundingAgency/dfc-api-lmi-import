@@ -58,6 +58,7 @@ namespace DFC.Api.Lmi.Import.Functions
 
             var eventGridPostPurgeRequest = new EventGridPostRequestModel
             {
+                ApiUseItemId = true,
                 ItemId = socRequest.SocId,
                 DisplayText = $"LMI SOC purged: {socRequest.Soc}",
                 EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
@@ -71,6 +72,7 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 var eventGridPostRequest = new EventGridPostRequestModel
                 {
+                    ApiUseItemId = true,
                     ItemId = itemId,
                     DisplayText = $"LMI SOC refreshed: {socRequest.Soc}",
                     EventType = socRequest.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
@@ -95,6 +97,7 @@ namespace DFC.Api.Lmi.Import.Functions
 
             var eventGridPostRequest = new EventGridPostRequestModel
             {
+                ApiUseItemId = true,
                 ItemId = socRequest.SocId,
                 DisplayText = $"LMI SOC purged: {socRequest.Soc}",
                 EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
@@ -221,7 +224,7 @@ namespace DFC.Api.Lmi.Import.Functions
             var eventGridEventData = new EventGridEventData
             {
                 ItemId = $"{eventGridPostRequest.ItemId}",
-                Api = $"{eventGridClientOptions.ApiEndpoint}" + (eventGridPostRequest.ItemId.HasValue ? $"/{eventGridPostRequest.ItemId.Value}" : string.Empty),
+                Api = $"{eventGridClientOptions.ApiEndpoint}" + (eventGridPostRequest.ApiUseItemId && eventGridPostRequest.ItemId.HasValue ? $"/{eventGridPostRequest.ItemId.Value}" : string.Empty),
                 DisplayText = eventGridPostRequest.DisplayText,
                 VersionId = Guid.NewGuid().ToString(),
                 Author = eventGridClientOptions.SubjectPrefix,
