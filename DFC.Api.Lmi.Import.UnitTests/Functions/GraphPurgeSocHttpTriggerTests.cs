@@ -33,7 +33,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
             // Act
-            var result = await graphPurgeSocHttpTrigger.Run(null, 3231, fakeDurableOrchestrationClient).ConfigureAwait(false);
+            var result = await graphPurgeSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -51,7 +51,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).Throws<Exception>();
 
             // Act
-            var result = await graphPurgeSocHttpTrigger.Run(null, 3231, fakeDurableOrchestrationClient).ConfigureAwait(false);
+            var result = await graphPurgeSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();

@@ -1,11 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.Lmi.Import.Models.FunctionRequestModels
 {
     [ExcludeFromCodeCoverage]
     public class EventGridPostRequestModel
     {
-        public int? Soc { get; set; }
+        public Guid? ItemId { get; set; }
 
         public string? DisplayText { get; set; }
 
