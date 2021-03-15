@@ -138,11 +138,11 @@ namespace DFC.Api.Lmi.Import.Functions
 
                 logger.LogInformation($"Importing {socJobProfileMappings.Count} SOC mappings");
 
-                var parallelTasks = new List<Task<bool>>();
+                var parallelTasks = new List<Task<Guid?>>();
 
                 foreach (var socJobProfileMapping in socJobProfileMappings)
                 {
-                    parallelTasks.Add(context.CallActivityAsync<bool>(nameof(ImportSocItemActivity), socJobProfileMapping));
+                    parallelTasks.Add(context.CallActivityAsync<Guid?>(nameof(ImportSocItemActivity), socJobProfileMapping));
                 }
 
                 await Task.WhenAll(parallelTasks).ConfigureAwait(true);
@@ -156,7 +156,7 @@ namespace DFC.Api.Lmi.Import.Functions
 
                 await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
 
-                int importedToGraphCount = parallelTasks.Count(t => t.Result);
+                int importedToGraphCount = parallelTasks.Count(t => t.Result != null);
 
                 logger.LogInformation($"Imported to Graph {importedToGraphCount} of {socJobProfileMappings.Count} SOC mappings");
             }
