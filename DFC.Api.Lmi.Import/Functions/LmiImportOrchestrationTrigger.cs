@@ -73,7 +73,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 var eventGridPostRequest = new EventGridPostRequestModel
                 {
                     ItemId = itemId,
-                    Api = $"{eventGridClientOptions.ApiEndpoint}/{socRequest.SocId}",
+                    Api = $"{eventGridClientOptions.ApiEndpoint}/{itemId}",
                     DisplayText = $"LMI SOC refreshed: {socRequest.Soc}",
                     EventType = socRequest.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
                 };
