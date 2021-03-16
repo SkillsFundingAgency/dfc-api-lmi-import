@@ -58,8 +58,8 @@ namespace DFC.Api.Lmi.Import.Functions
 
             var eventGridPostPurgeRequest = new EventGridPostRequestModel
             {
-                ApiUseItemId = true,
                 ItemId = socRequest.SocId,
+                Api = $"{eventGridClientOptions.ApiEndpoint}/{socRequest.SocId}",
                 DisplayText = $"LMI SOC purged: {socRequest.Soc}",
                 EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
             };
@@ -72,8 +72,8 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 var eventGridPostRequest = new EventGridPostRequestModel
                 {
-                    ApiUseItemId = true,
                     ItemId = itemId,
+                    Api = $"{eventGridClientOptions.ApiEndpoint}/{socRequest.SocId}",
                     DisplayText = $"LMI SOC refreshed: {socRequest.Soc}",
                     EventType = socRequest.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
                 };
@@ -97,8 +97,8 @@ namespace DFC.Api.Lmi.Import.Functions
 
             var eventGridPostRequest = new EventGridPostRequestModel
             {
-                ApiUseItemId = true,
                 ItemId = socRequest.SocId,
+                Api = $"{eventGridClientOptions.ApiEndpoint}/{socRequest.SocId}",
                 DisplayText = $"LMI SOC purged: {socRequest.Soc}",
                 EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
             };
@@ -117,6 +117,7 @@ namespace DFC.Api.Lmi.Import.Functions
             var eventGridPostRequest = new EventGridPostRequestModel
             {
                 ItemId = Guid.NewGuid(),
+                Api = $"{eventGridClientOptions.ApiEndpoint}",
                 DisplayText = "LMI Import purged",
                 EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
             };
@@ -153,6 +154,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 var eventGridPostRequest = new EventGridPostRequestModel
                 {
                     ItemId = Guid.NewGuid(),
+                    Api = $"{eventGridClientOptions.ApiEndpoint}",
                     DisplayText = "LMI Import refreshed",
                     EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
                 };
@@ -224,7 +226,7 @@ namespace DFC.Api.Lmi.Import.Functions
             var eventGridEventData = new EventGridEventData
             {
                 ItemId = $"{eventGridPostRequest.ItemId}",
-                Api = $"{eventGridClientOptions.ApiEndpoint}" + (eventGridPostRequest.ApiUseItemId && eventGridPostRequest.ItemId.HasValue ? $"/{eventGridPostRequest.ItemId.Value}" : string.Empty),
+                Api = eventGridPostRequest.Api,
                 DisplayText = eventGridPostRequest.DisplayText,
                 VersionId = Guid.NewGuid().ToString(),
                 Author = eventGridClientOptions.SubjectPrefix,
