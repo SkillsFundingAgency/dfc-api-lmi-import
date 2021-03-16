@@ -194,8 +194,8 @@
         }
       },
       "dependsOn": [
-        "[parameters('apimProductName')]",
-        "[parameters('apimLoggerName')]"
+        "[concat('apim-product-', parameters('apimProductName'))]",
+        "[concat('apim-logger-', parameters('apimLoggerName'))]"
         ]
     },
     {
