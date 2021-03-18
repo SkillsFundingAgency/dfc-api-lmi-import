@@ -6,5 +6,7 @@ namespace DFC.Api.Lmi.Import.Models.FunctionRequestModels
     public class OrchestratorRequestModel
     {
         public bool IsDraftEnvironment { get; set; }
+
+        public int SuccessRelayPercent { get; set; }
     }
 }

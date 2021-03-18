@@ -36,23 +36,30 @@ namespace DFC.Api.Lmi.Import.Services
             var employmentByRegionUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MinYear, lmiApiClientOptions.MinYear, LmiApiQuery.EmploymentByRegion);
             var topIndustriesInJobGroupUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MinYear, lmiApiClientOptions.MinYear, LmiApiQuery.TopIndustriesInJobGroup);
 
-            var lmiSocDataset = await lmiApiConnector.ImportAsync<LmiSocDatasetModel>(lmiSocUri).ConfigureAwait(false) ?? new LmiSocDatasetModel { Soc = soc };
-            lmiSocDataset.JobProfiles = jobProfiles;
-            lmiSocDataset.JobGrowth = await lmiApiConnector.ImportAsync<LmiPredictedModel>(jobGrowthStartUri).ConfigureAwait(false);
-            lmiSocDataset.QualificationLevel = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(qualificationLevelUri).ConfigureAwait(false);
-            lmiSocDataset.EmploymentByRegion = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(employmentByRegionUri).ConfigureAwait(false);
-            lmiSocDataset.TopIndustriesInJobGroup = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(topIndustriesInJobGroupUri).ConfigureAwait(false);
+            var lmiSocDataset = await lmiApiConnector.ImportAsync<LmiSocDatasetModel>(lmiSocUri).ConfigureAwait(false);
 
-            var jobGrowthEnd = await lmiApiConnector.ImportAsync<LmiPredictedModel>(jobGrowthEndUri).ConfigureAwait(false);
-
-            if (lmiSocDataset.JobGrowth?.PredictedEmployment != null && jobGrowthEnd?.PredictedEmployment != null)
+            if (lmiSocDataset != null)
             {
-                lmiSocDataset.JobGrowth.PredictedEmployment.AddRange(jobGrowthEnd.PredictedEmployment);
+                lmiSocDataset.JobProfiles = jobProfiles;
+                lmiSocDataset.JobGrowth = await lmiApiConnector.ImportAsync<LmiPredictedModel>(jobGrowthStartUri).ConfigureAwait(false);
+                lmiSocDataset.QualificationLevel = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(qualificationLevelUri).ConfigureAwait(false);
+                lmiSocDataset.EmploymentByRegion = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(employmentByRegionUri).ConfigureAwait(false);
+                lmiSocDataset.TopIndustriesInJobGroup = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(topIndustriesInJobGroupUri).ConfigureAwait(false);
+
+                var jobGrowthEnd = await lmiApiConnector.ImportAsync<LmiPredictedModel>(jobGrowthEndUri).ConfigureAwait(false);
+
+                if (lmiSocDataset.JobGrowth?.PredictedEmployment != null && jobGrowthEnd?.PredictedEmployment != null)
+                {
+                    lmiSocDataset.JobGrowth.PredictedEmployment.AddRange(jobGrowthEnd.PredictedEmployment);
+                }
+
+                logger.LogInformation($"Imported SOC '{soc}' with data from LMI API");
+
+                return lmiSocDataset;
             }
 
-            logger.LogInformation($"Imported SOC '{soc}' with data from LMI API");
-
-            return lmiSocDataset;
+            logger.LogWarning($"no data for SOC '{soc}' available from LMI API");
+            return null;
         }
     }
 }

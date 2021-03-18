@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Functions
@@ -24,6 +25,7 @@ namespace DFC.Api.Lmi.Import.Functions
             var orchestratorRequestModel = new OrchestratorRequestModel
             {
                 IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix")),
+                SuccessRelayPercent = int.Parse(Environment.GetEnvironmentVariable("SuccessRelayPercent") ?? "90", CultureInfo.InvariantCulture),
             };
             string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
 
