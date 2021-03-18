@@ -152,21 +152,26 @@ namespace DFC.Api.Lmi.Import.Functions
 
                 await Task.WhenAll(parallelTasks).ConfigureAwait(true);
 
-                var eventGridPostRequest = new EventGridPostRequestModel
-                {
-                    ItemId = Guid.NewGuid(),
-                    Api = $"{eventGridClientOptions.ApiEndpoint}",
-                    DisplayText = "LMI Import refreshed",
-                    EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
-                };
-
-                await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
-
                 int importedToGraphCount = parallelTasks.Count(t => t.Result != null);
 
                 logger.LogInformation($"Imported to Graph {importedToGraphCount} of {socJobProfileMappings.Count} SOC mappings");
 
-                return HttpStatusCode.OK;
+                if (importedToGraphCount / socJobProfileMappings.Count * 100 >= orchestratorRequestModel.SuccessRelayPercent)
+                {
+                    var eventGridPostRequest = new EventGridPostRequestModel
+                    {
+                        ItemId = Guid.NewGuid(),
+                        Api = $"{eventGridClientOptions.ApiEndpoint}",
+                        DisplayText = "LMI Import refreshed",
+                        EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
+                    };
+
+                    await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
+
+                    return HttpStatusCode.OK;
+                }
+
+                return HttpStatusCode.BadRequest;
             }
             else
             {

@@ -55,5 +55,28 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             Assert.NotNull(result.EmploymentByRegion);
             Assert.NotNull(result.TopIndustriesInJobGroup);
         }
+
+        [Fact]
+        public async Task LmiSocImportServiceImportReturnsnullWhenNoData()
+        {
+            // arrange
+            var socJobProfileMapping = new SocJobProfileMappingModel
+            {
+                Soc = 3231,
+                JobProfiles = A.CollectionOfDummy<SocJobProfileItemModel>(2).ToList(),
+            };
+            LmiSocDatasetModel? nullLmiSocDatasetModel = null;
+
+            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiSocDatasetModel>(A<Uri>.Ignored)).Returns(nullLmiSocDatasetModel);
+
+            // act
+            var result = await lmiSocImportService.ImportAsync(socJobProfileMapping.Soc.Value, socJobProfileMapping.JobProfiles).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiSocDatasetModel>(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiPredictedModel>(A<Uri>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).MustNotHaveHappened();
+            Assert.Null(result);
+        }
     }
 }

@@ -128,6 +128,30 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         }
 
         [Fact]
+        public async Task LmiImportOrchestrationTriggerGraphRefreshOrchestratorBadRequestWhenSuccessThresholdNotMet()
+        {
+            // Arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
+            const int mappingItemsCount = 2;
+            var dummyMappings = A.CollectionOfDummy<SocJobProfileMappingModel>(mappingItemsCount);
+            Guid? nullGuid = null;
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true, SuccessRelayPercent = 99 });
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).Returns(dummyMappings);
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(nullGuid);
+
+            // Act
+            var result = await lmiImportOrchestrationTrigger.GraphRefreshOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeActivity), null)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappened(mappingItemsCount, Times.Exactly);
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustNotHaveHappened();
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
         public async Task LmiImportOrchestrationTriggerGraphRefreshOrchestratorIsSuccessfulWhenNoMappings()
         {
             // Arrange
