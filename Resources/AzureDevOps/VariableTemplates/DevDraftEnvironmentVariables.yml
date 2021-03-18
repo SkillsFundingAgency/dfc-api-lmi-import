@@ -38,11 +38,11 @@ variables:
 - name: Neo4jEndpoints0Name
   value: Draft
 - name: Neo4jEndpoints0Uri
-  value: $(Neo4jUrl)
+  value: $(Neo4jUrlDraft)
 - name: Neo4jEndpoints0Username
-  value: $(Neo4jUser)
+  value: $(Neo4jUserDraft)
 - name: Neo4jEndpoints0Password
-  value: $(Neo4jPassword)
+  value: $(Neo4jPasswordDraft)
 - name: Neo4jReplicaSets0ReplicaSetName
   value: draft
 - name: Neo4jReplicaSets0GraphInstances0Endpoint
