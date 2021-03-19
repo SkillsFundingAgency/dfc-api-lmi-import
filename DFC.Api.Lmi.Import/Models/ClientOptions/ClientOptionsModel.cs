@@ -8,7 +8,7 @@ namespace DFC.Api.Lmi.Import.Models.ClientOptions
     {
         public Uri? BaseAddress { get; set; }
 
-        public TimeSpan Timeout { get; set; } = new TimeSpan(0, 0, 20);         // default to 20 seconds
+        public TimeSpan Timeout { get; set; } = new TimeSpan(0, 0, 30);         // default to 30 seconds
 
         public string? Version { get; set; }
 
