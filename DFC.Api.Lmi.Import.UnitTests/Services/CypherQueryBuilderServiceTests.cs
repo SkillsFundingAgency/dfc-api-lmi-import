@@ -695,7 +695,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         [InlineData(null, "''")]
         [InlineData("", "''")]
         [InlineData("value", "'value'")]
-        [InlineData("a 'quoted' value", "'a ''quoted'' value'")]
+        [InlineData("a 'quoted' value", "'a \\'quoted\\' value'")]
         public void CypherQueryBuilderServiceQuoteStringReturnsSuccess(string? data, string expectedResult)
         {
             //arrange

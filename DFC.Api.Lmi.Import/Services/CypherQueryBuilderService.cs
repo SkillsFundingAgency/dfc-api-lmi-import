@@ -346,7 +346,7 @@ namespace DFC.Api.Lmi.Import.Services
             }
             else
             {
-                return SingleQuote + value.Replace(SingleQuote, TwoSingleQuotes) + SingleQuote;
+                return SingleQuote + value.Replace(SingleQuote, $"\\{SingleQuote}") + SingleQuote;
             }
         }
     }
