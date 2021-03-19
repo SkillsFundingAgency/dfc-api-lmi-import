@@ -1,4 +1,5 @@
-﻿using DFC.Api.Lmi.Import.Functions;
+﻿using DFC.Api.Lmi.Import.Common;
+using DFC.Api.Lmi.Import.Functions;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using FakeItEasy;
 using Microsoft.Azure.WebJobs;
@@ -22,6 +23,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         public LmiImportTimerTriggerTests()
         {
             lmiImportTimerTrigger = new LmiImportTimerTrigger(fakeLogger);
+            Environment.SetEnvironmentVariable(Constants.EnvironmentNameApiSuffix, "(draft)");
         }
 
         [Fact]

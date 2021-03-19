@@ -1,4 +1,5 @@
-﻿using DFC.Api.Lmi.Import.Functions;
+﻿using DFC.Api.Lmi.Import.Common;
+using DFC.Api.Lmi.Import.Functions;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         public GraphRefreshHttpTriggerTests()
         {
             graphRefreshHttpTrigger = new GraphRefreshHttpTrigger(fakeLogger);
+            Environment.SetEnvironmentVariable(Constants.EnvironmentNameApiSuffix, "(draft)");
         }
 
         [Fact]
@@ -37,7 +39,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustHaveHappened();
+            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
             var statusResult = Assert.IsType<AcceptedResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }

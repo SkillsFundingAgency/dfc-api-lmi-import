@@ -1,5 +1,6 @@
 ﻿using AzureFunctions.Extensions.Swashbuckle;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
+using DFC.Api.Lmi.Import.Common;
 using DFC.Swagger.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,7 @@ namespace DFC.Api.Lmi.Import.Functions
         [FunctionName("SwaggerJson")]
         public async Task<IActionResult> SwaggerJson([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SwaggerJsonRoute)] HttpRequest request)
         {
-            var apiSuffix = Environment.GetEnvironmentVariable("ApiSuffix");
+            var apiSuffix = Environment.GetEnvironmentVariable(Constants.EnvironmentNameApiSuffix);
             var apiTitle = "LMI Import API " + apiSuffix;
             var swaggerDoc = await Task.FromResult(swaggerDocumentGenerator.GenerateSwaggerDocument(
                 request,
