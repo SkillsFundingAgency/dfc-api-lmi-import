@@ -1,4 +1,5 @@
-﻿using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
+﻿using DFC.Api.Lmi.Import.Common;
+using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +26,8 @@ namespace DFC.Api.Lmi.Import.Functions
 
         [FunctionName("GraphRefresh")]
         [Display(Name = "Graph refresh", Description = "Receives Post requests for graph refresh.")]
-        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Refresh processed", ShowSchema = false)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Invalid request data", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Accepted, Description = "Refresh queued for processing", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Invalid request data or wrong environment", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.InternalServerError, Description = "Internal error caught and logged", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
@@ -37,13 +38,19 @@ namespace DFC.Api.Lmi.Import.Functions
         {
             try
             {
-                logger.LogInformation("Received graph refresh request");
-
                 var orchestratorRequestModel = new OrchestratorRequestModel
                 {
-                    IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ApiSuffix")),
-                    SuccessRelayPercent = int.Parse(Environment.GetEnvironmentVariable("SuccessRelayPercent") ?? "90", CultureInfo.InvariantCulture),
+                    IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(Constants.EnvironmentNameApiSuffix)),
+                    SuccessRelayPercent = int.Parse(Environment.GetEnvironmentVariable(Constants.EnvironmentNameSuccessRelayPercent) ?? "90", CultureInfo.InvariantCulture),
                 };
+
+                if (!orchestratorRequestModel.IsDraftEnvironment)
+                {
+                    return new BadRequestResult();
+                }
+
+                logger.LogInformation("Received graph refresh request");
+
                 string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
 
                 logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
