@@ -1,4 +1,4 @@
-﻿using DFC.Api.Lmi.Import.Common;
+﻿using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
@@ -17,10 +17,12 @@ namespace DFC.Api.Lmi.Import.Functions
     public class GraphPurgeHttpTrigger
     {
         private readonly ILogger<GraphPurgeHttpTrigger> logger;
+        private readonly EnvironmentValues environmentValues;
 
-        public GraphPurgeHttpTrigger(ILogger<GraphPurgeHttpTrigger> logger)
+        public GraphPurgeHttpTrigger(ILogger<GraphPurgeHttpTrigger> logger, EnvironmentValues environmentValues)
         {
             this.logger = logger;
+            this.environmentValues = environmentValues;
         }
 
         [FunctionName("GraphPurge")]
@@ -39,7 +41,7 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 var orchestratorRequestModel = new OrchestratorRequestModel
                 {
-                    IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(Constants.EnvironmentNameApiSuffix)),
+                    IsDraftEnvironment = environmentValues.IsDraftEnvironment,
                 };
 
                 if (!orchestratorRequestModel.IsDraftEnvironment)

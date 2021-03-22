@@ -1,4 +1,4 @@
-﻿using DFC.Api.Lmi.Import.Common;
+﻿using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
@@ -17,10 +17,12 @@ namespace DFC.Api.Lmi.Import.Functions
     public class GraphRefreshSocHttpTrigger
     {
         private readonly ILogger<GraphRefreshSocHttpTrigger> logger;
+        private readonly EnvironmentValues environmentValues;
 
-        public GraphRefreshSocHttpTrigger(ILogger<GraphRefreshSocHttpTrigger> logger)
+        public GraphRefreshSocHttpTrigger(ILogger<GraphRefreshSocHttpTrigger> logger, EnvironmentValues environmentValues)
         {
             this.logger = logger;
+            this.environmentValues = environmentValues;
         }
 
         [FunctionName("GraphRefreshSoc")]
@@ -43,7 +45,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 {
                     Soc = soc,
                     SocId = socId,
-                    IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(Constants.EnvironmentNameApiSuffix)),
+                    IsDraftEnvironment = environmentValues.IsDraftEnvironment,
                 };
 
                 if (!socRequest.IsDraftEnvironment)
