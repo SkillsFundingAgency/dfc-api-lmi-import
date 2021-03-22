@@ -1,4 +1,4 @@
-﻿using DFC.Api.Lmi.Import.Common;
+﻿using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +9,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -18,10 +17,12 @@ namespace DFC.Api.Lmi.Import.Functions
     public class GraphRefreshHttpTrigger
     {
         private readonly ILogger<GraphRefreshHttpTrigger> logger;
+        private readonly EnvironmentValues environmentValues;
 
-        public GraphRefreshHttpTrigger(ILogger<GraphRefreshHttpTrigger> logger)
+        public GraphRefreshHttpTrigger(ILogger<GraphRefreshHttpTrigger> logger, EnvironmentValues environmentValues)
         {
             this.logger = logger;
+            this.environmentValues = environmentValues;
         }
 
         [FunctionName("GraphRefresh")]
@@ -40,8 +41,8 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 var orchestratorRequestModel = new OrchestratorRequestModel
                 {
-                    IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(Constants.EnvironmentNameApiSuffix)),
-                    SuccessRelayPercent = int.Parse(Environment.GetEnvironmentVariable(Constants.EnvironmentNameSuccessRelayPercent) ?? "90", CultureInfo.InvariantCulture),
+                    IsDraftEnvironment = environmentValues.IsDraftEnvironment,
+                    SuccessRelayPercent = environmentValues.SuccessRelayPercent,
                 };
 
                 if (!orchestratorRequestModel.IsDraftEnvironment)

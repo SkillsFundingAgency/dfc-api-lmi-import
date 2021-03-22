@@ -1,10 +1,8 @@
-﻿using DFC.Api.Lmi.Import.Common;
+﻿using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Globalization;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Functions
@@ -12,10 +10,12 @@ namespace DFC.Api.Lmi.Import.Functions
     public class LmiImportTimerTrigger
     {
         private readonly ILogger<LmiImportTimerTrigger> logger;
+        private readonly EnvironmentValues environmentValues;
 
-        public LmiImportTimerTrigger(ILogger<LmiImportTimerTrigger> logger)
+        public LmiImportTimerTrigger(ILogger<LmiImportTimerTrigger> logger, EnvironmentValues environmentValues)
         {
             this.logger = logger;
+            this.environmentValues = environmentValues;
         }
 
         [FunctionName("LmiImportTimerTrigger")]
@@ -25,8 +25,8 @@ namespace DFC.Api.Lmi.Import.Functions
         {
             var orchestratorRequestModel = new OrchestratorRequestModel
             {
-                IsDraftEnvironment = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(Constants.EnvironmentNameApiSuffix)),
-                SuccessRelayPercent = int.Parse(Environment.GetEnvironmentVariable(Constants.EnvironmentNameSuccessRelayPercent) ?? "90", CultureInfo.InvariantCulture),
+                IsDraftEnvironment = environmentValues.IsDraftEnvironment,
+                SuccessRelayPercent = environmentValues.SuccessRelayPercent,
             };
 
             if (orchestratorRequestModel.IsDraftEnvironment)

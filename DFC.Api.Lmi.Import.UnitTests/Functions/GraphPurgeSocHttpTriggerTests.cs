@@ -1,5 +1,5 @@
-﻿using DFC.Api.Lmi.Import.Common;
-using DFC.Api.Lmi.Import.Functions;
+﻿using DFC.Api.Lmi.Import.Functions;
+using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
@@ -18,19 +18,15 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
     {
         private readonly ILogger<GraphPurgeSocHttpTrigger> fakeLogger = A.Fake<ILogger<GraphPurgeSocHttpTrigger>>();
         private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
-        private readonly GraphPurgeSocHttpTrigger graphPurgeSocHttpTrigger;
-
-        public GraphPurgeSocHttpTriggerTests()
-        {
-            graphPurgeSocHttpTrigger = new GraphPurgeSocHttpTrigger(fakeLogger);
-            Environment.SetEnvironmentVariable(Constants.EnvironmentNameApiSuffix, "(draft)");
-        }
+        private readonly EnvironmentValues draftEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = "(draft)" };
+        private readonly EnvironmentValues publishedEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = string.Empty };
 
         [Fact]
         public async Task GraphPurgeSocHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
+            var graphPurgeSocHttpTrigger = new GraphPurgeSocHttpTrigger(fakeLogger, draftEnvironmentValues);
 
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
@@ -45,10 +41,28 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         }
 
         [Fact]
+        public async Task GraphPurgeSocHttpTriggerRunFunctionReturnsBadRequestForPublishedEnvironment()
+        {
+            // Arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
+            var graphPurgeSocHttpTrigger = new GraphPurgeSocHttpTrigger(fakeLogger, publishedEnvironmentValues);
+
+            // Act
+            var result = await graphPurgeSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
+        }
+
+        [Fact]
         public async Task GraphPurgeSocHttpTriggerReturnsUnprocessableEntityWhenStartNewAsyncRaisesException()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
+            var graphPurgeSocHttpTrigger = new GraphPurgeSocHttpTrigger(fakeLogger, draftEnvironmentValues);
 
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).Throws<Exception>();
 

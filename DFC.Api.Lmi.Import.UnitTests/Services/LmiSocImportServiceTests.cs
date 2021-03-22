@@ -49,7 +49,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiPredictedModel>(A<Uri>.Ignored)).MustHaveHappened(2, Times.Exactly);
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).MustHaveHappened(3, Times.Exactly);
             Assert.NotNull(result);
-            Assert.NotNull(result.JobProfiles);
+            Assert.NotNull(result!.JobProfiles);
             Assert.NotNull(result.JobGrowth);
             Assert.NotNull(result.QualificationLevel);
             Assert.NotNull(result.EmploymentByRegion);
