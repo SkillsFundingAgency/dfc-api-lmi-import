@@ -1,11 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Api.Lmi.Import", "DFC.Api.Lmi.Import\DFC.Api.Lmi.Import.csproj", "{364418A9-CD6E-4546-8F12-72A1186E9087}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Api.Lmi.Import", "DFC.Api.Lmi.Import\DFC.Api.Lmi.Import.csproj", "{364418A9-CD6E-4546-8F12-72A1186E9087}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Api.Lmi.Import.UnitTests", "DFC.Api.Lmi.Import.UnitTests\DFC.Api.Lmi.Import.UnitTests.csproj", "{406CBBB6-9ECD-487F-B242-EC9826B4FA95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Api.Lmi.Import.UnitTests", "DFC.Api.Lmi.Import.UnitTests\DFC.Api.Lmi.Import.UnitTests.csproj", "{406CBBB6-9ECD-487F-B242-EC9826B4FA95}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{935C48BB-433E-469C-88CD-20A6E3E2364F}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		CODEOWNERS = CODEOWNERS
+		DFC.Digital.CodeAnalysis.ruleset = DFC.Digital.CodeAnalysis.ruleset
+		LICENSE = LICENSE
+		README.md = README.md
+		stylecop.json = stylecop.json
+		UnitTests.CodeAnalysis.ruleset = UnitTests.CodeAnalysis.ruleset
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9AD8C046-E8BC-4939-88C1-B38F15E98504}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +28,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{364418A9-CD6E-4546-8F12-72A1186E9087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +54,14 @@ Global
 		{406CBBB6-9ECD-487F-B242-EC9826B4FA95}.Release|x64.Build.0 = Release|Any CPU
 		{406CBBB6-9ECD-487F-B242-EC9826B4FA95}.Release|x86.ActiveCfg = Release|Any CPU
 		{406CBBB6-9ECD-487F-B242-EC9826B4FA95}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{406CBBB6-9ECD-487F-B242-EC9826B4FA95} = {9AD8C046-E8BC-4939-88C1-B38F15E98504}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {14C15A87-2F4C-46FB-9CAB-CDDD247B71EC}
 	EndGlobalSection
 EndGlobal
