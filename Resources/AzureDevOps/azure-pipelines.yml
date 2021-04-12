@@ -53,7 +53,6 @@ stages:
 
 - stage: DeployToDevApiLmiImport
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
-  #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   displayName: Deploy to DEV_ApiLmiImport
   variables:
   - template: VariableTemplates/DevEnvironmentVariables.yml
@@ -180,3 +179,133 @@ stages:
         -
           - name: import
             azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+
+- stage: DeployToPPApiLmiImport
+  condition: and(eq(dependencies.Build.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: Deploy to PP_ApiLmiImport
+  variables:
+  - template: VariableTemplates/PPEnvironmentVariables.yml
+  - group: dfc-shared-pp
+  - group: dfc-app-shared-all
+  - group: dfc-stax-shared-pp
+  - group: dfc-app-shared-pp
+  - group: 'KeyVault - dfc-pp-shared-kv'
+  jobs:
+  - template: JobTemplates/deploy-environment.yml
+    parameters:
+      AzureSubscription: 'SFA-DIG-PreProd (931bc9f6-359c-4f65-a753-1ee191a1fd6c)'
+      EnvironmentTag: '$(EnvironmentTag)'
+      ParentBusiness: '$(ParentBusiness)'
+      ServiceOffering: '$(ServiceOffering)'
+      ResourceGroup: '$(ResourceGroup)'
+      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
+      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
+      FunctionAppDomain: '$(FunctionAppDomain)'
+      EnvironmentName: PP_ApiLmiImport
+      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
+      ApimLoggerName: "$(ApimLoggerName)"
+      ApimProductName: "$(ApimProductName)"
+      SharedResourceGroup: "$(SharedResourceGroup)"
+      ApimServiceName: "$(ApimServiceName)"
+      ApimApiName: $(ApimApiName)
+      Apis:
+        -
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+
+- stage: DeployToPPDraftApiLmiImport
+  condition: and(eq(dependencies.DeployToPPApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: Deploy to PP-DRAFT_ApiLmiImport
+  variables:
+  - template: VariableTemplates/PPDraftEnvironmentVariables.yml
+  - group: dfc-shared-pp
+  - group: dfc-app-shared-all
+  - group: dfc-stax-shared-pp
+  - group: dfc-app-shared-pp
+  - group: 'KeyVault - dfc-pp-shared-kv'
+  jobs:
+  - template: JobTemplates/deploy-environment.yml
+    parameters:
+      AzureSubscription: 'SFA-DIG-PreProd (931bc9f6-359c-4f65-a753-1ee191a1fd6c)'
+      EnvironmentTag: '$(EnvironmentTag)'
+      ParentBusiness: '$(ParentBusiness)'
+      ServiceOffering: '$(ServiceOffering)'
+      ResourceGroup: '$(ResourceGroup)'
+      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
+      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
+      FunctionAppDomain: '$(FunctionAppDomain)'
+      EnvironmentName: PP-DRAFT_ApiLmiImport
+      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
+      ApimLoggerName: "$(ApimLoggerName)"
+      ApimProductName: "$(ApimProductName)"
+      SharedResourceGroup: "$(SharedResourceGroup)"
+      ApimServiceName: "$(ApimServiceName)"
+      ApimApiName: $(ApimApiName)
+      Apis: 
+        -
+          - name: import
+            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+
+- stage: DeployToPRDApiLmiImport
+  condition: and(eq(dependencies.DeployToPPDraftApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: Deploy to PRD_ApiLmiImport
+  variables:
+  - template: VariableTemplates/PRDEnvironmentVariables.yml
+  - group: dfc-shared-prd
+  - group: dfc-app-shared-all
+  - group: dfc-stax-shared-prd
+  - group: dfc-app-shared-prd
+  - group: 'KeyVault - dfc-prd-shared-kv'
+  jobs:
+  - template: JobTemplates/deploy-environment.yml
+    parameters:
+      AzureSubscription: 'SFA-DIG-Prod (6c93f7dc-6c36-4ea6-8de3-3f4574f88027)'
+      EnvironmentTag: '$(EnvironmentTag)'
+      ParentBusiness: '$(ParentBusiness)'
+      ServiceOffering: '$(ServiceOffering)'
+      ResourceGroup: '$(ResourceGroup)'
+      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
+      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
+      FunctionAppDomain: '$(FunctionAppDomain)'
+      EnvironmentName: PRD_ApiLmiImport
+      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
+      ApimLoggerName: "$(ApimLoggerName)"
+      ApimProductName: "$(ApimProductName)"
+      SharedResourceGroup: "$(SharedResourceGroup)"
+      ApimServiceName: "$(ApimServiceName)"
+      ApimApiName: $(ApimApiName)
+      Apis:
+        -
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+
+- stage: DeployToPRDDraftApiLmiImport
+  condition: and(eq(dependencies.DeployToPRDApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: Deploy to PRD-DRAFT_ApiLmiImport
+  variables:
+  - template: VariableTemplates/PRDDraftEnvironmentVariables.yml
+  - group: dfc-shared-prd
+  - group: dfc-app-shared-all
+  - group: dfc-stax-shared-prd
+  - group: dfc-app-shared-prd
+  - group: 'KeyVault - dfc-prd-shared-kv'
+  jobs:
+  - template: JobTemplates/deploy-environment.yml
+    parameters:
+      AzureSubscription: 'SFA-DIG-Prod (6c93f7dc-6c36-4ea6-8de3-3f4574f88027)'
+      EnvironmentTag: '$(EnvironmentTag)'
+      ParentBusiness: '$(ParentBusiness)'
+      ServiceOffering: '$(ServiceOffering)'
+      ResourceGroup: '$(ResourceGroup)'
+      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
+      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
+      FunctionAppDomain: '$(FunctionAppDomain)'
+      EnvironmentName: PRD-DRAFT_ApiLmiImport
+      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
+      ApimLoggerName: "$(ApimLoggerName)"
+      ApimProductName: "$(ApimProductName)"
+      SharedResourceGroup: "$(SharedResourceGroup)"
+      ApimServiceName: "$(ApimServiceName)"
+      ApimApiName: $(ApimApiName)
+      Apis: 
+        -
+          - name: import
+            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'                        
