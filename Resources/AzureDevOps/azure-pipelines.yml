@@ -213,7 +213,7 @@ stages:
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToPPDraftApiLmiImport
-  condition: succeeded()
+  condition: and(eq(dependencies.DeployToPPApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PP-DRAFT_ApiLmiImport
   variables:
   - template: VariableTemplates/PPDraftEnvironmentVariables.yml
@@ -246,7 +246,7 @@ stages:
             azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToPRDApiLmiImport
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(eq(dependencies.DeployToPPDraftApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PRD_ApiLmiImport
   variables:
   - template: VariableTemplates/PRDEnvironmentVariables.yml
@@ -278,7 +278,7 @@ stages:
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToPRDDraftApiLmiImport
-  condition: succeeded()
+  condition: and(eq(dependencies.DeployToPRDApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PRD-DRAFT_ApiLmiImport
   variables:
   - template: VariableTemplates/PRDDraftEnvironmentVariables.yml
