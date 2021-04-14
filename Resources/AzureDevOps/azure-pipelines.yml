@@ -55,12 +55,12 @@ stages:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   displayName: Deploy to DEV_ApiLmiImport
   variables:
-  - template: VariableTemplates/DevEnvironmentVariables.yml
   - group: dfc-shared-dev
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-dev
   - group: dfc-app-shared-dev
   - group: 'KeyVault - dfc-dev-shared-kv'
+  - template: VariableTemplates/DevEnvironmentVariables.yml
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -87,12 +87,12 @@ stages:
   condition: succeeded()
   displayName: Deploy to DEV-DRAFT_ApiLmiImport
   variables:
-  - template: VariableTemplates/DevDraftEnvironmentVariables.yml
   - group: dfc-shared-dev
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-dev
   - group: dfc-app-shared-dev
   - group: 'KeyVault - dfc-dev-shared-kv'
+  - template: VariableTemplates/DevDraftEnvironmentVariables.yml
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -119,12 +119,12 @@ stages:
   condition: succeeded()
   displayName: Deploy to SIT_ApiLmiImport
   variables:
-  - template: VariableTemplates/SitEnvironmentVariables.yml
   - group: dfc-shared-sit
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-sit
   - group: dfc-app-shared-sit
   - group: 'KeyVault - dfc-sit-shared-kv'
+  - template: VariableTemplates/SitEnvironmentVariables.yml
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -151,12 +151,12 @@ stages:
   condition: succeeded()
   displayName: Deploy to SIT-DRAFT_ApiLmiImport
   variables:
-  - template: VariableTemplates/SitDraftEnvironmentVariables.yml
   - group: dfc-shared-sit
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-sit
   - group: dfc-app-shared-sit
   - group: 'KeyVault - dfc-sit-shared-kv'
+  - template: VariableTemplates/SitDraftEnvironmentVariables.yml
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -184,12 +184,12 @@ stages:
   condition: and(eq(dependencies.Build.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PP_ApiLmiImport
   variables:
-  - template: VariableTemplates/PPEnvironmentVariables.yml
   - group: dfc-shared-pp
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-pp
   - group: dfc-app-shared-pp
   - group: 'KeyVault - dfc-pp-shared-kv'
+  - template: VariableTemplates/PPEnvironmentVariables.yml
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -216,12 +216,12 @@ stages:
   condition: and(eq(dependencies.DeployToPPApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PP-DRAFT_ApiLmiImport
   variables:
-  - template: VariableTemplates/PPDraftEnvironmentVariables.yml
   - group: dfc-shared-pp
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-pp
   - group: dfc-app-shared-pp
   - group: 'KeyVault - dfc-pp-shared-kv'
+  - template: VariableTemplates/PPDraftEnvironmentVariables.yml
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -249,12 +249,12 @@ stages:
   condition: and(eq(dependencies.DeployToPPDraftApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PRD_ApiLmiImport
   variables:
-  - template: VariableTemplates/PRDEnvironmentVariables.yml
   - group: dfc-shared-prd
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-prd
   - group: dfc-app-shared-prd
   - group: 'KeyVault - dfc-prd-shared-kv'
+  - template: VariableTemplates/PRDEnvironmentVariables.yml
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
@@ -281,12 +281,12 @@ stages:
   condition: and(eq(dependencies.DeployToPRDApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PRD-DRAFT_ApiLmiImport
   variables:
-  - template: VariableTemplates/PRDDraftEnvironmentVariables.yml
   - group: dfc-shared-prd
   - group: dfc-app-shared-all
   - group: dfc-stax-shared-prd
   - group: dfc-app-shared-prd
   - group: 'KeyVault - dfc-prd-shared-kv'
+  - template: VariableTemplates/PRDDraftEnvironmentVariables.yml
   jobs:
   - template: JobTemplates/deploy-environment.yml
     parameters:
