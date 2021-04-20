@@ -5,6 +5,7 @@ using DFC.Api.Lmi.Import.Extensions;
 using DFC.Api.Lmi.Import.HttpClientPolicies;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
+using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
 using DFC.Api.Lmi.Import.Services;
 using DFC.Api.Lmi.Import.Startup;
 using DFC.ServiceTaxonomy.Neo4j.Configuration;
@@ -41,6 +42,7 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
             builder.Services.AddSingleton(new EnvironmentValues());
+            builder.Services.AddSingleton(new SocJobProfilesMappingsCachedModel());
             builder.Services.AddSingleton(configuration.GetSection(nameof(EventGridClientOptions)).Get<EventGridClientOptions>() ?? new EventGridClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(LmiApiClientOptions)).Get<LmiApiClientOptions>() ?? new LmiApiClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(JobProfileApiClientOptions)).Get<JobProfileApiClientOptions>() ?? new JobProfileApiClientOptions());
