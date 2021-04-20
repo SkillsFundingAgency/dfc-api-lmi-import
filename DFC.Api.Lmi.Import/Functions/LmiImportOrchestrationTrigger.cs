@@ -28,6 +28,7 @@ namespace DFC.Api.Lmi.Import.Functions
         private readonly IGraphService graphService;
         private readonly IEventGridService eventGridService;
         private readonly EventGridClientOptions eventGridClientOptions;
+        private readonly SocJobProfilesMappingsCachedModel socJobProfilesMappingsCachedModel;
 
         public LmiImportOrchestrationTrigger(
             ILogger<LmiImportOrchestrationTrigger> logger,
@@ -36,7 +37,8 @@ namespace DFC.Api.Lmi.Import.Functions
             ILmiSocImportService lmiSocImportService,
             IGraphService graphService,
             IEventGridService eventGridService,
-            EventGridClientOptions eventGridClientOptions)
+            EventGridClientOptions eventGridClientOptions,
+            SocJobProfilesMappingsCachedModel socJobProfilesMappingsCachedModel)
         {
             this.logger = logger;
             this.jobProfileService = jobProfileService;
@@ -45,6 +47,7 @@ namespace DFC.Api.Lmi.Import.Functions
             this.graphService = graphService;
             this.eventGridService = eventGridService;
             this.eventGridClientOptions = eventGridClientOptions;
+            this.socJobProfilesMappingsCachedModel = socJobProfilesMappingsCachedModel;
         }
 
         [FunctionName(nameof(GraphRefreshSocOrchestrator))]
@@ -53,7 +56,13 @@ namespace DFC.Api.Lmi.Import.Functions
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
             var socRequest = context.GetInput<SocRequestModel>();
-            var socJobProfileMapping = new SocJobProfileMappingModel { Soc = socRequest.Soc };
+
+            if (socJobProfilesMappingsCachedModel.SocJobProfileMappings == null || !socJobProfilesMappingsCachedModel.SocJobProfileMappings.Any())
+            {
+                socJobProfilesMappingsCachedModel.SocJobProfileMappings = await context.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(GetJobProfileSocMappingsActivity), null).ConfigureAwait(true);
+            }
+
+            var socJobProfileMapping = new SocJobProfileMappingModel { Soc = socRequest.Soc, JobProfiles = socJobProfilesMappingsCachedModel.SocJobProfileMappings.FirstOrDefault(f => f.Soc == socRequest.Soc)?.JobProfiles };
 
             await context.CallActivityAsync(nameof(GraphPurgeSocActivity), socRequest.Soc).ConfigureAwait(true);
 
