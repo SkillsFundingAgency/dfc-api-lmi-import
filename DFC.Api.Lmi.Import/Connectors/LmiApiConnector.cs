@@ -1,4 +1,5 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Utilities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
@@ -31,6 +32,10 @@ namespace DFC.Api.Lmi.Import.Connectors
 
             if (apiData != null)
             {
+                logger.LogInformation($"Sanitizing LMI data from: {uri}");
+
+                TextSanitizerUtilities.Sanitize(apiData);
+
                 logger.LogInformation($"Get LMI data from: {uri} was successful");
 
                 return apiData;
