@@ -9,5 +9,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.TestModels
         public Guid Id { get; set; }
 
         public string? Name { get; set; }
+
+        public string? Description { get; set; }
     }
 }

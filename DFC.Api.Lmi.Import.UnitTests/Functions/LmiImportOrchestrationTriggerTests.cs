@@ -28,11 +28,12 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         private readonly IEventGridService fakeEventGridService = A.Fake<IEventGridService>();
         private readonly EventGridClientOptions dummyEventGridClientOptions = A.Dummy<EventGridClientOptions>();
         private readonly IDurableOrchestrationContext fakeDurableOrchestrationContext = A.Fake<IDurableOrchestrationContext>();
+        private readonly SocJobProfilesMappingsCachedModel socJobProfilesMappingsCachedModel = new SocJobProfilesMappingsCachedModel();
         private readonly LmiImportOrchestrationTrigger lmiImportOrchestrationTrigger;
 
         public LmiImportOrchestrationTriggerTests()
         {
-            lmiImportOrchestrationTrigger = new LmiImportOrchestrationTrigger(fakeLogger, fakeJobProfileService, fakeMapLmiToGraphService, fakeLmiSocImportService, fakeGraphService, fakeEventGridService, dummyEventGridClientOptions);
+            lmiImportOrchestrationTrigger = new LmiImportOrchestrationTrigger(fakeLogger, fakeJobProfileService, fakeMapLmiToGraphService, fakeLmiSocImportService, fakeGraphService, fakeEventGridService, dummyEventGridClientOptions, socJobProfilesMappingsCachedModel);
         }
 
         [Fact]
@@ -48,6 +49,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), null)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocActivity), A<int>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedTwiceExactly();
@@ -68,6 +70,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationContext.GetInput<SocRequestModel>()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), null)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.GraphPurgeSocActivity), A<int>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostGraphEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedOnceExactly();

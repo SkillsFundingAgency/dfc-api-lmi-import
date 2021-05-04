@@ -3,6 +3,7 @@ using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.GraphData;
 using DFC.Api.Lmi.Import.Services;
 using DFC.Api.Lmi.Import.Startup;
+using DFC.Api.Lmi.Import.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -41,7 +42,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         [Fact]
         public void CypherQueryBuilderServiceCheckGraphModelIntegrityReturnsSuccess()
         {
-            foreach (var graphNodeType in Utilities.AttributeUtilies.GetTypesWithAttribute(Assembly.GetAssembly(typeof(WebJobsExtensionStartup)), typeof(GraphNodeAttribute)))
+            foreach (var graphNodeType in AttributeUtilities.GetTypesWithAttribute(Assembly.GetAssembly(typeof(WebJobsExtensionStartup)), typeof(GraphNodeAttribute)))
             {
                 //arrange
                 int intialKeyCount = 0;

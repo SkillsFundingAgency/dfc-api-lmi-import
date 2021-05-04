@@ -12,15 +12,18 @@ namespace DFC.Api.Lmi.Import.Services
         private readonly ILogger<JobProfileService> logger;
         private readonly IJobProfileApiConnector jobProfileApiConnector;
         private readonly IJobProfilesToSocMappingService jobProfilesToSocMappingService;
+        private readonly SocJobProfilesMappingsCachedModel socJobProfilesMappingsCachedModel;
 
         public JobProfileService(
              ILogger<JobProfileService> logger,
              IJobProfileApiConnector jobProfileApiConnector,
-             IJobProfilesToSocMappingService jobProfilesToSocMappingService)
+             IJobProfilesToSocMappingService jobProfilesToSocMappingService,
+             SocJobProfilesMappingsCachedModel socJobProfilesMappingsCachedModel)
         {
             this.logger = logger;
             this.jobProfileApiConnector = jobProfileApiConnector;
             this.jobProfilesToSocMappingService = jobProfilesToSocMappingService;
+            this.socJobProfilesMappingsCachedModel = socJobProfilesMappingsCachedModel;
         }
 
         public async Task<IList<SocJobProfileMappingModel>?> GetMappingsAsync()
@@ -34,11 +37,11 @@ namespace DFC.Api.Lmi.Import.Services
                 logger.LogInformation($"Retrieved {jobProfileSummaries.Count} job-profiles from job-profiles API");
 
                 var jobProfileDetails = await jobProfileApiConnector.GetDetailsAsync(jobProfileSummaries).ConfigureAwait(false);
-                var socJobProfileMappings = jobProfilesToSocMappingService.Map(jobProfileDetails);
+                socJobProfilesMappingsCachedModel.SocJobProfileMappings = jobProfilesToSocMappingService.Map(jobProfileDetails);
 
-                logger.LogInformation($"Transformed {jobProfileSummaries.Count} job-profiles into {socJobProfileMappings.Count} SOC / job-profile mapping");
+                logger.LogInformation($"Transformed {jobProfileSummaries.Count} job-profiles into {socJobProfilesMappingsCachedModel.SocJobProfileMappings.Count} SOC / job-profile mapping");
 
-                return socJobProfileMappings;
+                return socJobProfilesMappingsCachedModel.SocJobProfileMappings;
             }
             else
             {
