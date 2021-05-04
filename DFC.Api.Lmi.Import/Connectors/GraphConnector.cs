@@ -46,7 +46,7 @@ namespace DFC.Api.Lmi.Import.Connectors
 
             var commands = new List<string>();
 
-            var parentGraphNodeAttribute = Utilities.AttributeUtilies.GetAttribute<GraphNodeAttribute>(parent.GetType());
+            var parentGraphNodeAttribute = Utilities.AttributeUtilities.GetAttribute<GraphNodeAttribute>(parent.GetType());
             if (parentGraphNodeAttribute != null)
             {
                 commands.Add(cypherQueryBuilderService.BuildMerge(parent, parentGraphNodeAttribute.Name));

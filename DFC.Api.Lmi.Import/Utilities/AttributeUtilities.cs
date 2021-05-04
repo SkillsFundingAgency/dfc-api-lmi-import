@@ -6,7 +6,7 @@ using System.Reflection;
 namespace DFC.Api.Lmi.Import.Utilities
 {
     [ExcludeFromCodeCoverage]
-    public static class AttributeUtilies
+    public static class AttributeUtilities
     {
         public static TModel? GetAttribute<TModel>(Type type)
             where TModel : Attribute

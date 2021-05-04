@@ -16,11 +16,12 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
         private readonly ILogger<JobProfileService> fakeLogger = A.Fake<ILogger<JobProfileService>>();
         private readonly IJobProfileApiConnector fakeJobProfileApiConnector = A.Fake<IJobProfileApiConnector>();
         private readonly IJobProfilesToSocMappingService fakeJobProfilesToSocMappingService = A.Fake<IJobProfilesToSocMappingService>();
+        private readonly SocJobProfilesMappingsCachedModel socJobProfilesMappingsCachedModel = new SocJobProfilesMappingsCachedModel();
         private readonly JobProfileService jobProfileService;
 
         public JobProfileServiceTests()
         {
-            jobProfileService = new JobProfileService(fakeLogger, fakeJobProfileApiConnector, fakeJobProfilesToSocMappingService);
+            jobProfileService = new JobProfileService(fakeLogger, fakeJobProfileApiConnector, fakeJobProfilesToSocMappingService, socJobProfilesMappingsCachedModel);
         }
 
         [Fact]

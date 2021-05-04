@@ -24,13 +24,13 @@ namespace DFC.Api.Lmi.Import.Services
         {
             var commands = new List<string>();
 
-            var graphNodeClasses = Utilities.AttributeUtilies.GetTypesWithAttribute(Assembly.GetExecutingAssembly(), typeof(GraphNodeAttribute));
+            var graphNodeClasses = Utilities.AttributeUtilities.GetTypesWithAttribute(Assembly.GetExecutingAssembly(), typeof(GraphNodeAttribute));
 
             if (graphNodeClasses != null && graphNodeClasses.Any())
             {
                 foreach (var graphNodeClass in graphNodeClasses)
                 {
-                    var graphNodeAttribute = Utilities.AttributeUtilies.GetAttribute<GraphNodeAttribute>(graphNodeClass);
+                    var graphNodeAttribute = Utilities.AttributeUtilities.GetAttribute<GraphNodeAttribute>(graphNodeClass);
 
                     if (graphNodeAttribute != null)
                     {
@@ -46,13 +46,13 @@ namespace DFC.Api.Lmi.Import.Services
         {
             var commands = new List<string>();
 
-            var graphNodeClasses = Utilities.AttributeUtilies.GetTypesWithAttribute(Assembly.GetExecutingAssembly(), typeof(GraphNodeAttribute));
+            var graphNodeClasses = Utilities.AttributeUtilities.GetTypesWithAttribute(Assembly.GetExecutingAssembly(), typeof(GraphNodeAttribute));
 
             if (graphNodeClasses != null && graphNodeClasses.Any())
             {
                 foreach (var graphNodeClass in graphNodeClasses)
                 {
-                    var graphNodeAttribute = Utilities.AttributeUtilies.GetAttribute<GraphNodeAttribute>(graphNodeClass);
+                    var graphNodeAttribute = Utilities.AttributeUtilities.GetAttribute<GraphNodeAttribute>(graphNodeClass);
 
                     if (graphNodeAttribute != null)
                     {
@@ -211,7 +211,7 @@ namespace DFC.Api.Lmi.Import.Services
             _ = child ?? throw new ArgumentNullException(nameof(child));
 
             var commands = new List<string>();
-            var childGraphNodeAttribute = Utilities.AttributeUtilies.GetAttribute<GraphNodeAttribute>(child.GetType());
+            var childGraphNodeAttribute = Utilities.AttributeUtilities.GetAttribute<GraphNodeAttribute>(child.GetType());
 
             if (childGraphNodeAttribute != null)
             {
