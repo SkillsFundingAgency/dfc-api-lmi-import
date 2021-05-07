@@ -163,11 +163,11 @@ namespace DFC.Api.Lmi.Import.Functions
                 await Task.WhenAll(parallelTasks).ConfigureAwait(true);
 
                 decimal importedToGraphCount = parallelTasks.Count(t => t.Result != null);
+                var successPercentage = decimal.Divide(importedToGraphCount, socJobProfileMappings.Count) * 100;
 
-                logger.LogInformation($"Imported to Graph {importedToGraphCount} of {socJobProfileMappings.Count} SOC mappings");
+                logger.LogInformation($"Imported to Graph {importedToGraphCount} of {socJobProfileMappings.Count} SOC mappings = {successPercentage:0.0}% success");
 
-                var successThreshold = importedToGraphCount / socJobProfileMappings.Count * 100;
-                if (successThreshold >= orchestratorRequestModel.SuccessRelayPercent)
+                if (successPercentage >= orchestratorRequestModel.SuccessRelayPercent)
                 {
                     var eventGridPostRequest = new EventGridPostRequestModel
                     {
