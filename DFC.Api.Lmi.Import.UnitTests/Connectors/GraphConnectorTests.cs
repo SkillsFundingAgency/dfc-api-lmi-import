@@ -1,5 +1,6 @@
 ﻿using DFC.Api.Lmi.Import.Connectors;
 using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.GraphData;
 using DFC.ServiceTaxonomy.Neo4j.Commands;
@@ -107,8 +108,10 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
             Assert.Equal("Value cannot be null. (Parameter 'parent')", exceptionResult.Message);
         }
 
-        [Fact]
-        public async Task GraphConnectorRunReturnsSuccess()
+        [Theory]
+        [InlineData(GraphReplicaSet.Published)]
+        [InlineData(GraphReplicaSet.Draft)]
+        public async Task GraphConnectorRunReturnsSuccess(GraphReplicaSet graphReplicaSet)
         {
             // arrange
             var commands = new List<string>
@@ -120,7 +123,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
             A.CallTo(() => fakeServiceProvider.GetService(typeof(ICustomCommand))).Returns(new CustomCommand());
 
             // act
-            await graphConnector.RunAsync(commands).ConfigureAwait(false);
+            await graphConnector.RunAsync(commands, graphReplicaSet).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeServiceProvider.GetService(typeof(ICustomCommand))).MustHaveHappened(commands.Count, Times.Exactly);
@@ -134,12 +137,30 @@ namespace DFC.Api.Lmi.Import.UnitTests.Connectors
             // arrange
 
             // act
-            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await graphConnector.RunAsync(null).ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await graphConnector.RunAsync(null, GraphReplicaSet.Draft).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeServiceProvider.GetService(typeof(ICustomCommand))).MustNotHaveHappened();
             A.CallTo(() => fakeGraphCluster.Run(A<string>.Ignored, A<ICommand[]>.Ignored)).MustNotHaveHappened();
             Assert.Equal("Value cannot be null. (Parameter 'commands')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public async Task GraphConnectorRunReturnsExceptionForBadGraphReplicaSet()
+        {
+            // arrange
+            var commands = new List<string>
+            {
+                "command one",
+                "command two",
+            };
+
+            // act
+            var exceptionResult = await Assert.ThrowsAsync<NotImplementedException>(async () => await graphConnector.RunAsync(commands, GraphReplicaSet.None).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeServiceProvider.GetService(typeof(ICustomCommand))).MustNotHaveHappened();
+            A.CallTo(() => fakeGraphCluster.Run(A<string>.Ignored, A<ICommand[]>.Ignored)).MustNotHaveHappened();
         }
     }
 }

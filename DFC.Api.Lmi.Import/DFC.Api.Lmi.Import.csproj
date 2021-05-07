@@ -1,45 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-	  <TargetFramework>netcoreapp3.1</TargetFramework>
-	  <AzureFunctionsVersion>v3</AzureFunctionsVersion>
-	  <ProjectGuid>{364418A9-CD6E-4546-8F12-72A1186E9087}</ProjectGuid>
-	  <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
-	  <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<AzureFunctionsVersion>v3</AzureFunctionsVersion>
+		<ProjectGuid>{364418A9-CD6E-4546-8F12-72A1186E9087}</ProjectGuid>
+		<CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-	  <PackageReference Include="AzureFunctions.Extensions.Swashbuckle" Version="1.4.5-preview5" />
-	  <PackageReference Include="DFC.ServiceTaxonomy.Neo4j" Version="0.409.0" />
-	  <PackageReference Include="DFC.Swagger.Standard" Version="0.1.20" />
-	  <PackageReference Include="HtmlAgilityPack" Version="1.11.33" />
-	  <PackageReference Include="Microsoft.Azure.EventGrid" Version="3.2.0" />
-	  <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.4.1" />
-	  <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.11" />
-	  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
-	  <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.9" />
-	  <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.9" />
-	  <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
-	  <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-	  <None Update="host.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="local.settings.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-	  </None>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+		<PackageReference Include="AzureFunctions.Extensions.Swashbuckle" Version="1.4.5-preview5" />
+		<PackageReference Include="DFC.ServiceTaxonomy.Neo4j" Version="0.409.0" />
+		<PackageReference Include="DFC.Compui.Subscriptions" Version="1.0.96" />
+		<PackageReference Include="DFC.Swagger.Standard" Version="0.1.20" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.33" />
+		<PackageReference Include="Microsoft.Azure.EventGrid" Version="3.2.0" />
+		<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.4.3" />
+		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.11" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Http" Version="3.1.9" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.9" />
+		<PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="host.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="local.settings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
 </Project>

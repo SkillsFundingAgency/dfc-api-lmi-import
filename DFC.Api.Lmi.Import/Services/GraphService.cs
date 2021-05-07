@@ -1,4 +1,5 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models.GraphData;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,7 +21,7 @@ namespace DFC.Api.Lmi.Import.Services
             this.graphConnector = graphConnector;
         }
 
-        public async Task<bool> ImportAsync(GraphSocDatasetModel? graphSocDataset)
+        public async Task<bool> ImportAsync(GraphSocDatasetModel? graphSocDataset, GraphReplicaSet graphReplicaSet)
         {
             _ = graphSocDataset ?? throw new ArgumentNullException(nameof(graphSocDataset));
 
@@ -32,7 +33,7 @@ namespace DFC.Api.Lmi.Import.Services
 
                 logger.LogInformation($"Importing SOC dataset to Graph: {graphSocDataset.Soc}: executing commands");
 
-                await graphConnector.RunAsync(commands).ConfigureAwait(false);
+                await graphConnector.RunAsync(commands, graphReplicaSet).ConfigureAwait(false);
 
                 logger.LogInformation($"Imported SOC dataset to Graph: {graphSocDataset.Soc}");
 
@@ -45,7 +46,20 @@ namespace DFC.Api.Lmi.Import.Services
             }
         }
 
-        public async Task PurgeAsync()
+        public async Task PublishFromDraftAsync(GraphReplicaSet graphReplicaSet)
+        {
+            logger.LogInformation("Publishing draft LMI data to published graph");
+
+            //var commands = graphConnector.BuildPublishCommands();
+
+            //logger.LogInformation("Publishing draft LMI data to published graph: executing commands");
+
+            //await graphConnector.RunAsync(commands, graphReplicaSet).ConfigureAwait(false);
+
+            logger.LogInformation("Published draft LMI data to published graph");
+        }
+
+        public async Task PurgeAsync(GraphReplicaSet graphReplicaSet)
         {
             logger.LogInformation("Purging Graph of LMI data");
 
@@ -53,12 +67,12 @@ namespace DFC.Api.Lmi.Import.Services
 
             logger.LogInformation("Purging Graph of LMI data: executing commands");
 
-            await graphConnector.RunAsync(commands).ConfigureAwait(false);
+            await graphConnector.RunAsync(commands, graphReplicaSet).ConfigureAwait(false);
 
             logger.LogInformation("Purged Graph of LMI data");
         }
 
-        public async Task PurgeSocAsync(int soc)
+        public async Task PurgeSocAsync(int soc, GraphReplicaSet graphReplicaSet)
         {
             logger.LogInformation($"Purging Graph of LMI data for SOC {soc}");
 
@@ -66,7 +80,7 @@ namespace DFC.Api.Lmi.Import.Services
 
             logger.LogInformation($"Purging Graph of LMI data for SOC {soc}: executing commands");
 
-            await graphConnector.RunAsync(commands).ConfigureAwait(false);
+            await graphConnector.RunAsync(commands, graphReplicaSet).ConfigureAwait(false);
 
             logger.LogInformation($"Purged Graph of LMI data for SOC {soc}");
         }

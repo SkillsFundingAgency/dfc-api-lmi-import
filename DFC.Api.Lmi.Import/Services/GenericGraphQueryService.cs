@@ -11,20 +11,20 @@ namespace DFC.Api.Lmi.Import.Services
     public class GenericGraphQueryService : IGenericGraphQueryService
     {
         //   private readonly IOptionsMonitor<ContentApiOptions> _contentApiOptions;
-        private readonly IGraphCluster _graphCluster;
+        private readonly IGraphCluster graphCluster;
         //    private readonly IJsonFormatHelper _jsonFormatHelper;
 
         // public GenericGraphQueryService(IOptionsMonitor<ContentApiOptions> contentApiOptions, IGraphClusterBuilder graphClusterBuilder, IJsonFormatHelper jsonFormatHelper)
-        public GenericGraphQueryService(/ IGraphClusterBuilder graphClusterBuilder)
+        public GenericGraphQueryService(IGraphClusterBuilder graphClusterBuilder)
         {
             //      _contentApiOptions = contentApiOptions ?? throw new ArgumentNullException(nameof(contentApiOptions));
-            _graphCluster = graphClusterBuilder.Build() ?? throw new ArgumentNullException(nameof(graphClusterBuilder));
+            graphCluster = graphClusterBuilder.Build() ?? throw new ArgumentNullException(nameof(graphClusterBuilder));
             //        _jsonFormatHelper = jsonFormatHelper ?? throw new ArgumentNullException(nameof(jsonFormatHelper));
         }
 
         public async Task<IEnumerable<IRecord>> ExecuteCypherQuery(string query)
         {
-            return await _graphCluster.Run("target", new GenericCypherQueryModel(query));
+            return await graphCluster.Run("target", new GenericCypherQueryModel(query)).ConfigureAwait(false);
         }
     }
 }
