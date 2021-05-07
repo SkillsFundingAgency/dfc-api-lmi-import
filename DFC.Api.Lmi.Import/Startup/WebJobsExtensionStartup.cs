@@ -37,6 +37,7 @@ namespace DFC.Api.Lmi.Import.Startup
                 .AddEnvironmentVariables()
                 .Build();
 
+        //    builder.Services.AddSingleton<IConfiguration>(configuration);
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly());
             builder.Services.AddHttpClient();
             builder.Services.AddApplicationInsightsTelemetry();
@@ -60,6 +61,7 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddTransient<IMapLmiToGraphService, MapLmiToGraphService>();
             builder.Services.AddTransient<IEventGridService, EventGridService>();
             builder.Services.AddTransient<IEventGridClientService, EventGridClientService>();
+            builder.Services.AddTransient<IGenericGraphQueryService, GenericGraphQueryService>();
 
             var policyOptions = configuration.GetSection(AppSettingsPolicies).Get<PolicyOptions>() ?? new PolicyOptions();
             var policyRegistry = builder.Services.AddPolicyRegistry();
