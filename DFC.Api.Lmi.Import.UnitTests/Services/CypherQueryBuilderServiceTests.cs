@@ -372,7 +372,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             };
             var propertyInfo = item.GetType().GetProperty(nameof(GraphPredictedModel.PredictedEmployment));
             var expectedResults = new List<string>
-             {
+            {
                 $"MERGE (a:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{item.PredictedEmployment.First().ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.PredictedEmployment.First().Measure:O}',a.skos__prefLabel = {year},a.Employment = 1234.5678,a.CreatedDate = datetime('{item.PredictedEmployment.First().CreatedDate:O}'),a.ItemId = '{item.PredictedEmployment.First().ItemId}'",
                 $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) MERGE (p)-[rel:PredictedEmployment]->(c)",
             };

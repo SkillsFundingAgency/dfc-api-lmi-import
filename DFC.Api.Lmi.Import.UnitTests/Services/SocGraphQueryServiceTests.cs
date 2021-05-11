@@ -48,7 +48,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             A.CallTo(() => fakeGenericGraphQueryService.ExecuteCypherQuery<GraphSocDatasetModel>(A<GraphReplicaSet>.Ignored, A<string>.Ignored)).Returns(expectedResults);
 
             // act
-            var result = await socGraphQueryService.GetDetailAsync(GraphReplicaSet.Draft,1234).ConfigureAwait(false);
+            var result = await socGraphQueryService.GetDetailAsync(GraphReplicaSet.Draft, 1234).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeGenericGraphQueryService.ExecuteCypherQuery<GraphSocDatasetModel>(A<GraphReplicaSet>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
