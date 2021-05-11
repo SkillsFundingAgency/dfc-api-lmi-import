@@ -1,13 +1,16 @@
 ﻿using DFC.ServiceTaxonomy.Neo4j.Queries;
 using DFC.ServiceTaxonomy.Neo4j.Queries.Interfaces;
 using Neo4j.Driver;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.Lmi.Import.Models
 {
     [ExcludeFromCodeCoverage]
-    public class GenericCypherQueryModel : IQuery<IRecord>
+    public class GenericCypherQueryModel<TModel> : IQuery<TModel>
+        where TModel : class, new()
     {
         public GenericCypherQueryModel(string query)
         {
@@ -37,9 +40,14 @@ namespace DFC.Api.Lmi.Import.Models
             return validationErrors;
         }
 
-        public IRecord ProcessRecord(IRecord record)
+        public TModel ProcessRecord(IRecord record)
         {
-            return record;
+            _ = record ?? throw new ArgumentNullException(nameof(record));
+
+            var nodeProps = JsonConvert.SerializeObject(record[0].As<INode>().Properties);
+            var model = JsonConvert.DeserializeObject<TModel>(nodeProps);
+
+            return model;
         }
     }
 }

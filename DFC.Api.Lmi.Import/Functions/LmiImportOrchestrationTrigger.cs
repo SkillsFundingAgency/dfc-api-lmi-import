@@ -196,6 +196,7 @@ namespace DFC.Api.Lmi.Import.Functions
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
+            await context.CallActivityAsync(nameof(PurgePublishedActivity), null).ConfigureAwait(true);
             await context.CallActivityAsync(nameof(RefreshPublishedActivity), null).ConfigureAwait(true);
         }
 
@@ -220,7 +221,7 @@ namespace DFC.Api.Lmi.Import.Functions
         {
             logger.LogInformation("Refreshing published Graph from draft Graph");
 
-            await graphService.PublishFromDraftAsync(GraphReplicaSet.Published).ConfigureAwait(false);
+            await graphService.PublishAsync(GraphReplicaSet.Draft, GraphReplicaSet.Published).ConfigureAwait(false);
         }
 
         [FunctionName(nameof(PurgePublishedActivity))]

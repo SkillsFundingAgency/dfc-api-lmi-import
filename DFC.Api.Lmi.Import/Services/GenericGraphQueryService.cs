@@ -1,30 +1,39 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models;
 using DFC.ServiceTaxonomy.Neo4j.Services.Interfaces;
-using Neo4j.Driver;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Services
 {
+    [ExcludeFromCodeCoverage]
     public class GenericGraphQueryService : IGenericGraphQueryService
     {
-        //   private readonly IOptionsMonitor<ContentApiOptions> _contentApiOptions;
         private readonly IGraphCluster graphCluster;
-        //    private readonly IJsonFormatHelper _jsonFormatHelper;
+        private readonly GraphOptions graphOptions;
 
-        // public GenericGraphQueryService(IOptionsMonitor<ContentApiOptions> contentApiOptions, IGraphClusterBuilder graphClusterBuilder, IJsonFormatHelper jsonFormatHelper)
-        public GenericGraphQueryService(IGraphClusterBuilder graphClusterBuilder)
+        public GenericGraphQueryService(IGraphClusterBuilder graphClusterBuilder, GraphOptions graphOptions)
         {
-            //      _contentApiOptions = contentApiOptions ?? throw new ArgumentNullException(nameof(contentApiOptions));
-            graphCluster = graphClusterBuilder.Build() ?? throw new ArgumentNullException(nameof(graphClusterBuilder));
-            //        _jsonFormatHelper = jsonFormatHelper ?? throw new ArgumentNullException(nameof(jsonFormatHelper));
+            graphCluster = graphClusterBuilder?.Build() ?? throw new ArgumentNullException(nameof(graphClusterBuilder));
+            this.graphOptions = graphOptions;
         }
 
-        public async Task<IEnumerable<IRecord>> ExecuteCypherQuery(string query)
+        public async Task<List<TModel>> ExecuteCypherQuery<TModel>(GraphReplicaSet graphReplicaSet, string query)
+            where TModel : class, new()
         {
-            return await graphCluster.Run("target", new GenericCypherQueryModel(query)).ConfigureAwait(false);
+            string replicaSetName = graphReplicaSet switch
+            {
+                GraphReplicaSet.Published => graphOptions.PublishedReplicaSetName,
+                GraphReplicaSet.Draft => graphOptions.DraftReplicaSetName,
+                _ => throw new NotImplementedException(),
+            };
+
+            var result = await graphCluster.Run(replicaSetName, new GenericCypherQueryModel<TModel>(query)).ConfigureAwait(false);
+
+            return result;
         }
     }
 }

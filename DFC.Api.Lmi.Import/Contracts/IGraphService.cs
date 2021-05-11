@@ -8,7 +8,7 @@ namespace DFC.Api.Lmi.Import.Contracts
     {
         Task<bool> ImportAsync(GraphSocDatasetModel? graphSocDataset, GraphReplicaSet graphReplicaSet);
 
-        Task PublishFromDraftAsync(GraphReplicaSet graphReplicaSet);
+        Task PublishAsync(GraphReplicaSet fromGraphReplicaSet, GraphReplicaSet toGraphReplicaSet);
 
         Task PurgeAsync(GraphReplicaSet graphReplicaSet);
 

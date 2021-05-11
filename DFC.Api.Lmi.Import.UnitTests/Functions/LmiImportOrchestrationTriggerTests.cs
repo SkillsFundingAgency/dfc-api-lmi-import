@@ -207,6 +207,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             await lmiImportOrchestrationTrigger.RefreshPublishedOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
 
             // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PurgePublishedActivity), null)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.RefreshPublishedActivity), null)).MustHaveHappenedOnceExactly();
         }
 
@@ -231,7 +232,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             await lmiImportOrchestrationTrigger.RefreshPublishedActivity(null).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeGraphService.PublishFromDraftAsync(GraphReplicaSet.Published)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeGraphService.PublishAsync(GraphReplicaSet.Draft, GraphReplicaSet.Published)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]

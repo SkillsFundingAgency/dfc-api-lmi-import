@@ -59,6 +59,8 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddTransient<IJobProfileService, JobProfileService>();
             builder.Services.AddTransient<IJobProfilesToSocMappingService, JobProfilesToSocMappingService>();
             builder.Services.AddTransient<IGraphService, GraphService>();
+            builder.Services.AddTransient<IGenericGraphQueryService, GenericGraphQueryService>();
+            builder.Services.AddTransient<ISocGraphQueryService, SocGraphQueryService>();
             builder.Services.AddTransient<IMapLmiToGraphService, MapLmiToGraphService>();
             builder.Services.AddTransient<IEventGridService, EventGridService>();
             builder.Services.AddTransient<IEventGridClientService, EventGridClientService>();

@@ -1,9 +1,11 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
 using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models.GraphData;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Services
@@ -12,13 +14,16 @@ namespace DFC.Api.Lmi.Import.Services
     {
         private readonly ILogger<GraphService> logger;
         private readonly IGraphConnector graphConnector;
+        private readonly ISocGraphQueryService socGraphQueryService;
 
         public GraphService(
             ILogger<GraphService> logger,
-            IGraphConnector graphConnector)
+            IGraphConnector graphConnector,
+            ISocGraphQueryService socGraphQueryService)
         {
             this.logger = logger;
             this.graphConnector = graphConnector;
+            this.socGraphQueryService = socGraphQueryService;
         }
 
         public async Task<bool> ImportAsync(GraphSocDatasetModel? graphSocDataset, GraphReplicaSet graphReplicaSet)
@@ -46,17 +51,25 @@ namespace DFC.Api.Lmi.Import.Services
             }
         }
 
-        public async Task PublishFromDraftAsync(GraphReplicaSet graphReplicaSet)
+        public async Task PublishAsync(GraphReplicaSet fromGraphReplicaSet, GraphReplicaSet toGraphReplicaSet)
         {
-            logger.LogInformation("Publishing draft LMI data to published graph");
+            logger.LogInformation($"Publishing from {fromGraphReplicaSet} LMI data to {toGraphReplicaSet} graph");
 
-            //var commands = graphConnector.BuildPublishCommands();
+            var socModels = await socGraphQueryService.GetSummaryAsync(fromGraphReplicaSet).ConfigureAwait(false);
 
-            //logger.LogInformation("Publishing draft LMI data to published graph: executing commands");
+            if (socModels != null && socModels.Any())
+            {
+                foreach (var socModel in socModels)
+                {
+                    var graphSocDataset = await socGraphQueryService.GetDetailAsync(fromGraphReplicaSet, socModel.Soc).ConfigureAwait(false);
+                    if (graphSocDataset != null)
+                    {
+                        await ImportAsync(graphSocDataset, toGraphReplicaSet).ConfigureAwait(false);
+                    }
+                }
+            }
 
-            //await graphConnector.RunAsync(commands, graphReplicaSet).ConfigureAwait(false);
-
-            logger.LogInformation("Published draft LMI data to published graph");
+            logger.LogInformation($"Published from {fromGraphReplicaSet} LMI data to {toGraphReplicaSet} graph");
         }
 
         public async Task PurgeAsync(GraphReplicaSet graphReplicaSet)

@@ -6,6 +6,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -16,11 +17,12 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
     {
         private readonly ILogger<GraphService> fakeLogger = A.Fake<ILogger<GraphService>>();
         private readonly IGraphConnector fakeGraphConnector = A.Fake<IGraphConnector>();
+        private readonly ISocGraphQueryService fakeSocGraphQueryService = A.Fake<ISocGraphQueryService>();
         private readonly GraphService graphService;
 
         public GraphServiceTests()
         {
-            graphService = new GraphService(fakeLogger, fakeGraphConnector);
+            graphService = new GraphService(fakeLogger, fakeGraphConnector, fakeSocGraphQueryService);
         }
 
         [Fact]
@@ -71,6 +73,27 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored, A<GraphReplicaSet>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public async Task GraphServicePublishReturnsSuccess()
+        {
+            // arrange
+            var socModels = A.CollectionOfDummy<SocModel>(2).ToList();
+            var graphSocDataset = A.Dummy<GraphSocDatasetModel>();
+
+            A.CallTo(() => fakeSocGraphQueryService.GetSummaryAsync(A<GraphReplicaSet>.Ignored)).Returns(socModels);
+            A.CallTo(() => fakeSocGraphQueryService.GetDetailAsync(A<GraphReplicaSet>.Ignored, A<int>.Ignored)).Returns(graphSocDataset);
+            A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).Returns(A.CollectionOfDummy<string>(2));
+
+            // act
+            await graphService.PublishAsync(GraphReplicaSet.Draft, GraphReplicaSet.Published).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeSocGraphQueryService.GetSummaryAsync(A<GraphReplicaSet>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeSocGraphQueryService.GetDetailAsync(A<GraphReplicaSet>.Ignored, A<int>.Ignored)).MustHaveHappened(socModels.Count, Times.Exactly);
+            A.CallTo(() => fakeGraphConnector.BuildImportCommands(A<GraphSocDatasetModel>.Ignored)).MustHaveHappened(socModels.Count, Times.Exactly);
+            A.CallTo(() => fakeGraphConnector.RunAsync(A<IList<string>>.Ignored, A<GraphReplicaSet>.Ignored)).MustHaveHappened(socModels.Count, Times.Exactly);
         }
 
         [Fact]
