@@ -368,11 +368,11 @@
               },
               {
                 "name": "Neo4j__ReplicaSets__0__GraphInstances__0__Endpoint",
-                "value": "[parameters('Neo4jReplicaSets0GraphInstances0Endpoint')]"
+                "value": "neo4j"
               },
               {
                 "name": "Neo4j__ReplicaSets__0__GraphInstances__0__GraphName",
-                "value": "[parameters('Neo4jReplicaSets0GraphInstances0GraphName')]"
+                "value": "neo4j"
               },
               {
                 "name": "Neo4j__ReplicaSets__0__GraphInstances__0__DefaultGraph",
@@ -388,11 +388,11 @@
               },
               {
                 "name": "Neo4j__ReplicaSets__1__GraphInstances__0__Endpoint",
-                "value": "[parameters('Neo4jReplicaSets0GraphInstances0Endpoint')]"
+                "value": "Draft"
               },
               {
                 "name": "Neo4j__ReplicaSets__1__GraphInstances__0__GraphName",
-                "value": "[parameters('Neo4jReplicaSets0GraphInstances0GraphName')]"
+                "value": "neo4j"
               },
               {
                 "name": "Neo4j__ReplicaSets__1__GraphInstances__0__DefaultGraph",
