@@ -106,6 +106,12 @@
     },
     "EventGridClientOptionsApiEndpoint": {
       "value": "EventGridClientOptionsApiEndpoint"
+    },
+    "SubscriptionSettingsEndpoint": {
+      "value": "SubscriptionSettingsEndpoint"
+    },
+    "subscriptionUrl":{
+      "value": "subscriptionUrl"
     }
   }
 }
