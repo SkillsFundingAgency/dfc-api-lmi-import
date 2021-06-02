@@ -68,7 +68,7 @@ jobs:
 
 - ${{ each apiPartition in parameters.Apis }}:
   - ${{ each api in apiPartition }}:
-    - deployment: Deploy${{ api.name }}
+    - deployment: DeployDraft${{ api.name }}
       condition: ne(contains('${{ parameters.EnvironmentName }}', 'DRAFT')), true)
       displayName: "Deploy ${{ api.name }}"
       environment: ${{ parameters.EnvironmentName }}
