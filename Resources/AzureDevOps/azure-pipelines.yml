@@ -80,6 +80,7 @@ stages:
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -112,6 +113,7 @@ stages:
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -144,6 +146,7 @@ stages:
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -176,6 +179,7 @@ stages:
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       Apis: 
         -
           - name: import
@@ -209,6 +213,7 @@ stages:
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -241,6 +246,7 @@ stages:
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       Apis: 
         -
           - name: import
@@ -274,6 +280,7 @@ stages:
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -305,6 +312,7 @@ stages:
       ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
+      SubscriptionPosturi: '$(SubscriptionPosturi)'
       ApimApiName: $(ApimApiName)
       Apis: 
         -

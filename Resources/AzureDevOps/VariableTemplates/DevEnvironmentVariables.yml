@@ -67,3 +67,5 @@ variables:
   value: ''
 - name: subscriptionUrl
   value: ''
+- name: SubscriptionPosturi
+  value: https://$(FunctionAppName).$(FunctionAppDomain)/subscription/
