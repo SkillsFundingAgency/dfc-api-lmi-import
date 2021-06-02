@@ -43,7 +43,6 @@ jobs:
 - ${{ each apiPartition in parameters.Apis }}:
   - ${{ each api in apiPartition }}:
     - deployment: Deploy${{ api.name }}
-      # condition: contains('${{ parameters.EnvironmentName }}', 'DRAFT'))
       displayName: "Deploy ${{ api.name }}"
       environment: ${{ parameters.EnvironmentName }}
       dependsOn: 
@@ -53,7 +52,6 @@ jobs:
           deploy:
             steps:
             - template: ../StepTemplates/deploy-functionapp-apim-zdt.yml
-              condition: contains('${{ parameters.EnvironmentName }}', 'DRAFT'))
               parameters:
                 WebAppName: '${{ api.azureFunctionName }}'
                 AzureSubscription: '${{ parameters.AzureSubscription }}'
@@ -64,7 +62,8 @@ jobs:
                 ApimServiceName: '${{ parameters.ApimServiceName }}'
                 APIMProductName: '${{ parameters.ApimProductName }}'
                 APIMApiName: '${{ parameters.ApimApiName }}'
-                SubscriptionPosturi: '${{ parameters.SubscriptionPosturi }}'                
+                SubscriptionPosturi: '${{ parameters.SubscriptionPosturi }}'    
+                EnvironmentName: '${{ parameters.EnvironmentName }}'    
 
 
 # - ${{ each apiPartition in parameters.Apis }}:
