@@ -53,6 +53,7 @@ jobs:
           deploy:
             steps:
             - template: ../StepTemplates/deploy-functionapp-apim-zdt.yml
+              condition: contains('${{ parameters.EnvironmentName }}', 'DRAFT'))
               parameters:
                 WebAppName: '${{ api.azureFunctionName }}'
                 AzureSubscription: '${{ parameters.AzureSubscription }}'
