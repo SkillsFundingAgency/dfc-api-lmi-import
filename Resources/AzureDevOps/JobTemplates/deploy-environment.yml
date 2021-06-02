@@ -17,7 +17,7 @@ parameters:
   ApimServiceName: ''
   ApimProductName: ''
   ApimApiName: ''
-  SubscriptionPosturi: '${{ parameters.SubscriptionPosturi }}'
+  SubscriptionPosturi: ''
   Apis: []
 
 jobs:
