@@ -64,7 +64,7 @@ steps:
 
 - task: AzurePowerShell@5
   displayName: 'Send a post request to /subscription'
-  condition: contains('${{ parameters.EnvironmentName }}', 'DRAFT'))
+  condition: contains('${{ parameters.EnvironmentName }}', 'DRAFT')
   inputs:
     azureSubscription: '${{ parameters.AzureSubscription }}'
     ScriptType: InlineScript
