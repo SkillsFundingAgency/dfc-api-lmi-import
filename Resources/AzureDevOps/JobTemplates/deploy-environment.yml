@@ -43,6 +43,7 @@ jobs:
 - ${{ each apiPartition in parameters.Apis }}:
   - ${{ each api in apiPartition }}:
     - deployment: Deploy${{ api.name }}
+      condition: contains('${{ parameters.EnvironmentName }}', 'DRAFT'))
       displayName: "Deploy ${{ api.name }}"
       environment: ${{ parameters.EnvironmentName }}
       dependsOn: 
@@ -63,3 +64,29 @@ jobs:
                 APIMProductName: '${{ parameters.ApimProductName }}'
                 APIMApiName: '${{ parameters.ApimApiName }}'
                 SubscriptionPosturi: '${{ parameters.SubscriptionPosturi }}'                
+
+
+- ${{ each apiPartition in parameters.Apis }}:
+  - ${{ each api in apiPartition }}:
+    - deployment: Deploy${{ api.name }}
+      condition: ne(contains('${{ parameters.EnvironmentName }}', 'DRAFT')), true)
+      displayName: "Deploy ${{ api.name }}"
+      environment: ${{ parameters.EnvironmentName }}
+      dependsOn: 
+      - DeployTemplate
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - template: ../StepTemplates/deploy-functionapp-apim-zdt.yml
+              parameters:
+                WebAppName: '${{ api.azureFunctionName }}'
+                AzureSubscription: '${{ parameters.AzureSubscription }}'
+                FunctionAppDomain: '${{ parameters.FunctionAppDomain }}'
+                PackageFile: '${{ parameters.PackageFile }}'
+                ResourceGroup: '${{ parameters.ResourceGroup }}'
+                SharedResourceGroup: '${{ parameters.SharedResourceGroup }}'
+                ApimServiceName: '${{ parameters.ApimServiceName }}'
+                APIMProductName: '${{ parameters.ApimProductName }}'
+                APIMApiName: '${{ parameters.ApimApiName }}'
+                SubscriptionPosturi: '${{ parameters.SubscriptionPosturi }}'  
