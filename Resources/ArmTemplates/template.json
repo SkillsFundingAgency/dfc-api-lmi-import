@@ -111,6 +111,15 @@
     },
     "EventGridClientOptionsApiEndpoint": {
       "type": "string"
+    },
+    "SubscriptionSettingsEndpoint": {
+      "type": "string"
+    },
+    "subscriptionUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "subscriptionUrl"
+      }
     }
   },
   "variables": {
@@ -319,39 +328,79 @@
               },
               {
                 "name": "Neo4j__Endpoints__0__Uri",
-                "value": "[parameters('Neo4jEndpoints0Uri')]"
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Uri'),'')]"
               },
               {
                 "name": "Neo4j__Endpoints__0__Username",
-                "value": "[parameters('Neo4jEndpoints0Username')]"
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Username'),'')]"
               },
               {
                 "name": "Neo4j__Endpoints__0__Password",
-                "value": "[parameters('Neo4jEndpoints0Password')]"
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Password'),'')]"
               },
               {
                 "name": "Neo4j__Endpoints__0__Enabled",
-                "value": "true"
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__1__Name",
+                "value": "draft"
+              },
+              {
+                "name": "Neo4j__Endpoints__1__Uri",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Uri'),'')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__1__Username",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Username'),'')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__1__Password",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Password'),'')]"
+              },
+              {
+                "name": "Neo4j__Endpoints__1__Enabled",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
               },
               {
                 "name": "Neo4j__ReplicaSets__0__ReplicaSetName",
-                "value": "[parameters('Neo4jReplicaSets0ReplicaSetName')]"
+                "value": "neo4j"
               },
               {
                 "name": "Neo4j__ReplicaSets__0__GraphInstances__0__Endpoint",
-                "value": "[parameters('Neo4jReplicaSets0GraphInstances0Endpoint')]"
+                "value": "neo4j"
               },
               {
                 "name": "Neo4j__ReplicaSets__0__GraphInstances__0__GraphName",
-                "value": "[parameters('Neo4jReplicaSets0GraphInstances0GraphName')]"
+                "value": "neo4j"
               },
               {
                 "name": "Neo4j__ReplicaSets__0__GraphInstances__0__DefaultGraph",
-                "value": "true"
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'false','false')]"
               },
               {
                 "name": "Neo4j__ReplicaSets__0__GraphInstances__0__Enabled",
-                "value": "true"
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__1__ReplicaSetName",
+                "value": "preview"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__1__GraphInstances__0__Endpoint",
+                "value": "Draft"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__1__GraphInstances__0__GraphName",
+                "value": "neo4j"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__1__GraphInstances__0__DefaultGraph",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
+              },
+              {
+                "name": "Neo4j__ReplicaSets__1__GraphInstances__0__Enabled",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
               },
               {
                 "name": "GraphOptions__ContentApiUriPrefix",
@@ -392,6 +441,42 @@
               {
                 "name": "LmiApiClientOptions__BaseAddress",
                 "value": "https://api.lmiforall.org.uk/api/v1/"
+              },
+              {
+                "name": "SubscriptionSettings__Endpoint",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('SubscriptionSettingsEndpoint'),'')]"
+              },
+              {
+                "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('subscriptionUrl'),'')]"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__Key",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'subject','')]"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__Values__0",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'/dfc-api-lmi-delta-report/','')]"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__0",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'published','')]"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__1",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'unpublished','')]"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__2",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'deleted','')]"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__3",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'draft','')]"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__4",
+                "value": "[if(contains(variables('resourcePrefix'),'draft'),'draft-discarded','')]"
               }
             ]
           }
