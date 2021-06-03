@@ -168,14 +168,14 @@ namespace DFC.Api.Lmi.Import.Services
 
             var commands = new List<string>();
 
-            var graphRelationshipRootAttribute = propertyInfo.GetCustomAttributes(typeof(GraphRelationshipRootAttribute), false).FirstOrDefault() as GraphRelationshipRootAttribute;
-            if (graphRelationshipRootAttribute != null && !graphRelationshipRootAttribute.Ignore && !string.IsNullOrWhiteSpace(graphRelationshipRootAttribute.Name))
+            var graphRelationshipAttribute = propertyInfo.GetCustomAttributes(typeof(GraphRelationshipAttribute), false).FirstOrDefault() as GraphRelationshipAttribute;
+            if (graphRelationshipAttribute != null && !graphRelationshipAttribute.Ignore && !string.IsNullOrWhiteSpace(graphRelationshipAttribute.Name))
             {
                 var child = propertyInfo.GetValue(parent, null) as GraphBaseModel;
 
                 if (child != null)
                 {
-                    commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipRootAttribute.Name));
+                    commands.AddRange(BuildChildRelationship(parent, child, parentNodeName, graphRelationshipAttribute.Name));
                 }
             }
 

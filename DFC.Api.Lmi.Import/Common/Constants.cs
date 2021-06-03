@@ -7,5 +7,7 @@ namespace DFC.Api.Lmi.Import.Common
     {
         public const string EnvironmentNameApiSuffix = "ApiSuffix";
         public const string EnvironmentNameSuccessRelayPercent = "SuccessRelayPercent";
+
+        public const string ApiForJobGroups = "job-groups";
     }
 }

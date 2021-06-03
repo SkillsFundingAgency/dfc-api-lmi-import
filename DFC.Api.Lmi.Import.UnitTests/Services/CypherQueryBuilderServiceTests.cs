@@ -138,7 +138,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 CanonicalName = "canonical-name",
                 Title = "The title",
             };
-            string expectedResult = $"MERGE (a:{nodeName} {{CanonicalName: '{graphJobProfile.CanonicalName}'}}) SET a.uri = '{HttpContentApi}{nodeName.ToLowerInvariant()}/{graphJobProfile.ItemId.ToString().ToLowerInvariant()}',a.skos__prefLabel = '{graphJobProfile.CanonicalName}',a.Title = '{graphJobProfile.Title}',a.CreatedDate = datetime('{graphJobProfile.CreatedDate:O}')";
+            string expectedResult = $"MERGE (a:{nodeName} {{CanonicalName: '{graphJobProfile.CanonicalName}'}}) SET a.uri = '{HttpContentApi}{nodeName.ToLowerInvariant()}/{graphJobProfile.ItemId.ToString().ToLowerInvariant()}',a.skos__prefLabel = '{graphJobProfile.CanonicalName}',a.Title = '{graphJobProfile.Title}',a.CreatedDate = datetime('{graphJobProfile.CreatedDate:O}'),a.ItemId = '{graphJobProfile.ItemId}'";
 
             //act
             var result = cypherQueryBuilderService.BuildMerge(graphJobProfile, nodeName);
@@ -202,7 +202,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                 Measure = "a measure",
                 Employment = new decimal(1234.5678),
             };
-            var expectedResult = $"{nodeAlias}.uri = '{HttpContentApi}{nodeName.ToLowerInvariant()}/{item.ItemId.ToString().ToLowerInvariant()}',{nodeAlias}.Measure = '{item.Measure}',{nodeAlias}.skos__prefLabel = {item.Year},{nodeAlias}.Employment = {item.Employment},{nodeAlias}.CreatedDate = datetime('{item.CreatedDate:O}')";
+            var expectedResult = $"{nodeAlias}.uri = '{HttpContentApi}{nodeName.ToLowerInvariant()}/{item.ItemId.ToString().ToLowerInvariant()}',{nodeAlias}.Measure = '{item.Measure}',{nodeAlias}.skos__prefLabel = {item.Year},{nodeAlias}.Employment = {item.Employment},{nodeAlias}.CreatedDate = datetime('{item.CreatedDate:O}'),{nodeAlias}.ItemId = '{item.ItemId}'";
 
             //act
             var result = cypherQueryBuilderService.BuildSetProperties(nodeAlias, nodeName, item);
@@ -301,7 +301,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             var propertyInfo = item.GetType().GetProperty(nameof(GraphSocDatasetModel.JobGrowth));
             var expectedResults = new List<string>
             {
-                $"MERGE (a:LmiSocPredicted {{Soc: {soc}}}) SET a.uri = '{HttpContentApi}lmisocpredicted/{item.JobGrowth.ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.JobGrowth.Measure}',a.skos__prefLabel = '{item.JobGrowth.Measure}',a.CreatedDate = datetime('{item.JobGrowth.CreatedDate:O}')",
+                $"MERGE (a:LmiSocPredicted {{Soc: {soc}}}) SET a.uri = '{HttpContentApi}lmisocpredicted/{item.JobGrowth.ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.JobGrowth.Measure}',a.skos__prefLabel = '{item.JobGrowth.Measure}',a.CreatedDate = datetime('{item.JobGrowth.CreatedDate:O}'),a.ItemId = '{item.JobGrowth.ItemId}'",
                 $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredicted {{Soc: {soc}}}) MERGE (p)-[rel:PredictedJobGrowth]->(c)",
             };
 
@@ -373,7 +373,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             var propertyInfo = item.GetType().GetProperty(nameof(GraphPredictedModel.PredictedEmployment));
             var expectedResults = new List<string>
             {
-                $"MERGE (a:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{item.PredictedEmployment.First().ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.PredictedEmployment.First().Measure:O}',a.skos__prefLabel = {year},a.Employment = 1234.5678,a.CreatedDate = datetime('{item.PredictedEmployment.First().CreatedDate:O}')",
+                $"MERGE (a:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{item.PredictedEmployment.First().ItemId.ToString().ToLowerInvariant()}',a.Measure = '{item.PredictedEmployment.First().Measure:O}',a.skos__prefLabel = {year},a.Employment = 1234.5678,a.CreatedDate = datetime('{item.PredictedEmployment.First().CreatedDate:O}'),a.ItemId = '{item.PredictedEmployment.First().ItemId}'",
                 $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) MERGE (p)-[rel:PredictedEmployment]->(c)",
             };
 
@@ -432,7 +432,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             var child = new GraphPredictedYearModel { Soc = soc, Year = year };
             var expectedResults = new List<string>
             {
-                $"MERGE (a:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{child.ItemId.ToString().ToLowerInvariant()}',a.Measure = '',a.skos__prefLabel = 2021,a.Employment = 0,a.CreatedDate = datetime('{child.CreatedDate:O}')",
+                $"MERGE (a:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) SET a.uri = '{HttpContentApi}lmisocpredictedyear/{child.ItemId.ToString().ToLowerInvariant()}',a.Measure = '',a.skos__prefLabel = 2021,a.Employment = 0,a.CreatedDate = datetime('{child.CreatedDate:O}'),a.ItemId = '{child.ItemId}'",
                 $"MATCH (p:{nodeName} {{Soc: {soc}}}) MATCH (c:LmiSocPredictedYear {{Soc: {soc},Year: {year}}}) MERGE (p)-[rel:{relName}]->(c)",
             };
 
