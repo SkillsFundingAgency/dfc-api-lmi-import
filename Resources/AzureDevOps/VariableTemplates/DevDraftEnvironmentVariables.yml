@@ -68,4 +68,4 @@ variables:
 - name: subscriptionUrl
   value: https://dfc-dev-api-eventgridsubscriptions-fa.$(FunctionAppDomain)/api/execute/
 - name: SubscriptionPosturi
-  value: https://$(FunctionAppName).$(FunctionAppDomain)/SubscriptionRegistration/
+  value: https://$(FunctionAppName).$(FunctionAppDomain)/subscription/
