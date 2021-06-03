@@ -63,3 +63,9 @@ variables:
   value: $(EventGridAegSasKey)
 - name: EventGridClientOptionsApiEndpoint
   value: https://dfc-prd-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
+- name: SubscriptionSettingsEndpoint
+  value: ''
+- name: subscriptionUrl
+  value: ''
+- name: SubscriptionPosturi
+  value: ''

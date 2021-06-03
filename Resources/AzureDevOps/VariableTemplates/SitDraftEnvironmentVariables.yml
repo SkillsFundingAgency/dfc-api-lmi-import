@@ -63,3 +63,9 @@ variables:
   value: $(EventGridAegSasKey)
 - name: EventGridClientOptionsApiEndpoint
   value: https://dfc-sit-draft-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
+- name: SubscriptionSettingsEndpoint
+  value: $(ApimProxyAddress)/LMI/Import-Draft/lmi/webhook?subscription-key=$(apimLmiKey)
+- name: subscriptionUrl
+  value: https://dfc-sit-api-eventgridsubscriptions-fa.$(FunctionAppDomain)/api/execute/
+- name: SubscriptionPosturi
+  value: https://$(FunctionAppName).$(FunctionAppDomain)/subscription/
