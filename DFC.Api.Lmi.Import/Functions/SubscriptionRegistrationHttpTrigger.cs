@@ -49,7 +49,7 @@ namespace DFC.Api.Lmi.Import.Functions
                                 .Replace(" ", "-", StringComparison.Ordinal).ToLowerInvariant();
                 }
 
-                await subscriptionRegistrationService.RegisterSubscription("DFC-Api-LMI-Transformation" + apiSuffix).ConfigureAwait(false);
+                await subscriptionRegistrationService.RegisterSubscription("DFC-Api-LMI-Import" + apiSuffix).ConfigureAwait(false);
                 return new OkResult();
             }
             catch (Exception ex)
