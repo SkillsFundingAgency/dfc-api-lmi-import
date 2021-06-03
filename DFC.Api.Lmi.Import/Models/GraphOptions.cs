@@ -12,6 +12,8 @@ namespace DFC.Api.Lmi.Import.Models
 
         public Uri? ContentApiUriPrefix { get; set; }
 
-        public string ReplicaSetName { get; set; } = "published";
+        public string PublishedReplicaSetName { get; set; } = "neo4j";
+
+        public string DraftReplicaSetName { get; set; } = "preview";
     }
 }

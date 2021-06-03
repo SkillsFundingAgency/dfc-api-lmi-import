@@ -1,5 +1,6 @@
 ﻿using DFC.Api.Lmi.Import.Attributes;
 using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.GraphData;
 using DFC.ServiceTaxonomy.Neo4j.Commands.Interfaces;
@@ -56,10 +57,15 @@ namespace DFC.Api.Lmi.Import.Connectors
             return commands;
         }
 
-        public async Task RunAsync(IList<string>? commands)
+        public async Task RunAsync(IList<string>? commands, GraphReplicaSet graphReplicaSet)
         {
             _ = commands ?? throw new ArgumentNullException(nameof(commands));
-
+            string replicaSetName = graphReplicaSet switch
+            {
+                GraphReplicaSet.Published => graphOptions.PublishedReplicaSetName,
+                GraphReplicaSet.Draft => graphOptions.DraftReplicaSetName,
+                _ => throw new NotImplementedException(),
+            };
             var customCommands = new List<ICustomCommand>();
             foreach (var command in commands)
             {
@@ -68,7 +74,7 @@ namespace DFC.Api.Lmi.Import.Connectors
                 customCommands.Add(customCommand);
             }
 
-            await graphCluster.Run(graphOptions.ReplicaSetName, customCommands.ToArray()).ConfigureAwait(false);
+            await graphCluster.Run(replicaSetName, customCommands.ToArray()).ConfigureAwait(false);
         }
     }
 }
