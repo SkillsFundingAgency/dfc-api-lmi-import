@@ -451,11 +451,11 @@
                 "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('subscriptionUrl'),'')]"
               },
               {
-                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__Key",
+                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Key",
                 "value": "[if(contains(variables('resourcePrefix'),'draft'),'subject','')]"
               },
               {
-                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__Values__0",
+                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Values__0",
                 "value": "[if(contains(variables('resourcePrefix'),'draft'),'/dfc-api-lmi-delta-report/','')]"
               },
               {
