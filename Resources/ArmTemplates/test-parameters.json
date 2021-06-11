@@ -65,9 +65,6 @@
     "ApiSuffix": {
       "value": "ApiSuffix"
     },
-    "Neo4jEndpoints0Name": {
-      "value": "Neo4jEndpoints0Name"
-    },
     "Neo4jEndpoints0Uri": {
       "value": "Neo4jEndpoints0Uri"
     },
