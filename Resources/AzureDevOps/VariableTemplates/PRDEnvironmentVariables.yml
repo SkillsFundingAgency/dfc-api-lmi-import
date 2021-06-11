@@ -39,20 +39,14 @@ variables:
   value: Published
 - name: Neo4jEndpoints0Uri
   value: $(Neo4jUrl)
+- name: Neo4jEndpoints1Uri
+  value: $(Neo4jUrlDraft)
 - name: Neo4jEndpoints0Username
   value: $(Neo4jUser)
 - name: Neo4jEndpoints0Password
   value: $(Neo4jPassword)
-- name: Neo4jReplicaSets0ReplicaSetName
-  value: published
-- name: Neo4jReplicaSets0GraphInstances0Endpoint
-  value: Published
-- name: Neo4jReplicaSets0GraphInstances0GraphName
-  value: published
 - name: GraphOptionsContentApiUriPrefix
   value: https://dfc-prd-api-cont-fa.$(appServiceDomain)/api/execute/
-- name: GraphOptionsReplicaSetName
-  value: published
 - name: JobProfileApiClientOptionsBaseAddress
   value: $(ApimProxyAddress)/job-profiles/summary
 - name: JobProfileApiClientOptionsApiKey
