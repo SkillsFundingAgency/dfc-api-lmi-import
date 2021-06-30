@@ -31,16 +31,16 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
         [GraphRelationship("LinkedTo")]
         public List<GraphJobProfileModel>? JobProfiles { get; set; }
 
-        [GraphRelationshipRoot("Predicted" + nameof(JobGrowth))]
+        [GraphRelationship("Predicted" + nameof(JobGrowth))]
         public GraphPredictedModel? JobGrowth { get; set; }
 
-        [GraphRelationshipRoot("Breakdown" + nameof(QualificationLevel))]
+        [GraphRelationship("Breakdown" + nameof(QualificationLevel))]
         public GraphBreakdownModel? QualificationLevel { get; set; }
 
-        [GraphRelationshipRoot("Breakdown" + nameof(EmploymentByRegion))]
+        [GraphRelationship("Breakdown" + nameof(EmploymentByRegion))]
         public GraphBreakdownModel? EmploymentByRegion { get; set; }
 
-        [GraphRelationshipRoot("Breakdown" + nameof(TopIndustriesInJobGroup))]
+        [GraphRelationship("Breakdown" + nameof(TopIndustriesInJobGroup))]
         public GraphBreakdownModel? TopIndustriesInJobGroup { get; set; }
     }
 }

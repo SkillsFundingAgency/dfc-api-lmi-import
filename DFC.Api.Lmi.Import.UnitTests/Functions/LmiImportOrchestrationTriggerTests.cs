@@ -1,4 +1,5 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Functions;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
@@ -198,6 +199,55 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         }
 
         [Fact]
+        public async Task LmiImportOrchestrationTriggerRefreshPublishedOrchestratorIsSuccessful()
+        {
+            // Arrange
+
+            // Act
+            await lmiImportOrchestrationTrigger.RefreshPublishedOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PurgePublishedActivity), null)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.RefreshPublishedActivity), null)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task LmiImportOrchestrationTriggerPurgePublishedOrchestratorIsSuccessful()
+        {
+            // Arrange
+
+            // Act
+            await lmiImportOrchestrationTrigger.PurgePublishedOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PurgePublishedActivity), null)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task LmiImportOrchestrationTriggerRefreshPublishedActivityIsSuccessful()
+        {
+            // Arrange
+
+            // Act
+            await lmiImportOrchestrationTrigger.RefreshPublishedActivity(null).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeGraphService.PublishAsync(GraphReplicaSet.Draft, GraphReplicaSet.Published)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task LmiImportOrchestrationTriggerPurgePublishedActivityIsSuccessful()
+        {
+            // Arrange
+
+            // Act
+            await lmiImportOrchestrationTrigger.PurgePublishedActivity(null).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeGraphService.PurgeAsync(GraphReplicaSet.Published)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
         public async Task LmiImportOrchestrationTriggerGetJobProfileSocMappingsActivityIsSuccessful()
         {
             // Arrange
@@ -222,7 +272,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             await lmiImportOrchestrationTrigger.GraphPurgeActivity(null).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeGraphService.PurgeAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeGraphService.PurgeAsync(GraphReplicaSet.Draft)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -234,7 +284,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             await lmiImportOrchestrationTrigger.GraphPurgeSocActivity(1234).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeGraphService.PurgeSocAsync(A<int>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeGraphService.PurgeSocAsync(A<int>.Ignored, GraphReplicaSet.Draft)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -247,7 +297,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
 
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).Returns(dummyLmiSocDatasetModel);
             A.CallTo(() => fakeMapLmiToGraphService.Map(A<LmiSocDatasetModel>.Ignored)).Returns(dummyGraphSocDatasetModel);
-            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).Returns(true);
+            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored, A<GraphReplicaSet>.Ignored)).Returns(true);
 
             // Act
             var result = await lmiImportOrchestrationTrigger.ImportSocItemActivity(socJobProfileMapping).ConfigureAwait(false);
@@ -255,7 +305,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Assert
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapLmiToGraphService.Map(A<LmiSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored, A<GraphReplicaSet>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.NotNull(result);
         }
 
@@ -274,7 +324,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Assert
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapLmiToGraphService.Map(A<LmiSocDatasetModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeGraphService.ImportAsync(A<GraphSocDatasetModel>.Ignored, A<GraphReplicaSet>.Ignored)).MustNotHaveHappened();
             Assert.Null(result);
         }
 

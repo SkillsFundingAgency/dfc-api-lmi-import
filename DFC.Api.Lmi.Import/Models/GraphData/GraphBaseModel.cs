@@ -10,7 +10,7 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
         [GraphProperty(nameof(CreatedDate))]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-        [GraphProperty(nameof(ItemId), ignore: true)]
+        [GraphProperty(nameof(ItemId))]
         public Guid ItemId { get; set; } = Guid.NewGuid();
     }
 }

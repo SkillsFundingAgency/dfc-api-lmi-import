@@ -8,6 +8,7 @@ using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
 using DFC.Api.Lmi.Import.Services;
 using DFC.Api.Lmi.Import.Startup;
+using DFC.Compui.Subscriptions.Pkg.Netstandard.Extensions;
 using DFC.ServiceTaxonomy.Neo4j.Configuration;
 using DFC.Swagger.Standard;
 using Microsoft.Azure.WebJobs;
@@ -48,6 +49,7 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddSingleton(configuration.GetSection(nameof(JobProfileApiClientOptions)).Get<JobProfileApiClientOptions>() ?? new JobProfileApiClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(GraphOptions)).Get<GraphOptions>() ?? new GraphOptions());
             builder.Services.AddGraphCluster(options => configuration.GetSection(Neo4jOptions.Neo4j).Bind(options));
+            builder.Services.AddSubscriptionService(configuration);
             builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
             builder.Services.AddTransient<IApiConnector, ApiConnector>();
             builder.Services.AddTransient<IApiDataConnector, ApiDataConnector>();
@@ -57,9 +59,12 @@ namespace DFC.Api.Lmi.Import.Startup
             builder.Services.AddTransient<IJobProfileService, JobProfileService>();
             builder.Services.AddTransient<IJobProfilesToSocMappingService, JobProfilesToSocMappingService>();
             builder.Services.AddTransient<IGraphService, GraphService>();
+            builder.Services.AddTransient<IGenericGraphQueryService, GenericGraphQueryService>();
+            builder.Services.AddTransient<ISocGraphQueryService, SocGraphQueryService>();
             builder.Services.AddTransient<IMapLmiToGraphService, MapLmiToGraphService>();
             builder.Services.AddTransient<IEventGridService, EventGridService>();
             builder.Services.AddTransient<IEventGridClientService, EventGridClientService>();
+            builder.Services.AddTransient<ILmiWebhookReceiverService, LmiWebhookReceiverService>();
 
             var policyOptions = configuration.GetSection(AppSettingsPolicies).Get<PolicyOptions>() ?? new PolicyOptions();
             var policyRegistry = builder.Services.AddPolicyRegistry();

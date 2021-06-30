@@ -1,4 +1,5 @@
 using DFC.Api.Lmi.Import.Contracts;
+using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
@@ -161,7 +162,7 @@ namespace DFC.Api.Lmi.Import.Functions
 
                 await Task.WhenAll(parallelTasks).ConfigureAwait(true);
 
-                int importedToGraphCount = parallelTasks.Count(t => t.Result != null);
+                decimal importedToGraphCount = parallelTasks.Count(t => t.Result != null);
                 var successPercentage = decimal.Divide(importedToGraphCount, socJobProfileMappings.Count) * 100;
 
                 logger.LogInformation($"Imported to Graph {importedToGraphCount} of {socJobProfileMappings.Count} SOC mappings = {successPercentage:0.0}% success");
@@ -190,6 +191,23 @@ namespace DFC.Api.Lmi.Import.Functions
             }
         }
 
+        [FunctionName(nameof(RefreshPublishedOrchestrator))]
+        public async Task RefreshPublishedOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
+        {
+            _ = context ?? throw new ArgumentNullException(nameof(context));
+
+            await context.CallActivityAsync(nameof(PurgePublishedActivity), null).ConfigureAwait(true);
+            await context.CallActivityAsync(nameof(RefreshPublishedActivity), null).ConfigureAwait(true);
+        }
+
+        [FunctionName(nameof(PurgePublishedOrchestrator))]
+        public async Task PurgePublishedOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
+        {
+            _ = context ?? throw new ArgumentNullException(nameof(context));
+
+            await context.CallActivityAsync(nameof(PurgePublishedActivity), null).ConfigureAwait(true);
+        }
+
         [FunctionName(nameof(GetJobProfileSocMappingsActivity))]
         public async Task<IList<SocJobProfileMappingModel>?> GetJobProfileSocMappingsActivity([ActivityTrigger] string? name)
         {
@@ -198,20 +216,36 @@ namespace DFC.Api.Lmi.Import.Functions
             return await jobProfileService.GetMappingsAsync().ConfigureAwait(false);
         }
 
+        [FunctionName(nameof(RefreshPublishedActivity))]
+        public async Task RefreshPublishedActivity([ActivityTrigger] string? name)
+        {
+            logger.LogInformation("Refreshing published Graph from draft Graph");
+
+            await graphService.PublishAsync(GraphReplicaSet.Draft, GraphReplicaSet.Published).ConfigureAwait(false);
+        }
+
+        [FunctionName(nameof(PurgePublishedActivity))]
+        public async Task PurgePublishedActivity([ActivityTrigger] string? name)
+        {
+            logger.LogInformation("Purging published Graph of all SOC");
+
+            await graphService.PurgeAsync(GraphReplicaSet.Published).ConfigureAwait(false);
+        }
+
         [FunctionName(nameof(GraphPurgeActivity))]
         public async Task GraphPurgeActivity([ActivityTrigger] string? name)
         {
-            logger.LogInformation("Purging Graph of all SOC");
+            logger.LogInformation("Purging draft Graph of all SOC");
 
-            await graphService.PurgeAsync().ConfigureAwait(false);
+            await graphService.PurgeAsync(GraphReplicaSet.Draft).ConfigureAwait(false);
         }
 
         [FunctionName(nameof(GraphPurgeSocActivity))]
         public async Task GraphPurgeSocActivity([ActivityTrigger] int soc)
         {
-            logger.LogInformation($"Purging Graph of SOC: {soc}");
+            logger.LogInformation($"Purging draft Graph of SOC: {soc}");
 
-            await graphService.PurgeSocAsync(soc).ConfigureAwait(false);
+            await graphService.PurgeSocAsync(soc, GraphReplicaSet.Draft).ConfigureAwait(false);
         }
 
         [FunctionName(nameof(ImportSocItemActivity))]
@@ -226,7 +260,7 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 var graphSocDataset = mapLmiToGraphService.Map(lmiSocDataset);
 
-                if (await graphService.ImportAsync(graphSocDataset).ConfigureAwait(false))
+                if (await graphService.ImportAsync(graphSocDataset, GraphReplicaSet.Draft).ConfigureAwait(false))
                 {
                     return graphSocDataset!.ItemId;
                 }

@@ -68,11 +68,11 @@
     "ApiSuffix": {
       "value": "__ApiSuffix__"
     },
-    "Neo4jEndpoints0Name": {
-      "value": "__Neo4jEndpoints0Name__"
-    },
     "Neo4jEndpoints0Uri": {
       "value": "__Neo4jEndpoints0Uri__"
+    },
+    "Neo4jEndpoints1Uri": {
+      "value": "__Neo4jEndpoints1Uri__"
     },
     "Neo4jEndpoints0Username": {
       "value": "__Neo4jEndpoints0Username__"
@@ -80,20 +80,8 @@
     "Neo4jEndpoints0Password": {
       "value": "__Neo4jEndpoints0Password__"
     },
-    "Neo4jReplicaSets0ReplicaSetName": {
-      "value": "__Neo4jReplicaSets0ReplicaSetName__"
-    },
-    "Neo4jReplicaSets0GraphInstances0Endpoint": {
-      "value": "__Neo4jReplicaSets0GraphInstances0Endpoint__"
-    },
-    "Neo4jReplicaSets0GraphInstances0GraphName": {
-      "value": "__Neo4jReplicaSets0GraphInstances0GraphName__"
-    },
     "GraphOptionsContentApiUriPrefix": {
       "value": "__GraphOptionsContentApiUriPrefix__"
-    },
-    "GraphOptionsReplicaSetName": {
-      "value": "__GraphOptionsReplicaSetName__"
     },
     "JobProfileApiClientOptionsBaseAddress": {
       "value": "__JobProfileApiClientOptionsBaseAddress__"
@@ -109,6 +97,12 @@
     },
     "EventGridClientOptionsApiEndpoint": {
       "value": "__EventGridClientOptionsApiEndpoint__"
+    },
+    "SubscriptionSettingsEndpoint": {
+      "value": "__SubscriptionSettingsEndpoint__"
+    },
+    "subscriptionUrl": {
+      "value": "__subscriptionUrl__"
     }
   }
 }
