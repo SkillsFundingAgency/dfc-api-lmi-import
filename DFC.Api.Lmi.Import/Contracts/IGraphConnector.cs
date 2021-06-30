@@ -1,4 +1,5 @@
-﻿using DFC.Api.Lmi.Import.Models.GraphData;
+﻿using DFC.Api.Lmi.Import.Enums;
+using DFC.Api.Lmi.Import.Models.GraphData;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,6 +13,6 @@ namespace DFC.Api.Lmi.Import.Contracts
 
         IList<string> BuildImportCommands(GraphBaseSocModel? parent);
 
-        Task RunAsync(IList<string>? commands);
+        Task RunAsync(IList<string>? commands, GraphReplicaSet graphReplicaSet);
     }
 }

@@ -38,21 +38,15 @@ variables:
 - name: Neo4jEndpoints0Name
   value: Draft
 - name: Neo4jEndpoints0Uri
+  value: $(Neo4jUrl)
+- name: Neo4jEndpoints1Uri
   value: $(Neo4jUrlDraft)
 - name: Neo4jEndpoints0Username
   value: $(Neo4jUserDraft)
 - name: Neo4jEndpoints0Password
   value: $(Neo4jPasswordDraft)
-- name: Neo4jReplicaSets0ReplicaSetName
-  value: draft
-- name: Neo4jReplicaSets0GraphInstances0Endpoint
-  value: Draft
-- name: Neo4jReplicaSets0GraphInstances0GraphName
-  value: draft
 - name: GraphOptionsContentApiUriPrefix
   value: https://dfc-sit-draft-api-cont-fa.$(appServiceDomain)/api/execute/
-- name: GraphOptionsReplicaSetName
-  value: draft
 - name: JobProfileApiClientOptionsBaseAddress
   value: $(ApimProxyAddress)/job-profiles/summary
 - name: JobProfileApiClientOptionsApiKey
@@ -63,3 +57,9 @@ variables:
   value: $(EventGridAegSasKey)
 - name: EventGridClientOptionsApiEndpoint
   value: https://dfc-sit-draft-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
+- name: SubscriptionSettingsEndpoint
+  value: $(ApimProxyAddress)/LMI/Import-Draft/lmi/webhook?subscription-key=$(apimLmiKey)
+- name: subscriptionUrl
+  value: https://dfc-sit-api-eventgridsubscriptions-fa.$(FunctionAppDomain)/api/execute/
+- name: SubscriptionPosturi
+  value: https://$(FunctionAppName).$(FunctionAppDomain)/subscription/
