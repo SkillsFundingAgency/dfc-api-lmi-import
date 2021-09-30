@@ -17,7 +17,7 @@ namespace DFC.Api.Lmi.Import.Models.ClientOptions
             { LmiApiQuery.TopIndustriesInJobGroup, "wf/predict/breakdown/industry?soc={soc}&minYear={minYear}&maxYear={minYear}" },
         };
 
-        public int MinYear { get; set; } = DateTime.UtcNow.Year - 1;
+        public int MinYear { get; set; } = DateTime.UtcNow.Year;
 
         public int MaxYear { get; set; } = DateTime.UtcNow.Year + 6;
 

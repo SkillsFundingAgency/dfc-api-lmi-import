@@ -59,6 +59,8 @@ EventGridClientOptions__SubjectPrefix | Message subject prefix |
 EventGridClientOptions__TopicKey | Event grid topic key |
 EventGridClientOptions__ApiEndpoint | Content API endpoint |
 LmiApiClientOptions__BaseAddress | https://api.lmiforall.org.uk/api/v1/ |
+LmiApiClientOptions__MinYear | 2021 |
+LmiApiClientOptions__MaxYear | 2027 |
 
 ## Running locally
 
