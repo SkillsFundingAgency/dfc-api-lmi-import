@@ -427,6 +427,14 @@
                 "value": "https://api.lmiforall.org.uk/api/v1/"
               },
               {
+                "name": "LmiApiClientOptions__MinYear",
+                "value": "2021"
+              },
+              {
+                "name": "LmiApiClientOptions__MaxYear",
+                "value": "2027"
+              },
+              {
                 "name": "SubscriptionSettings__Endpoint",
                 "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('SubscriptionSettingsEndpoint'),'')]"
               },

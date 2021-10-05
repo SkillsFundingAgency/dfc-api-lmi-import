@@ -127,7 +127,7 @@ namespace DFC.Api.Lmi.Import.Functions
 
             var eventGridPostRequest = new EventGridPostRequestModel
             {
-                ItemId = Guid.NewGuid(),
+                ItemId = context.NewGuid(),
                 Api = $"{eventGridClientOptions.ApiEndpoint}",
                 DisplayText = "LMI Import purged",
                 EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
@@ -171,7 +171,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 {
                     var eventGridPostRequest = new EventGridPostRequestModel
                     {
-                        ItemId = Guid.NewGuid(),
+                        ItemId = context.NewGuid(),
                         Api = $"{eventGridClientOptions.ApiEndpoint}",
                         DisplayText = "LMI Import refreshed",
                         EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
