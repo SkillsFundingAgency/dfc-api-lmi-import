@@ -38,6 +38,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             dummyLmiPredictedModel.PredictedEmployment = A.CollectionOfDummy<LmiPredictedYearModel>(2).ToList();
 
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiSocDatasetModel>(A<Uri>.Ignored)).Returns(A.Dummy<LmiSocDatasetModel>());
+            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiReplacementDemandModel>(A<Uri>.Ignored)).Returns(A.Dummy<LmiReplacementDemandModel>());
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiPredictedModel>(A<Uri>.Ignored)).Returns(dummyLmiPredictedModel);
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).Returns(A.Dummy<LmiBreakdownModel>());
 
@@ -46,18 +47,20 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
 
             // assert
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiSocDatasetModel>(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiReplacementDemandModel>(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiPredictedModel>(A<Uri>.Ignored)).MustHaveHappened(2, Times.Exactly);
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).MustHaveHappened(3, Times.Exactly);
             Assert.NotNull(result);
             Assert.NotNull(result!.JobProfiles);
             Assert.NotNull(result.JobGrowth);
+            Assert.NotNull(result.ReplacementDemand);
             Assert.NotNull(result.QualificationLevel);
             Assert.NotNull(result.EmploymentByRegion);
             Assert.NotNull(result.TopIndustriesInJobGroup);
         }
 
         [Fact]
-        public async Task LmiSocImportServiceImportReturnsnullWhenNoData()
+        public async Task LmiSocImportServiceImportReturnsNullWhenNoData()
         {
             // arrange
             var socJobProfileMapping = new SocJobProfileMappingModel
@@ -74,6 +77,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
 
             // assert
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiSocDatasetModel>(A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiReplacementDemandModel>(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiPredictedModel>(A<Uri>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeLmiApiConnector.ImportAsync<LmiBreakdownModel>(A<Uri>.Ignored)).MustNotHaveHappened();
             Assert.Null(result);

@@ -38,6 +38,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             Assert.NotNull(result);
             Assert.NotNull(result!.JobProfiles);
             Assert.NotNull(result.JobGrowth!.PredictedEmployment);
+            Assert.NotNull(result.ReplacementDemand);
             Assert.NotNull(result.QualificationLevel!.PredictedEmployment.First().Breakdown);
             Assert.NotNull(result.EmploymentByRegion!.PredictedEmployment.First().Breakdown);
             Assert.NotNull(result.TopIndustriesInJobGroup!.PredictedEmployment.First().Breakdown);
@@ -48,6 +49,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             Assert.Equal(lmiSocDataset.Soc, result.JobGrowth.PredictedEmployment.First().Soc);
             Assert.Equal(lmiSocDataset.JobGrowth!.PredictedEmployment.First().Year, result.JobGrowth.PredictedEmployment.First().Year);
             Assert.Equal(lmiSocDataset.JobGrowth.PredictedEmployment.First().Employment, result.JobGrowth.PredictedEmployment.First().Employment);
+            Assert.Equal(lmiSocDataset.Soc, result.ReplacementDemand!.Soc);
             Assert.Equal(lmiSocDataset.Soc, result.QualificationLevel.Soc);
             Assert.Equal(lmiSocDataset.QualificationLevel!.Breakdown, result.QualificationLevel.Measure);
             Assert.Equal(lmiSocDataset.QualificationLevel.PredictedEmployment.First().Year, result.QualificationLevel.PredictedEmployment.First().Year);
@@ -95,6 +97,12 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                             Employment = new decimal(123.45),
                         },
                     },
+                },
+                ReplacementDemand = new LmiReplacementDemandModel
+                {
+                    StartYear = 2021,
+                    EndYear = 2027,
+                    Rate = 123456,
                 },
                 QualificationLevel = new LmiBreakdownModel
                 {
@@ -193,6 +201,12 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
                             Employment = new decimal(123.45),
                         },
                     },
+                },
+                ReplacementDemand = new GraphReplacementDemandModel
+                {
+                    StartYear = 2021,
+                    EndYear = 2027,
+                    Rate = 123456,
                 },
                 QualificationLevel = new GraphBreakdownModel
                 {

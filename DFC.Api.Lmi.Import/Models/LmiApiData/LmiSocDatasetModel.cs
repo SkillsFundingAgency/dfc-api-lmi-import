@@ -25,6 +25,8 @@ namespace DFC.Api.Lmi.Import.Models.LmiApiData
 
         public LmiPredictedModel? JobGrowth { get; set; }
 
+        public LmiReplacementDemandModel? ReplacementDemand { get; set; }
+
         public LmiBreakdownModel? QualificationLevel { get; set; }
 
         public LmiBreakdownModel? EmploymentByRegion { get; set; }
