@@ -20,6 +20,9 @@ namespace DFC.Api.Lmi.Import.AutoMapperProfiles
             CreateMap<LmiPredictedModel, GraphPredictedModel>()
                 .ForMember(d => d.Measure, s => s.MapFrom(m => "employment"));
 
+            CreateMap<LmiReplacementDemandModel, GraphReplacementDemandModel>()
+                .ForMember(d => d.Measure, s => s.MapFrom(m => "replacement"));
+
             CreateMap<LmiPredictedYearModel, GraphPredictedYearModel>()
                 .ForMember(d => d.Soc, s => s.Ignore())
                 .ForMember(d => d.Measure, s => s.Ignore());

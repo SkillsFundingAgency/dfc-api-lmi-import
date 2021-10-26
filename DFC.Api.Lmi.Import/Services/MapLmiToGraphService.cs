@@ -28,6 +28,7 @@ namespace DFC.Api.Lmi.Import.Services
         private static void PropogateKeys(GraphSocDatasetModel graphSocDataset)
         {
             PropogateKeys(graphSocDataset.Soc, graphSocDataset.JobGrowth);
+            PropogateKeys(graphSocDataset.Soc, graphSocDataset.ReplacementDemand);
             PropogateKeys(graphSocDataset.Soc, graphSocDataset.QualificationLevel);
             PropogateKeys(graphSocDataset.Soc, graphSocDataset.EmploymentByRegion);
             PropogateKeys(graphSocDataset.Soc, graphSocDataset.TopIndustriesInJobGroup);
@@ -40,6 +41,14 @@ namespace DFC.Api.Lmi.Import.Services
                 graphPredictedModel.Soc = soc;
 
                 PropogateKeys(graphPredictedModel.Soc, graphPredictedModel.Measure, graphPredictedModel?.PredictedEmployment);
+            }
+        }
+
+        private static void PropogateKeys(int soc, GraphReplacementDemandModel? graphReplacementDemandModel)
+        {
+            if (graphReplacementDemandModel != null)
+            {
+                graphReplacementDemandModel.Soc = soc;
             }
         }
 
