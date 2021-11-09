@@ -4,6 +4,7 @@
     {
         SocDetail,
         JobGrowth,
+        ReplacementDemand,
         QualificationLevel,
         EmploymentByRegion,
         TopIndustriesInJobGroup,

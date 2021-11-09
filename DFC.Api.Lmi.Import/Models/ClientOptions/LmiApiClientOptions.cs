@@ -12,6 +12,7 @@ namespace DFC.Api.Lmi.Import.Models.ClientOptions
         {
             { LmiApiQuery.SocDetail, "soc/code/{soc}" },
             { LmiApiQuery.JobGrowth, "wf/predict?soc={soc}&minYear={minYear}&maxYear={maxYear}" },
+            { LmiApiQuery.ReplacementDemand, "wf/replacement_demand?soc={soc}" },
             { LmiApiQuery.QualificationLevel, "wf/predict/breakdown/qualification?soc={soc}&minYear={minYear}&maxYear={minYear}" },
             { LmiApiQuery.EmploymentByRegion, "wf/predict/breakdown/region?soc={soc}&minYear={minYear}&maxYear={minYear}" },
             { LmiApiQuery.TopIndustriesInJobGroup, "wf/predict/breakdown/industry?soc={soc}&minYear={minYear}&maxYear={minYear}" },

@@ -32,6 +32,7 @@ namespace DFC.Api.Lmi.Import.Services
             var lmiSocUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MinYear, lmiApiClientOptions.MaxYear, LmiApiQuery.SocDetail);
             var jobGrowthStartUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MinYear, lmiApiClientOptions.MinYear, LmiApiQuery.JobGrowth);
             var jobGrowthEndUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MaxYear, lmiApiClientOptions.MaxYear, LmiApiQuery.JobGrowth);
+            var replacementDemandUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MinYear, lmiApiClientOptions.MaxYear, LmiApiQuery.ReplacementDemand);
             var qualificationLevelUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MinYear, lmiApiClientOptions.MinYear, LmiApiQuery.QualificationLevel);
             var employmentByRegionUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MinYear, lmiApiClientOptions.MinYear, LmiApiQuery.EmploymentByRegion);
             var topIndustriesInJobGroupUri = lmiApiClientOptions.BuildApiUri(soc, lmiApiClientOptions.MinYear, lmiApiClientOptions.MinYear, LmiApiQuery.TopIndustriesInJobGroup);
@@ -42,6 +43,7 @@ namespace DFC.Api.Lmi.Import.Services
             {
                 lmiSocDataset.JobProfiles = jobProfiles;
                 lmiSocDataset.JobGrowth = await lmiApiConnector.ImportAsync<LmiPredictedModel>(jobGrowthStartUri).ConfigureAwait(false);
+                lmiSocDataset.ReplacementDemand = await lmiApiConnector.ImportAsync<LmiReplacementDemandModel>(replacementDemandUri).ConfigureAwait(false);
                 lmiSocDataset.QualificationLevel = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(qualificationLevelUri).ConfigureAwait(false);
                 lmiSocDataset.EmploymentByRegion = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(employmentByRegionUri).ConfigureAwait(false);
                 lmiSocDataset.TopIndustriesInJobGroup = await lmiApiConnector.ImportAsync<LmiBreakdownModel>(topIndustriesInJobGroupUri).ConfigureAwait(false);

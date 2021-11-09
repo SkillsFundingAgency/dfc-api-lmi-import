@@ -34,6 +34,9 @@ namespace DFC.Api.Lmi.Import.Models.GraphData
         [GraphRelationship("Predicted" + nameof(JobGrowth))]
         public GraphPredictedModel? JobGrowth { get; set; }
 
+        [GraphRelationship("Replacement" + nameof(ReplacementDemand))]
+        public GraphReplacementDemandModel? ReplacementDemand { get; set; }
+
         [GraphRelationship("Breakdown" + nameof(QualificationLevel))]
         public GraphBreakdownModel? QualificationLevel { get; set; }
 

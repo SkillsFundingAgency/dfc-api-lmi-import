@@ -27,6 +27,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             { "LmiSocJobProfile", "CanonicalName" },
             { "LmiSocPredicted", "Soc" },
             { "LmiSocPredictedYear", "Soc" },
+            { "LmiSocReplacementDemand", "Soc" },
             { "LmiSoc", "Soc" },
         };
 
