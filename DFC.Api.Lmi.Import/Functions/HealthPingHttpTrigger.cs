@@ -9,7 +9,7 @@ using System.Net;
 
 namespace DFC.Api.Lmi.Import.Functions
 {
-    public static class HealthPing
+    public static class HealthPingHttpTrigger
     {
         [FunctionName("HealthPing")]
         [Display(Name = "Health ping", Description = "Simple OK response to a health ping")]

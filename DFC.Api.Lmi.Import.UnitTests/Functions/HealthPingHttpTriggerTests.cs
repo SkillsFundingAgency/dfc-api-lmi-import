@@ -18,7 +18,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Arrange
 
             // Act
-            var result = HealthPing.Run(new DefaultHttpRequest(new DefaultHttpContext()), logger);
+            var result = HealthPingHttpTrigger.Run(new DefaultHttpRequest(new DefaultHttpContext()), logger);
 
             // Assert
             Assert.IsType<OkResult>(result);
