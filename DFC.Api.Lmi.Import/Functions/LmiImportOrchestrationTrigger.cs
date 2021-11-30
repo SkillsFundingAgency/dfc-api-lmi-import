@@ -230,6 +230,13 @@ namespace DFC.Api.Lmi.Import.Functions
             if (lmiSocDataset != null)
             {
                 var socDataset = mapper.Map<SocDatasetModel>(lmiSocDataset);
+                var exisitingDocument = await documentService.GetAsync(w => w.Soc == lmiSocDataset.Soc, lmiSocDataset.Soc.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                if (exisitingDocument != null)
+                {
+                    socDataset.Id = exisitingDocument.Id;
+                    socDataset.Etag = exisitingDocument.Etag;
+                }
+
                 var upsertResult = await documentService.UpsertAsync(socDataset).ConfigureAwait(false);
                 if (upsertResult == HttpStatusCode.OK || upsertResult == HttpStatusCode.Created)
                 {

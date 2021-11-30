@@ -296,8 +296,10 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             A.CallTo(() => fakeDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
-        [Fact]
-        public async Task LmiImportOrchestrationTriggerImportSocItemActivityIsSuccessful()
+        [Theory]
+        [InlineData(HttpStatusCode.Created)]
+        [InlineData(HttpStatusCode.OK)]
+        public async Task LmiImportOrchestrationTriggerImportSocItemActivityIsSuccessful(HttpStatusCode httpStatusCode)
         {
             // Arrange
             var dummyLmiSocDatasetModel = A.Dummy<LmiSocDatasetModel>();
@@ -306,7 +308,8 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
 
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).Returns(dummyLmiSocDatasetModel);
             A.CallTo(() => fakeMapper.Map<SocDatasetModel>(A<LmiSocDatasetModel>.Ignored)).Returns(dummyCacheSocDatasetModel);
-            A.CallTo(() => fakeDocumentService.UpsertAsync(A<SocDatasetModel>.Ignored)).Returns(HttpStatusCode.Created);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<SocDatasetModel, bool>>>.Ignored, A<string>.Ignored)).Returns(new SocDatasetModel());
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<SocDatasetModel>.Ignored)).Returns(httpStatusCode);
 
             // Act
             var result = await lmiImportOrchestrationTrigger.ImportSocItemActivity(socJobProfileMapping).ConfigureAwait(false);
@@ -314,6 +317,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Assert
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapper.Map<SocDatasetModel>(A<LmiSocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<SocDatasetModel, bool>>>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<SocDatasetModel>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.NotNull(result);
         }
@@ -345,6 +349,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Assert
             A.CallTo(() => fakeLmiSocImportService.ImportAsync(A<int>.Ignored, A<List<SocJobProfileItemModel>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeMapper.Map<SocDatasetModel>(A<LmiSocDatasetModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<SocDatasetModel, bool>>>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<SocDatasetModel>.Ignored)).MustNotHaveHappened();
             Assert.Null(result);
         }
