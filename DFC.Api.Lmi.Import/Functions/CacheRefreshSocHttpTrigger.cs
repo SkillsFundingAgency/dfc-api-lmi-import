@@ -14,47 +14,48 @@ using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Functions
 {
-    public class GraphRefreshHttpTrigger
+    public class CacheRefreshSocHttpTrigger
     {
-        private readonly ILogger<GraphRefreshHttpTrigger> logger;
+        private readonly ILogger<CacheRefreshSocHttpTrigger> logger;
         private readonly EnvironmentValues environmentValues;
 
-        public GraphRefreshHttpTrigger(ILogger<GraphRefreshHttpTrigger> logger, EnvironmentValues environmentValues)
+        public CacheRefreshSocHttpTrigger(ILogger<CacheRefreshSocHttpTrigger> logger, EnvironmentValues environmentValues)
         {
             this.logger = logger;
             this.environmentValues = environmentValues;
         }
 
-        [FunctionName("GraphRefresh")]
-        [Display(Name = "Graph refresh", Description = "Receives Post requests for graph refresh.")]
-        [Response(HttpStatusCode = (int)HttpStatusCode.Accepted, Description = "Refresh queued for processing", ShowSchema = false)]
+        [FunctionName("CacheRefreshSoc")]
+        [Display(Name = "Cache refresh SOC", Description = "Receives Post requests for cache refresh of a SOC.")]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Accepted, Description = "Refresh SOC item queued for processing", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Invalid request data or wrong environment", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.InternalServerError, Description = "Internal error caught and logged", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/refresh")] HttpRequest? request,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cache/refresh/{soc}")] HttpRequest? request,
+            int soc,
             [DurableClient] IDurableOrchestrationClient starter)
         {
             try
             {
-                var orchestratorRequestModel = new OrchestratorRequestModel
+                var socRequest = new SocRequestModel
                 {
+                    Soc = soc,
                     IsDraftEnvironment = environmentValues.IsDraftEnvironment,
-                    SuccessRelayPercent = environmentValues.SuccessRelayPercent,
                 };
 
-                if (!orchestratorRequestModel.IsDraftEnvironment)
+                if (!socRequest.IsDraftEnvironment)
                 {
                     return new BadRequestResult();
                 }
 
-                logger.LogInformation("Received graph refresh request");
+                logger.LogInformation("Received cache refresh  for SOC {soc} request");
 
-                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
+                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CacheRefreshSocOrchestrator), socRequest).ConfigureAwait(false);
 
-                logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+                logger.LogInformation($"Started orchestration with ID = '{instanceId}' for SOC {soc}.");
 
                 return starter.CreateCheckStatusResponse(request, instanceId);
             }

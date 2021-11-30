@@ -8,6 +8,19 @@
 		"ApiSuffix": "__Environment__",
 		"SuccessRelayPercent": 95
 	},
+	"Configuration": {
+		"CosmosDbConnections": {
+			"LmiImport": {
+				//"AccessKey": "UN6V3MIwuSrnilmujFBdDEnybwTv5oJmL32GT0J17u9VQVm2W1wvzn3CE8E33uYvU6986d0Dyvj02lu8RgVNxw==",
+				//"EndpointUrl": "https://dfc-dev-compui-shared-cdb.documents.azure.com:443/",
+				"AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+				"EndpointUrl": "https://localhost:8081/",
+				"DatabaseId": "dfc-api-lmi-import",
+				"CollectionId": "lmi-for-all-data",
+				"PartitionKey": "/PartitionKey"
+			}
+		}
+	},
 	"Policies": {
 		"HttpCircuitBreaker": {
 			"DurationOfBreak": "00:01:00",
@@ -18,60 +31,12 @@
 			"Count": 3
 		}
 	},
-	"Neo4j": {
-		"Endpoints": [
-			{
-				"Name": "__Neo4jInstance__",
-				"Uri": "__Neo4jBoltUri__",
-				"Username": "__Neo4jUsername__",
-				"Password": "__Neo4jPassword__",
-				"Enabled": true
-			}
-		],
-		"ReplicaSets": [
-			{
-				"ReplicaSetName": "__Neo4jReplicaSetName__",
-				"GraphInstances": [
-					{
-						"Endpoint": "__Neo4jInstance__",
-						"GraphName": "__PublishedGraphName__",
-						"DefaultGraph": true,
-						"Enabled": true
-					}
-				]
-			},
-			{
-				"ReplicaSetName": "__PreviewReplicaSetName__",
-				"GraphInstances": [
-					{
-						"Endpoint": "__Neo4jInstance__",
-						"GraphName": "__PreviewGraphName__",
-						"DefaultGraph": false,
-						"Enabled": true
-					}
-				]
-			}
-		]
-	},
-	"GraphOptions": {
-		"PreferredLabelName": "__PreferredLabelName__",
-		"UriPropertyName": "__UriPropertyName__",
-		"ContentApiUriPrefix": "__ContentApiBasename__",
-		"PublishedReplicaSetName": "__Neo4jReplicaSetName__",
-		"DraftReplicaSetName": "__DraftReplicaSetName__"
-	},
 	"JobProfileApiClientOptions": {
 		"BaseAddress": "__JobProfilesApiSummaryEndpoint__",
 		"Version": "__JobProfilesVersion__",
 		"ApiKey": "__JobProfilesApimKey__",
 		"Timeout": "00:00:30",
 		"DeveloperModeMaxJobProfiles": "__ProcessMaxJobProfiles__"
-	},
-	"EventGridClientOptions": {
-		"TopicEndpoint": "__EventGridTopicEndpoint__/api/events",
-		"SubjectPrefix": "/dfc-api-lmi-import/",
-		"TopicKey": "__EventGridTopicKey__",
-		"ApiEndpoint": "__ContentApiEndpoint__/api/execute/lmisoc"
 	},
 	"LmiApiClientOptions": {
 		"BaseAddress": "https://api.lmiforall.org.uk/api/v1/",
@@ -86,21 +51,10 @@
 		"MaxYear": "__LmiEndYear__",
 		"Timeout": "00:00:30"
 	},
-	"SubscriptionSettings": {
-		"Endpoint": "__ThisAppWebhookEndpoint__",
-		"SubscriptionServiceEndpoint": "__SubscriptionServiceEndpoint__",
-		"SubscriptionRegistrationDelay": "00:02:00",
-		"ApiKey": "__SubscriptionsApimKey__",
-		"Filter": {
-			"IncludeEventTypes": [ "published", "unpublished", "deleted" ],
-			"PropertyContainsFilters": [
-				{
-					"Key": "subject",
-					"Values": [
-						"/dfc-api-lmi-delta-report/"
-					]
-				}
-			]
-		}
+	"EventGridClientOptions": {
+		"TopicEndpoint": "__EventGridTopicEndpoint__/api/events",
+		"SubjectPrefix": "/dfc-api-lmi-import/",
+		"TopicKey": "__EventGridTopicKey__",
+		"ApiEndpoint": "__ContentApiEndpoint__/api/execute/lmisoc"
 	}
 }

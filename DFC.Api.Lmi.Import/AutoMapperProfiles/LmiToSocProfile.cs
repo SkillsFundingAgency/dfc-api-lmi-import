@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using DFC.Api.Lmi.Import.Models.GraphData;
 using DFC.Api.Lmi.Import.Models.LmiApiData;
+using DFC.Api.Lmi.Import.Models.SocDataset;
 using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -12,32 +12,25 @@ namespace DFC.Api.Lmi.Import.AutoMapperProfiles
     {
         public LmiToSocProfile()
         {
-            CreateMap<LmiSocDatasetModel, GraphSocDatasetModel>()
-                .ForMember(d => d.CreatedDate, s => s.Ignore());
+            CreateMap<LmiSocDatasetModel, SocDatasetModel>()
+                .ForMember(d => d.Id, s => s.MapFrom(m => Guid.NewGuid()));
 
-            CreateMap<SocJobProfileItemModel, GraphJobProfileModel>();
+            CreateMap<SocJobProfileItemModel, JobProfileModel>();
 
-            CreateMap<LmiPredictedModel, GraphPredictedModel>()
+            CreateMap<LmiPredictedModel, PredictedModel>()
                 .ForMember(d => d.Measure, s => s.MapFrom(m => "employment"));
 
-            CreateMap<LmiReplacementDemandModel, GraphReplacementDemandModel>()
+            CreateMap<LmiReplacementDemandModel, ReplacementDemandModel>()
                 .ForMember(d => d.Measure, s => s.MapFrom(m => "replacement"));
 
-            CreateMap<LmiPredictedYearModel, GraphPredictedYearModel>()
-                .ForMember(d => d.Soc, s => s.Ignore())
-                .ForMember(d => d.Measure, s => s.Ignore());
+            CreateMap<LmiPredictedYearModel, PredictedYearModel>();
 
-            CreateMap<LmiBreakdownModel, GraphBreakdownModel>()
+            CreateMap<LmiBreakdownModel, BreakdownModel>()
                 .ForMember(d => d.Measure, s => s.MapFrom(m => m.Breakdown));
 
-            CreateMap<LmiBreakdownYearModel, GraphBreakdownYearModel>()
-                .ForMember(d => d.Soc, s => s.Ignore())
-                .ForMember(d => d.Measure, s => s.Ignore());
+            CreateMap<LmiBreakdownYearModel, BreakdownYearModel>();
 
-            CreateMap<LmiBreakdownYearValueModel, GraphBreakdownYearValueModel>()
-                .ForMember(d => d.Soc, s => s.Ignore())
-                .ForMember(d => d.Measure, s => s.Ignore())
-                .ForMember(d => d.Year, s => s.Ignore());
+            CreateMap<LmiBreakdownYearValueModel, BreakdownYearValueModel>();
         }
     }
 }
