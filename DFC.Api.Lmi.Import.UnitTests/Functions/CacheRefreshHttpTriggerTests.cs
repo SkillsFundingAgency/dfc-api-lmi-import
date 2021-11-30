@@ -13,64 +13,64 @@ using Xunit;
 
 namespace DFC.Api.Lmi.Import.UnitTests.Functions
 {
-    [Trait("Category", "Graph refresh SOC http trigger function Unit Tests")]
-    public class GraphRefreshSocHttpTriggerTests
+    [Trait("Category", "Cache refresh http trigger function Unit Tests")]
+    public class CacheRefreshHttpTriggerTests
     {
-        private readonly ILogger<GraphRefreshSocHttpTrigger> fakeLogger = A.Fake<ILogger<GraphRefreshSocHttpTrigger>>();
+        private readonly ILogger<CacheRefreshHttpTrigger> fakeLogger = A.Fake<ILogger<CacheRefreshHttpTrigger>>();
         private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
         private readonly EnvironmentValues draftEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = "(draft)" };
         private readonly EnvironmentValues publishedEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = string.Empty };
 
         [Fact]
-        public async Task GraphRefreshSocHttpTriggerRunFunctionIsSuccessful()
+        public async Task CacheRefreshHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
-            var graphRefreshSocHttpTrigger = new GraphRefreshSocHttpTrigger(fakeLogger, draftEnvironmentValues);
+            var cacheRefreshHttpTrigger = new CacheRefreshHttpTrigger(fakeLogger, draftEnvironmentValues);
 
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
             // Act
-            var result = await graphRefreshSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
+            var result = await cacheRefreshHttpTrigger.Run(null, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
             var statusResult = Assert.IsType<AcceptedResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
-        public async Task GraphRefreshSocHttpTriggerRunFunctionReturnsBadRequestForPublishedEnvironment()
+        public async Task CacheRefreshHttpTriggerRunFunctionReturnsBadRequestForPublishedEnvironment()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var graphRefreshSocHttpTrigger = new GraphRefreshSocHttpTrigger(fakeLogger, publishedEnvironmentValues);
+            var cacheRefreshHttpTrigger = new CacheRefreshHttpTrigger(fakeLogger, publishedEnvironmentValues);
 
             // Act
-            var result = await graphRefreshSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
+            var result = await cacheRefreshHttpTrigger.Run(null, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
             var statusResult = Assert.IsType<BadRequestResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
-        public async Task GraphRefreshSocHttpTriggertReturnsUnprocessableEntityWhenStartNewAsyncRaisesException()
+        public async Task CacheRefreshHttpTriggerReturnsUnprocessableEntityWhenStartNewAsyncRaisesException()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
-            var graphRefreshSocHttpTrigger = new GraphRefreshSocHttpTrigger(fakeLogger, draftEnvironmentValues);
+            var cacheRefreshHttpTrigger = new CacheRefreshHttpTrigger(fakeLogger, draftEnvironmentValues);
 
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).Throws<Exception>();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).Throws<Exception>();
 
             // Act
-            var result = await graphRefreshSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
+            var result = await cacheRefreshHttpTrigger.Run(null, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
             var statusResult = Assert.IsType<StatusCodeResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);

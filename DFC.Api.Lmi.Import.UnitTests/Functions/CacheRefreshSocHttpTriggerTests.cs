@@ -13,25 +13,25 @@ using Xunit;
 
 namespace DFC.Api.Lmi.Import.UnitTests.Functions
 {
-    [Trait("Category", "Graph purge SOC http trigger function Unit Tests")]
-    public class GraphPurgeSocHttpTriggerTests
+    [Trait("Category", "Cache refresh SOC http trigger function Unit Tests")]
+    public class CacheRefreshSocHttpTriggerTests
     {
-        private readonly ILogger<GraphPurgeSocHttpTrigger> fakeLogger = A.Fake<ILogger<GraphPurgeSocHttpTrigger>>();
+        private readonly ILogger<CacheRefreshSocHttpTrigger> fakeLogger = A.Fake<ILogger<CacheRefreshSocHttpTrigger>>();
         private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
         private readonly EnvironmentValues draftEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = "(draft)" };
         private readonly EnvironmentValues publishedEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = string.Empty };
 
         [Fact]
-        public async Task GraphPurgeSocHttpTriggerRunFunctionIsSuccessful()
+        public async Task CacheRefreshSocHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
-            var graphPurgeSocHttpTrigger = new GraphPurgeSocHttpTrigger(fakeLogger, draftEnvironmentValues);
+            var cacheRefreshSocHttpTrigger = new CacheRefreshSocHttpTrigger(fakeLogger, draftEnvironmentValues);
 
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
             // Act
-            var result = await graphPurgeSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
+            var result = await cacheRefreshSocHttpTrigger.Run(null, 3231, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -41,14 +41,14 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         }
 
         [Fact]
-        public async Task GraphPurgeSocHttpTriggerRunFunctionReturnsBadRequestForPublishedEnvironment()
+        public async Task CacheRefreshSocHttpTriggerRunFunctionReturnsBadRequestForPublishedEnvironment()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var graphPurgeSocHttpTrigger = new GraphPurgeSocHttpTrigger(fakeLogger, publishedEnvironmentValues);
+            var cacheRefreshSocHttpTrigger = new CacheRefreshSocHttpTrigger(fakeLogger, publishedEnvironmentValues);
 
             // Act
-            var result = await graphPurgeSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
+            var result = await cacheRefreshSocHttpTrigger.Run(null, 3231, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustNotHaveHappened();
@@ -58,16 +58,16 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         }
 
         [Fact]
-        public async Task GraphPurgeSocHttpTriggerReturnsUnprocessableEntityWhenStartNewAsyncRaisesException()
+        public async Task CacheRefreshSocHttpTriggertReturnsUnprocessableEntityWhenStartNewAsyncRaisesException()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
-            var graphPurgeSocHttpTrigger = new GraphPurgeSocHttpTrigger(fakeLogger, draftEnvironmentValues);
+            var cacheRefreshSocHttpTrigger = new CacheRefreshSocHttpTrigger(fakeLogger, draftEnvironmentValues);
 
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).Throws<Exception>();
 
             // Act
-            var result = await graphPurgeSocHttpTrigger.Run(null, 3231, Guid.NewGuid(), fakeDurableOrchestrationClient).ConfigureAwait(false);
+            var result = await cacheRefreshSocHttpTrigger.Run(null, 3231, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustHaveHappenedOnceExactly();

@@ -31,7 +31,7 @@ namespace DFC.Api.Lmi.Import.Functions
 
             if (orchestratorRequestModel.IsDraftEnvironment)
             {
-                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
+                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CacheRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
 
                 logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
             }
