@@ -5,7 +5,6 @@
 		"FUNCTIONS_WORKER_RUNTIME": "dotnet",
 		"APPINSIGHTS_INSTRUMENTATIONKEY": "__AppInsightsKey__",
 		"LmiImportTimerTriggerSchedule": "__TimerTriggerCron__",
-		"ApiSuffix": "__Environment__",
 		"SuccessRelayPercent": 95
 	},
 	"Configuration": {

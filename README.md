@@ -38,7 +38,6 @@ This app uses the LMI API to retrieve LMI data. This app also uses the Job Profi
 | App setting | Value |
 |-------|-------|
 LmiImportTimerTriggerSchedule | * * * * * * |
-ApiSuffix | dev | 
 |Configuration__CosmosDbConnections__LmiImport__AccessKey|__CosmosAccessKey__|
 |Configuration__CosmosDbConnections__LmiImport__EndpointUrl|__CosmosEndpoint__|
 |Configuration__CosmosDbConnections__LmiImport__DatabaseId|dfc-api-lmi-import|

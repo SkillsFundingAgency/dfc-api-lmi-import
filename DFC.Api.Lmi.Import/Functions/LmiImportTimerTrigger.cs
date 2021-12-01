@@ -3,6 +3,7 @@ using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Functions
@@ -23,18 +24,16 @@ namespace DFC.Api.Lmi.Import.Functions
             [TimerTrigger("%LmiImportTimerTriggerSchedule%")] TimerInfo myTimer,
             [DurableClient] IDurableOrchestrationClient starter)
         {
+            _ = starter ?? throw new ArgumentNullException(nameof(starter));
+
             var orchestratorRequestModel = new OrchestratorRequestModel
             {
-                IsDraftEnvironment = environmentValues.IsDraftEnvironment,
                 SuccessRelayPercent = environmentValues.SuccessRelayPercent,
             };
 
-            if (orchestratorRequestModel.IsDraftEnvironment)
-            {
-                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CacheRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
+            string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CacheRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
 
-                logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
-            }
+            logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
             logger.LogTrace($"Next run of {nameof(LmiImportTimerTrigger)}is {myTimer?.ScheduleStatus?.Next}");
         }

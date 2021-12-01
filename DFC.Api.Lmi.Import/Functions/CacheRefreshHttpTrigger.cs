@@ -37,18 +37,14 @@ namespace DFC.Api.Lmi.Import.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cache/refresh")] HttpRequest? request,
             [DurableClient] IDurableOrchestrationClient starter)
         {
+            _ = starter ?? throw new ArgumentNullException(nameof(starter));
+
             try
             {
                 var orchestratorRequestModel = new OrchestratorRequestModel
                 {
-                    IsDraftEnvironment = environmentValues.IsDraftEnvironment,
                     SuccessRelayPercent = environmentValues.SuccessRelayPercent,
                 };
-
-                if (!orchestratorRequestModel.IsDraftEnvironment)
-                {
-                    return new BadRequestResult();
-                }
 
                 logger.LogInformation("Received cache refresh request");
 

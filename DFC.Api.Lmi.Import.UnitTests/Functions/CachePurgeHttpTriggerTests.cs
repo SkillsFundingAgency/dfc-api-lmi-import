@@ -1,6 +1,4 @@
 ﻿using DFC.Api.Lmi.Import.Functions;
-using DFC.Api.Lmi.Import.Models;
-using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,15 +16,13 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
     {
         private readonly ILogger<CachePurgeHttpTrigger> fakeLogger = A.Fake<ILogger<CachePurgeHttpTrigger>>();
         private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
-        private readonly EnvironmentValues draftEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = "(draft)" };
-        private readonly EnvironmentValues publishedEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = string.Empty };
 
         [Fact]
         public async Task CachePurgeHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
-            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger, draftEnvironmentValues);
+            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger);
 
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
@@ -34,26 +30,9 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             var result = await cachePurgeHttpTrigger.Run(null, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, null)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
             var statusResult = Assert.IsType<AcceptedResult>(result);
-            Assert.Equal((int)expectedResult, statusResult.StatusCode);
-        }
-
-        [Fact]
-        public async Task CachePurgeHttpTriggerRunFunctionReturnsBadRequestForPublishedEnvironment()
-        {
-            // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger, publishedEnvironmentValues);
-
-            // Act
-            var result = await cachePurgeHttpTrigger.Run(null, fakeDurableOrchestrationClient).ConfigureAwait(false);
-
-            // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
-            var statusResult = Assert.IsType<BadRequestResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
@@ -62,15 +41,15 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
-            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger, draftEnvironmentValues);
+            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger);
 
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).Throws<Exception>();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, null)).Throws<Exception>();
 
             // Act
             var result = await cachePurgeHttpTrigger.Run(null, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, null)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
             var statusResult = Assert.IsType<StatusCodeResult>(result);
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
