@@ -41,14 +41,8 @@ namespace DFC.Api.Lmi.Import.Functions
             {
                 var orchestratorRequestModel = new OrchestratorRequestModel
                 {
-                    IsDraftEnvironment = environmentValues.IsDraftEnvironment,
                     SuccessRelayPercent = environmentValues.SuccessRelayPercent,
                 };
-
-                if (!orchestratorRequestModel.IsDraftEnvironment)
-                {
-                    return new BadRequestResult();
-                }
 
                 logger.LogInformation("Received cache refresh request");
 

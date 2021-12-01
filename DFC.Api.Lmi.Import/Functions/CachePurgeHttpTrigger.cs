@@ -1,5 +1,4 @@
 ﻿using DFC.Api.Lmi.Import.Models;
-using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,19 +38,9 @@ namespace DFC.Api.Lmi.Import.Functions
         {
             try
             {
-                var orchestratorRequestModel = new OrchestratorRequestModel
-                {
-                    IsDraftEnvironment = environmentValues.IsDraftEnvironment,
-                };
-
-                if (!orchestratorRequestModel.IsDraftEnvironment)
-                {
-                    return new BadRequestResult();
-                }
-
                 logger.LogInformation("Received cache purge request");
 
-                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CachePurgeOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
+                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CachePurgeOrchestrator)).ConfigureAwait(false);
 
                 logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 

@@ -21,9 +21,7 @@ namespace DFC.Api.Lmi.Import.Functions
 {
     public class LmiImportOrchestrationTrigger
     {
-        private const string EventTypeForDraft = "draft";
         private const string EventTypeForPublished = "published";
-        private const string EventTypeForDraftDiscarded = "draft-discarded";
         private const string EventTypeForDeleted = "deleted";
 
         private readonly ILogger<LmiImportOrchestrationTrigger> logger;
@@ -85,7 +83,7 @@ namespace DFC.Api.Lmi.Import.Functions
                     ItemId = itemId,
                     Api = $"{eventGridClientOptions.ApiEndpoint}/{itemId}",
                     DisplayText = $"LMI SOC refreshed: {socRequest.Soc}",
-                    EventType = socRequest.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
+                    EventType = EventTypeForPublished,
                 };
 
                 await context.CallActivityAsync(nameof(PostCacheEventActivity), eventGridPostRequest).ConfigureAwait(true);
@@ -114,7 +112,7 @@ namespace DFC.Api.Lmi.Import.Functions
                     ItemId = existingDocument.Id,
                     Api = $"{eventGridClientOptions.ApiEndpoint}/{existingDocument.Id}",
                     DisplayText = $"LMI SOC purged: {existingDocument.Soc}",
-                    EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
+                    EventType = EventTypeForDeleted,
                 };
 
                 await context.CallActivityAsync(nameof(PostCacheEventActivity), eventGridPostRequest).ConfigureAwait(true);
@@ -126,7 +124,6 @@ namespace DFC.Api.Lmi.Import.Functions
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
-            var orchestratorRequestModel = context.GetInput<OrchestratorRequestModel>();
             await context.CallActivityAsync(nameof(CachePurgeActivity), null).ConfigureAwait(true);
 
             var eventGridPostRequest = new EventGridPostRequestModel
@@ -134,7 +131,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 ItemId = context.NewGuid(),
                 Api = $"{eventGridClientOptions.ApiEndpoint}",
                 DisplayText = "LMI Import purged",
-                EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
+                EventType = EventTypeForDeleted,
             };
 
             await context.CallActivityAsync(nameof(PostCacheEventActivity), eventGridPostRequest).ConfigureAwait(true);
@@ -178,7 +175,7 @@ namespace DFC.Api.Lmi.Import.Functions
                         ItemId = context.NewGuid(),
                         Api = $"{eventGridClientOptions.ApiEndpoint}",
                         DisplayText = "LMI Import refreshed",
-                        EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
+                        EventType = EventTypeForPublished,
                     };
 
                     await context.CallActivityAsync(nameof(PostCacheEventActivity), eventGridPostRequest).ConfigureAwait(true);

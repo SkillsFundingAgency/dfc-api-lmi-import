@@ -18,15 +18,14 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
     {
         private readonly ILogger<CachePurgeSocHttpTrigger> fakeLogger = A.Fake<ILogger<CachePurgeSocHttpTrigger>>();
         private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
-        private readonly EnvironmentValues draftEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = "(draft)" };
-        private readonly EnvironmentValues publishedEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = string.Empty };
+        private readonly EnvironmentValues environmentValues = new EnvironmentValues();
 
         [Fact]
         public async Task CachePurgeSocHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
-            var cachePurgeSocHttpTrigger = new CachePurgeSocHttpTrigger(fakeLogger, draftEnvironmentValues);
+            var cachePurgeSocHttpTrigger = new CachePurgeSocHttpTrigger(fakeLogger, environmentValues);
 
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
@@ -41,28 +40,11 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         }
 
         [Fact]
-        public async Task CachePurgeSocHttpTriggerRunFunctionReturnsBadRequestForPublishedEnvironment()
-        {
-            // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var cachePurgeSocHttpTrigger = new CachePurgeSocHttpTrigger(fakeLogger, publishedEnvironmentValues);
-
-            // Act
-            var result = await cachePurgeSocHttpTrigger.Run(null, 3231, fakeDurableOrchestrationClient).ConfigureAwait(false);
-
-            // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
-            var statusResult = Assert.IsType<BadRequestResult>(result);
-            Assert.Equal((int)expectedResult, statusResult.StatusCode);
-        }
-
-        [Fact]
         public async Task CachePurgeSocHttpTriggerReturnsUnprocessableEntityWhenStartNewAsyncRaisesException()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
-            var cachePurgeSocHttpTrigger = new CachePurgeSocHttpTrigger(fakeLogger, draftEnvironmentValues);
+            var cachePurgeSocHttpTrigger = new CachePurgeSocHttpTrigger(fakeLogger, environmentValues);
 
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).Throws<Exception>();
 

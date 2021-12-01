@@ -131,13 +131,11 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         public async Task LmiImportOrchestrationTriggerCachePurgeOrchestratorIsSuccessful()
         {
             // Arrange
-            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true });
 
             // Act
             await lmiImportOrchestrationTrigger.CachePurgeOrchestrator(fakeDurableOrchestrationContext).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.CachePurgeActivity), A<object>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync(nameof(LmiImportOrchestrationTrigger.PostCacheEventActivity), A<EventGridPostRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
@@ -161,7 +159,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
             const int mappingItemsCount = 2;
             var dummyMappings = A.CollectionOfDummy<SocJobProfileMappingModel>(mappingItemsCount);
-            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true });
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel());
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).Returns(dummyMappings);
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(Guid.NewGuid());
 
@@ -197,7 +195,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             const int mappingItemsCount = 2;
             var dummyMappings = A.CollectionOfDummy<SocJobProfileMappingModel>(mappingItemsCount);
             Guid? nullGuid = null;
-            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true, SuccessRelayPercent = 99 });
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { SuccessRelayPercent = 99 });
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).Returns(dummyMappings);
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<Guid?>(nameof(LmiImportOrchestrationTrigger.ImportSocItemActivity), A<SocJobProfileMappingModel>.Ignored)).Returns(nullGuid);
 
@@ -220,7 +218,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
             const int mappingItemsCount = 0;
             var dummyMappings = A.CollectionOfDummy<SocJobProfileMappingModel>(mappingItemsCount);
-            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true });
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel());
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).Returns(dummyMappings);
 
             // Act
@@ -241,7 +239,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
             List<SocJobProfileMappingModel>? nullMappings = null;
-            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel { IsDraftEnvironment = true });
+            A.CallTo(() => fakeDurableOrchestrationContext.GetInput<OrchestratorRequestModel>()).Returns(new OrchestratorRequestModel());
             A.CallTo(() => fakeDurableOrchestrationContext.CallActivityAsync<IList<SocJobProfileMappingModel>?>(nameof(LmiImportOrchestrationTrigger.GetJobProfileSocMappingsActivity), A<object>.Ignored)).Returns(nullMappings);
 
             // Act

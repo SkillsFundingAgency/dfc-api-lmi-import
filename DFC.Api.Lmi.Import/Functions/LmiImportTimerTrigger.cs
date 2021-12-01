@@ -25,16 +25,12 @@ namespace DFC.Api.Lmi.Import.Functions
         {
             var orchestratorRequestModel = new OrchestratorRequestModel
             {
-                IsDraftEnvironment = environmentValues.IsDraftEnvironment,
                 SuccessRelayPercent = environmentValues.SuccessRelayPercent,
             };
 
-            if (orchestratorRequestModel.IsDraftEnvironment)
-            {
-                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CacheRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
+            string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CacheRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
 
-                logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
-            }
+            logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
             logger.LogTrace($"Next run of {nameof(LmiImportTimerTrigger)}is {myTimer?.ScheduleStatus?.Next}");
         }

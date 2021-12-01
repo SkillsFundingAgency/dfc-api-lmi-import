@@ -45,11 +45,9 @@ namespace DFC.Api.Lmi.Import.Functions
         [FunctionName("SwaggerJson")]
         public async Task<IActionResult> SwaggerJson([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SwaggerJsonRoute)] HttpRequest request)
         {
-            var apiSuffix = environmentValues.EnvironmentNameApiSuffix;
-            var apiTitle = "LMI Import API " + apiSuffix;
             var swaggerDoc = await Task.FromResult(swaggerDocumentGenerator.GenerateSwaggerDocument(
                 request,
-                apiTitle,
+                "LMI Import API",
                 ApiDefinitionDescription,
                 SwaggerJsonRoute,
                 ApiVersion,

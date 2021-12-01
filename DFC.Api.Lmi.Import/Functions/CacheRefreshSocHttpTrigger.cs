@@ -43,13 +43,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 var socRequest = new SocRequestModel
                 {
                     Soc = soc,
-                    IsDraftEnvironment = environmentValues.IsDraftEnvironment,
                 };
-
-                if (!socRequest.IsDraftEnvironment)
-                {
-                    return new BadRequestResult();
-                }
 
                 logger.LogInformation("Received cache refresh  for SOC {soc} request");
 
