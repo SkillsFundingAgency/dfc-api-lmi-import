@@ -37,6 +37,8 @@ namespace DFC.Api.Lmi.Import.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cache/refresh")] HttpRequest? request,
             [DurableClient] IDurableOrchestrationClient starter)
         {
+            _ = starter ?? throw new ArgumentNullException(nameof(starter));
+
             try
             {
                 var orchestratorRequestModel = new OrchestratorRequestModel

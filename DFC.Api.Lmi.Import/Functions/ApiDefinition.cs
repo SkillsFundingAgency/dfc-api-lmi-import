@@ -1,6 +1,5 @@
 ﻿using AzureFunctions.Extensions.Swashbuckle;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using DFC.Api.Lmi.Import.Models;
 using DFC.Swagger.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +22,10 @@ namespace DFC.Api.Lmi.Import.Functions
         private const string ApiVersion = "0.1.0";
 
         private readonly ISwaggerDocumentGenerator swaggerDocumentGenerator;
-        private readonly EnvironmentValues environmentValues;
 
-        public ApiDefinition(ISwaggerDocumentGenerator swaggerDocumentGenerator, EnvironmentValues environmentValues)
+        public ApiDefinition(ISwaggerDocumentGenerator swaggerDocumentGenerator)
         {
             this.swaggerDocumentGenerator = swaggerDocumentGenerator;
-            this.environmentValues = environmentValues;
         }
 
         [SwaggerIgnore]

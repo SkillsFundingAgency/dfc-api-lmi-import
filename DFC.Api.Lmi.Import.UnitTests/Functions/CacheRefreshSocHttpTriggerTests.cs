@@ -1,5 +1,4 @@
 ﻿using DFC.Api.Lmi.Import.Functions;
-using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
@@ -18,14 +17,13 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
     {
         private readonly ILogger<CacheRefreshSocHttpTrigger> fakeLogger = A.Fake<ILogger<CacheRefreshSocHttpTrigger>>();
         private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
-        private readonly EnvironmentValues environmentValues = new EnvironmentValues();
 
         [Fact]
         public async Task CacheRefreshSocHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
-            var cacheRefreshSocHttpTrigger = new CacheRefreshSocHttpTrigger(fakeLogger, environmentValues);
+            var cacheRefreshSocHttpTrigger = new CacheRefreshSocHttpTrigger(fakeLogger);
 
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
@@ -44,7 +42,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
-            var cacheRefreshSocHttpTrigger = new CacheRefreshSocHttpTrigger(fakeLogger, environmentValues);
+            var cacheRefreshSocHttpTrigger = new CacheRefreshSocHttpTrigger(fakeLogger);
 
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<SocRequestModel>.Ignored)).Throws<Exception>();
 

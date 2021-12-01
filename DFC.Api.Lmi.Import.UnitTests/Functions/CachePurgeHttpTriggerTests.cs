@@ -1,5 +1,4 @@
 ﻿using DFC.Api.Lmi.Import.Functions;
-using DFC.Api.Lmi.Import.Models;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,14 +16,13 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
     {
         private readonly ILogger<CachePurgeHttpTrigger> fakeLogger = A.Fake<ILogger<CachePurgeHttpTrigger>>();
         private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
-        private readonly EnvironmentValues environmentValues = new EnvironmentValues();
 
         [Fact]
         public async Task CachePurgeHttpTriggerRunFunctionIsSuccessful()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.Accepted;
-            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger, environmentValues);
+            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger);
 
             A.CallTo(() => fakeDurableOrchestrationClient.CreateCheckStatusResponse(A<HttpRequest>.Ignored, A<string>.Ignored, A<bool>.Ignored)).Returns(new AcceptedResult());
 
@@ -43,7 +41,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.InternalServerError;
-            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger, environmentValues);
+            var cachePurgeHttpTrigger = new CachePurgeHttpTrigger(fakeLogger);
 
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, null)).Throws<Exception>();
 

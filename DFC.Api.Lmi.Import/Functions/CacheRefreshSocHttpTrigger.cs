@@ -1,5 +1,4 @@
-﻿using DFC.Api.Lmi.Import.Models;
-using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
+﻿using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +16,10 @@ namespace DFC.Api.Lmi.Import.Functions
     public class CacheRefreshSocHttpTrigger
     {
         private readonly ILogger<CacheRefreshSocHttpTrigger> logger;
-        private readonly EnvironmentValues environmentValues;
 
-        public CacheRefreshSocHttpTrigger(ILogger<CacheRefreshSocHttpTrigger> logger, EnvironmentValues environmentValues)
+        public CacheRefreshSocHttpTrigger(ILogger<CacheRefreshSocHttpTrigger> logger)
         {
             this.logger = logger;
-            this.environmentValues = environmentValues;
         }
 
         [FunctionName("CacheRefreshSoc")]
@@ -38,6 +35,8 @@ namespace DFC.Api.Lmi.Import.Functions
             int soc,
             [DurableClient] IDurableOrchestrationClient starter)
         {
+            _ = starter ?? throw new ArgumentNullException(nameof(starter));
+
             try
             {
                 var socRequest = new SocRequestModel

@@ -1,5 +1,4 @@
-﻿using DFC.Api.Lmi.Import.Models;
-using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
+﻿using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +16,10 @@ namespace DFC.Api.Lmi.Import.Functions
     public class CachePurgeSocHttpTrigger
     {
         private readonly ILogger<CachePurgeSocHttpTrigger> logger;
-        private readonly EnvironmentValues environmentValues;
 
-        public CachePurgeSocHttpTrigger(ILogger<CachePurgeSocHttpTrigger> logger, EnvironmentValues environmentValues)
+        public CachePurgeSocHttpTrigger(ILogger<CachePurgeSocHttpTrigger> logger)
         {
             this.logger = logger;
-            this.environmentValues = environmentValues;
         }
 
         [FunctionName("CachePurgeSoc")]
@@ -38,6 +35,8 @@ namespace DFC.Api.Lmi.Import.Functions
             int soc,
             [DurableClient] IDurableOrchestrationClient starter)
         {
+            _ = starter ?? throw new ArgumentNullException(nameof(starter));
+
             try
             {
                 var socRequest = new SocRequestModel

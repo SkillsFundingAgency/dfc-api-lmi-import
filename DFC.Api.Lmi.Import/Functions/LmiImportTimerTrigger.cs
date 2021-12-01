@@ -3,6 +3,7 @@ using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Functions
@@ -23,6 +24,8 @@ namespace DFC.Api.Lmi.Import.Functions
             [TimerTrigger("%LmiImportTimerTriggerSchedule%")] TimerInfo myTimer,
             [DurableClient] IDurableOrchestrationClient starter)
         {
+            _ = starter ?? throw new ArgumentNullException(nameof(starter));
+
             var orchestratorRequestModel = new OrchestratorRequestModel
             {
                 SuccessRelayPercent = environmentValues.SuccessRelayPercent,

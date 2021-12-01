@@ -1,5 +1,4 @@
-﻿using DFC.Api.Lmi.Import.Models;
-using DFC.Swagger.Standard.Annotations;
+﻿using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -16,12 +15,10 @@ namespace DFC.Api.Lmi.Import.Functions
     public class CachePurgeHttpTrigger
     {
         private readonly ILogger<CachePurgeHttpTrigger> logger;
-        private readonly EnvironmentValues environmentValues;
 
-        public CachePurgeHttpTrigger(ILogger<CachePurgeHttpTrigger> logger, EnvironmentValues environmentValues)
+        public CachePurgeHttpTrigger(ILogger<CachePurgeHttpTrigger> logger)
         {
             this.logger = logger;
-            this.environmentValues = environmentValues;
         }
 
         [FunctionName("CachePurge")]
@@ -36,6 +33,8 @@ namespace DFC.Api.Lmi.Import.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cache/purge")] HttpRequest? request,
             [DurableClient] IDurableOrchestrationClient starter)
         {
+            _ = starter ?? throw new ArgumentNullException(nameof(starter));
+
             try
             {
                 logger.LogInformation("Received cache purge request");
