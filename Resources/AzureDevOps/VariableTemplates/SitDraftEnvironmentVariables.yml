@@ -63,3 +63,5 @@ variables:
   value: https://dfc-sit-api-eventgridsubscriptions-fa.$(FunctionAppDomain)/api/execute/
 - name: SubscriptionPosturi
   value: https://$(FunctionAppName).$(FunctionAppDomain)/subscription/
+- name: CosmosDbCollectionName
+  value: lmi-for-all-data-draft

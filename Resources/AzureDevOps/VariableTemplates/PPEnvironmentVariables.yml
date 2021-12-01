@@ -63,3 +63,5 @@ variables:
   value: ''
 - name: SubscriptionPosturi
   value: ''
+- name: CosmosDbCollectionName
+  value: lmi-for-all-data
