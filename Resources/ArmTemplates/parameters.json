@@ -117,10 +117,10 @@
       "value": "__cosmosCollectionName__"
     },
     "CosmosDbDatabaseThroughput": {
-      "value": "__CosmosDbDatabaseThroughput__"
+      "value": __CosmosDbDatabaseThroughput__
     },
     "CosmosDbDatabaseNeedsCreation": {
-      "value": "__CosmosDbDatabaseDoesntExist__"
+      "value": __CosmosDbDatabaseDoesntExist__
     }
   }
 }
