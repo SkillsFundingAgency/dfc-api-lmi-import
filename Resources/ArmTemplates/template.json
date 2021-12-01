@@ -108,6 +108,27 @@
       "metadata": {
         "description": "subscriptionUrl"
       }
+    },
+    "CosmosDbResourceGroup": {
+      "type": "string"
+    },
+    "cosmosDbName": {
+      "type": "string"
+    },
+    "cosmosDbKey": {
+      "type": "securestring"
+    },
+    "CosmosDbDatabaseNeedsCreation": {
+      "type": "bool"
+    },
+    "CosmosDbDatabaseThroughput": {
+      "type": "int"
+    },
+    "CosmosDbCollectionName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the collection to create"
+      }
     }
   },
   "variables": {
@@ -116,7 +137,10 @@
     "appServicePlanResourceGroup": "[concat(variables('resourcePrefix'),'-rg')]",
     "apimApiName": "[concat(parameters('apimProductName'), '-', parameters('apimApiName'))]",
     "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-    "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-app-sharedresources-actgrp')]"
+    "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-app-sharedresources-actgrp')]",
+    "cosmosDbCollectionPartitionKey": "/PartitionKey",
+    "cosmosDbDatabaseName": "dfc-api-lmi-import",
+    "cosmosDbEndpoint": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
   },
   "resources": [
     {
@@ -193,7 +217,70 @@
       "dependsOn": [
         "[concat('apim-product-', parameters('apimProductName'))]",
         "[concat('apim-logger-', parameters('apimLoggerName'))]"
-        ]
+      ]
+    },
+    {
+      "name": "[variables('CosmosDbDatabaseName')]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('CosmosDbResourceGroup')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'),'CosmosDb/cosmos-database.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "accountName": {
+            "value": "[parameters('CosmosDbName')]"
+          },
+          "databaseName": {
+            "value": "[variables('CosmosDbDatabaseName')]"
+          },
+          "useSharedRequestUnits": {
+            "value": true
+          },
+          "offerThroughput": {
+            "value": "[parameters('CosmosDbDatabaseThroughput')]"
+          },
+          "databaseNeedsCreation": {
+            "value": "[parameters('CosmosDbDatabaseNeedsCreation')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[parameters('CosmosDbCollectionName')]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('CosmosDbResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'CosmosDb/cosmos-collection.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "accountName": {
+            "value": "[parameters('cosmosDbName')]"
+          },
+          "databaseName": {
+            "value": "[variables('cosmosDbDatabaseName')]"
+          },
+          "collectionName": {
+            "value": "[parameters('CosmosDbCollectionName')]"
+          },
+          "provisionRequestUnits": {
+            "value": false
+          },
+          "partitionKey": {
+            "value": "[variables('cosmosDbCollectionPartitionKey')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[variables('CosmosDbDatabaseName')]"
+      ]
     },
     {
       "apiVersion": "2017-05-10",
@@ -469,6 +556,26 @@
               {
                 "name": "SubscriptionSettings__Filter__IncludeEventTypes__4",
                 "value": "[if(contains(variables('resourcePrefix'),'draft'),'draft-discarded','')]"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__LmiImport__EndpointUrl",
+                "value": "[variables('cosmosDbEndpoint')]"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__LmiImport__DatabaseId",
+                "value": "[variables('cosmosDbDatabaseName')]"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__LmiImport__CollectionId",
+                "value": "[parameters('CosmosDbCollectionName')]"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__LmiImport__PartitionKey",
+                "value": "[variables('cosmosDbCollectionPartitionKey')]"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__LmiImport__AccessKey",
+                "value": "[parameters('cosmosDbKey')]"
               }
             ]
           }

@@ -98,8 +98,26 @@
     "SubscriptionSettingsEndpoint": {
       "value": "SubscriptionSettingsEndpoint"
     },
-    "subscriptionUrl":{
+    "subscriptionUrl": {
       "value": "subscriptionUrl"
+    },
+    "cosmosDbKey": {
+      "value": "not-a-real-key"
+    },
+    "CosmosDbResourceGroup": {
+      "value": "dfc-dev-app-sharedresources-rg"
+    },
+    "CosmosDbDatabaseNeedsCreation": {
+      "value": true
+    },
+    "CosmosDbDatabaseThroughput": {
+      "value": 2
+    },
+    "cosmosDbName": {
+      "value": "cosmosDB"
+    },
+    "CosmosDbCollectionName": {
+      "value": "CosmosDbCollectionName"
     }
   }
 }

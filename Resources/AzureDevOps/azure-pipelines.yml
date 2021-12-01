@@ -80,6 +80,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -113,6 +116,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -147,6 +153,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -180,6 +189,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -213,6 +225,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -246,6 +261,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis: 
         -
           - name: import
@@ -280,6 +298,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -313,6 +334,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis: 
         -
           - name: import
@@ -347,6 +371,9 @@ stages:
       ApimServiceName: "$(ApimServiceName)"
       ApimApiName: $(ApimApiName)
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
@@ -379,8 +406,11 @@ stages:
       SharedResourceGroup: "$(SharedResourceGroup)"
       ApimServiceName: "$(ApimServiceName)"
       SubscriptionPosturi: '$(SubscriptionPosturi)'
+      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
+      AppSharedResourceGroup: $(AppSharedResourceGroup)
+      appSharedCosmosDBName: $(appSharedCosmosDBName)
       ApimApiName: $(ApimApiName)
       Apis: 
         -
           - name: import
-            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'                        
+            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'

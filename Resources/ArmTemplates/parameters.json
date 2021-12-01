@@ -103,6 +103,24 @@
     },
     "subscriptionUrl": {
       "value": "__subscriptionUrl__"
+    },
+    "cosmosDbName": {
+      "value": "__appSharedCosmosDBName__"
+    },
+    "cosmosDbKey": {
+      "value": "__appSharedCosmosPrimaryKey__"
+    },
+    "CosmosDbResourceGroup": {
+      "value": "__appSharedResourceGroup__"
+    },
+    "CosmosDbCollectionName": {
+      "value": "__cosmosCollectionName__"
+    },
+    "CosmosDbDatabaseThroughput": {
+      "value": __CosmosDbDatabaseThroughput__
+    },
+    "CosmosDbDatabaseNeedsCreation": {
+      "value": __CosmosDbDatabaseDoesntExist__
     }
   }
 }

@@ -18,6 +18,9 @@ parameters:
   ApimProductName: ''
   ApimApiName: ''
   SubscriptionPosturi: ''
+  DfCDevopsPath: ''
+  AppSharedResourceGroup: ''
+  appSharedCosmosDBName: ''
   Apis: []
 
 jobs:
@@ -39,6 +42,9 @@ jobs:
             Location: '${{ parameters.Location }}'
             ArmOutputVariableName: '${{ parameters.ArmOutputVariableName }}'
             ArmTemplateFolder: '${{ parameters.ArmTemplateFolder }}'
+            DfCDevopsPath: '${{ parameters.DfCDevopsPath }}'
+            AppSharedResourceGroup: '${{ parameters.AppSharedResourceGroup }}'
+            appSharedCosmosDBName: '${{ parameters.appSharedCosmosDBName }}'
 
 - ${{ each apiPartition in parameters.Apis }}:
   - ${{ each api in apiPartition }}:
