@@ -63,5 +63,7 @@ variables:
   value: ''
 - name: SubscriptionPosturi
   value: ''
-- name: CosmosDbCollectionName
+- name: cosmosCollectionName
   value: lmi-for-all-data
+- name: CosmosDbDatabaseThroughput
+  value: 400
