@@ -18,7 +18,7 @@ namespace DFC.Api.Lmi.Import.Models.SocDataset
 
         public int Soc { get; set; }
 
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime CachedDate { get; set; } = DateTime.UtcNow;
 
         public string? Title { get; set; }
 
