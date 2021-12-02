@@ -82,37 +82,6 @@ stages:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
-- stage: DeployToLabDraftApiLmiImport
-  condition: succeeded()
-  displayName: Deploy to LAB-DRAFT_ApiLmiImport
-  variables:
-  - group: dfc-shared-lab
-  - group: dfc-app-shared-all
-  - group: dfc-stax-shared-lab
-  - group: dfc-app-shared-lab
-  - group: 'KeyVault - dfc-lab-shared-kv'
-  - template: VariableTemplates/LabDraftEnvironmentVariables.yml
-  jobs:
-  - template: JobTemplates/deploy-environment.yml
-    parameters:
-      AzureSubscription: 'SFA-CDH-Dev/Test (962cae10-2950-412a-93e3-d8ae92b17896)'
-      EnvironmentTag: '$(EnvironmentTag)'
-      ParentBusiness: '$(ParentBusiness)'
-      ServiceOffering: '$(ServiceOffering)'
-      ResourceGroup: '$(ResourceGroup)'
-      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
-      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      EnvironmentName: LAB-DRAFT_ApiLmiImport
-      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
-      ApimLoggerName: "$(ApimLoggerName)"
-      SharedResourceGroup: "$(SharedResourceGroup)"
-      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
-      AppSharedResourceGroup: $(AppSharedResourceGroup)
-      appSharedCosmosDBName: $(appSharedCosmosDBName)
-      Apis:
-        -
-          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
-
 - stage: DeployToDevApiLmiImport
   dependsOn: Build
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
@@ -135,37 +104,6 @@ stages:
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
       EnvironmentName: DEV_ApiLmiImport
-      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
-      ApimLoggerName: "$(ApimLoggerName)"
-      SharedResourceGroup: "$(SharedResourceGroup)"
-      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
-      AppSharedResourceGroup: $(AppSharedResourceGroup)
-      appSharedCosmosDBName: $(appSharedCosmosDBName)
-      Apis:
-        -
-          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
-
-- stage: DeployToDevDraftApiLmiImport
-  condition: succeeded()
-  displayName: Deploy to DEV-DRAFT_ApiLmiImport
-  variables:
-  - group: dfc-shared-dev
-  - group: dfc-app-shared-all
-  - group: dfc-stax-shared-dev
-  - group: dfc-app-shared-dev
-  - group: 'KeyVault - dfc-dev-shared-kv'
-  - template: VariableTemplates/DevDraftEnvironmentVariables.yml
-  jobs:
-  - template: JobTemplates/deploy-environment.yml
-    parameters:
-      AzureSubscription: 'SFA-CDH-Dev/Test (962cae10-2950-412a-93e3-d8ae92b17896)'
-      EnvironmentTag: '$(EnvironmentTag)'
-      ParentBusiness: '$(ParentBusiness)'
-      ServiceOffering: '$(ServiceOffering)'
-      ResourceGroup: '$(ResourceGroup)'
-      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
-      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      EnvironmentName: DEV-DRAFT_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
@@ -207,38 +145,6 @@ stages:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
-- stage: DeployToSitDraftApiLmiImport
-  condition: succeeded()
-  displayName: Deploy to SIT-DRAFT_ApiLmiImport
-  variables:
-  - group: dfc-shared-sit
-  - group: dfc-app-shared-all
-  - group: dfc-stax-shared-sit
-  - group: dfc-app-shared-sit
-  - group: 'KeyVault - dfc-sit-shared-kv'
-  - template: VariableTemplates/SitDraftEnvironmentVariables.yml
-  jobs:
-  - template: JobTemplates/deploy-environment.yml
-    parameters:
-      AzureSubscription: 'SFA-CDH-Dev/Test (962cae10-2950-412a-93e3-d8ae92b17896)'
-      EnvironmentTag: '$(EnvironmentTag)'
-      ParentBusiness: '$(ParentBusiness)'
-      ServiceOffering: '$(ServiceOffering)'
-      ResourceGroup: '$(ResourceGroup)'
-      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
-      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      EnvironmentName: SIT-draft_ApiLmiImport
-      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
-      ApimLoggerName: "$(ApimLoggerName)"
-      SharedResourceGroup: "$(SharedResourceGroup)"
-      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
-      AppSharedResourceGroup: $(AppSharedResourceGroup)
-      appSharedCosmosDBName: $(appSharedCosmosDBName)
-      Apis: 
-        -
-          - name: import
-            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
-
 - stage: DeployToPPApiLmiImport
   condition: and(eq(dependencies.Build.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PP_ApiLmiImport
@@ -270,40 +176,8 @@ stages:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
-- stage: DeployToPPDraftApiLmiImport
-  condition: and(eq(dependencies.DeployToPPApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  displayName: Deploy to PP-DRAFT_ApiLmiImport
-  variables:
-  - group: dfc-shared-pp
-  - group: dfc-app-shared-all
-  - group: dfc-stax-shared-pp
-  - group: dfc-app-shared-pp
-  - group: 'KeyVault - dfc-pp-shared-kv'
-  - template: VariableTemplates/PPDraftEnvironmentVariables.yml
-  jobs:
-  - template: JobTemplates/deploy-environment.yml
-    parameters:
-      AzureSubscription: 'SFA-DIG-PreProd (931bc9f6-359c-4f65-a753-1ee191a1fd6c)'
-      EnvironmentTag: '$(EnvironmentTag)'
-      ParentBusiness: '$(ParentBusiness)'
-      ServiceOffering: '$(ServiceOffering)'
-      ResourceGroup: '$(ResourceGroup)'
-      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
-      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      EnvironmentName: PP-DRAFT_ApiLmiImport
-      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
-      ApimLoggerName: "$(ApimLoggerName)"
-      SharedResourceGroup: "$(SharedResourceGroup)"
-      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
-      AppSharedResourceGroup: $(AppSharedResourceGroup)
-      appSharedCosmosDBName: $(appSharedCosmosDBName)
-      Apis: 
-        -
-          - name: import
-            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
-
 - stage: DeployToPRDApiLmiImport
-  condition: and(eq(dependencies.DeployToPPDraftApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(eq(dependencies.DeployToPPApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: Deploy to PRD_ApiLmiImport
   variables:
   - group: dfc-shared-prd
@@ -332,35 +206,3 @@ stages:
       Apis:
         -
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
-
-- stage: DeployToPRDDraftApiLmiImport
-  condition: and(eq(dependencies.DeployToPRDApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  displayName: Deploy to PRD-DRAFT_ApiLmiImport
-  variables:
-  - group: dfc-shared-prd
-  - group: dfc-app-shared-all
-  - group: dfc-stax-shared-prd
-  - group: dfc-app-shared-prd
-  - group: 'KeyVault - dfc-prd-shared-kv'
-  - template: VariableTemplates/PRDDraftEnvironmentVariables.yml
-  jobs:
-  - template: JobTemplates/deploy-environment.yml
-    parameters:
-      AzureSubscription: 'SFA-DIG-Prod (6c93f7dc-6c36-4ea6-8de3-3f4574f88027)'
-      EnvironmentTag: '$(EnvironmentTag)'
-      ParentBusiness: '$(ParentBusiness)'
-      ServiceOffering: '$(ServiceOffering)'
-      ResourceGroup: '$(ResourceGroup)'
-      PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
-      ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      EnvironmentName: PRD-DRAFT_ApiLmiImport
-      DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
-      ApimLoggerName: "$(ApimLoggerName)"
-      SharedResourceGroup: "$(SharedResourceGroup)"
-      DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
-      AppSharedResourceGroup: $(AppSharedResourceGroup)
-      appSharedCosmosDBName: $(appSharedCosmosDBName)
-      Apis: 
-        -
-          - name: import
-            azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
