@@ -71,15 +71,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: LAB_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -107,15 +102,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: LAB-DRAFT_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -144,15 +134,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: DEV_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -180,15 +165,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: DEV-DRAFT_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -216,15 +196,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: SIT_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -252,15 +227,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: SIT-draft_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -289,15 +259,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: PP_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -325,15 +290,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: PP-DRAFT_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -362,15 +322,10 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: PRD_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      ApimApiName: $(ApimApiName)
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
@@ -398,18 +353,13 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      FunctionAppDomain: '$(FunctionAppDomain)'
       EnvironmentName: PRD-DRAFT_ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
-      ApimProductName: "$(ApimProductName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
-      ApimServiceName: "$(ApimServiceName)"
-      SubscriptionPosturi: '$(SubscriptionPosturi)'
       DfCDevopsPath: '$(Agent.BuildDirectory)/s/dfc-devops'
       AppSharedResourceGroup: $(AppSharedResourceGroup)
       appSharedCosmosDBName: $(appSharedCosmosDBName)
-      ApimApiName: $(ApimApiName)
       Apis: 
         -
           - name: import
