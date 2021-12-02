@@ -57,7 +57,6 @@ stages:
   variables:
   - group: dfc-shared-lab
   - group: dfc-app-shared-all
-  - group: dfc-stax-shared-lab
   - group: dfc-app-shared-lab
   - group: 'KeyVault - dfc-lab-shared-kv'
   - template: VariableTemplates/LabEnvironmentVariables.yml
@@ -89,7 +88,6 @@ stages:
   variables:
   - group: dfc-shared-dev
   - group: dfc-app-shared-all
-  - group: dfc-stax-shared-dev
   - group: dfc-app-shared-dev
   - group: 'KeyVault - dfc-dev-shared-kv'
   - template: VariableTemplates/DevEnvironmentVariables.yml
@@ -120,7 +118,6 @@ stages:
   variables:
   - group: dfc-shared-sit
   - group: dfc-app-shared-all
-  - group: dfc-stax-shared-sit
   - group: dfc-app-shared-sit
   - group: 'KeyVault - dfc-sit-shared-kv'
   - template: VariableTemplates/SitEnvironmentVariables.yml
@@ -151,7 +148,6 @@ stages:
   variables:
   - group: dfc-shared-pp
   - group: dfc-app-shared-all
-  - group: dfc-stax-shared-pp
   - group: dfc-app-shared-pp
   - group: 'KeyVault - dfc-pp-shared-kv'
   - template: VariableTemplates/PPEnvironmentVariables.yml
@@ -182,7 +178,6 @@ stages:
   variables:
   - group: dfc-shared-prd
   - group: dfc-app-shared-all
-  - group: dfc-stax-shared-prd
   - group: dfc-app-shared-prd
   - group: 'KeyVault - dfc-prd-shared-kv'
   - template: VariableTemplates/PRDEnvironmentVariables.yml
