@@ -62,24 +62,6 @@
     "LmiImportTimerTriggerSchedule": {
       "value": "LmiImportTimerTriggerSchedule"
     },
-    "ApiSuffix": {
-      "value": "ApiSuffix"
-    },
-    "Neo4jEndpoints0Uri": {
-      "value": "Neo4jEndpoints0Uri"
-    },
-    "Neo4jEndpoints1Uri": {
-      "value": "Neo4jEndpoints1Uri"
-    },
-    "Neo4jEndpoints0Username": {
-      "value": "Neo4jEndpoints0Username"
-    },
-    "Neo4jEndpoints0Password": {
-      "value": "Neo4jEndpoints0Password"
-    },
-    "GraphOptionsContentApiUriPrefix": {
-      "value": "GraphOptionsContentApiUriPrefix"
-    },
     "JobProfileApiClientOptionsBaseAddress": {
       "value": "JobProfileApiClientOptionsBaseAddress"
     },
@@ -94,12 +76,6 @@
     },
     "EventGridClientOptionsApiEndpoint": {
       "value": "EventGridClientOptionsApiEndpoint"
-    },
-    "SubscriptionSettingsEndpoint": {
-      "value": "SubscriptionSettingsEndpoint"
-    },
-    "subscriptionUrl": {
-      "value": "subscriptionUrl"
     },
     "cosmosDbKey": {
       "value": "not-a-real-key"
