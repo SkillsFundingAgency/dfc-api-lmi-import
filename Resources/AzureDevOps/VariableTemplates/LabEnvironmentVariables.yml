@@ -42,7 +42,7 @@ variables:
 - name: EventGridClientOptionsTopicKey
   value: $(EventGridAegSasKey)
 - name: EventGridClientOptionsApiEndpoint
-  value: https://dfc-lab-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
+  value: https://dfc-lab-api-lmi-import-fa.$(appServiceDomain)/api/lmi-for-all-data
 - name: cosmosCollectionName
   value: lmi-for-all-data
 - name: CosmosDbDatabaseThroughput
