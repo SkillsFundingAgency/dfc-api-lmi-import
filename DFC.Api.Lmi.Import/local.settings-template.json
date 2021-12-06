@@ -54,6 +54,6 @@
 		"TopicEndpoint": "__EventGridTopicEndpoint__/api/events",
 		"SubjectPrefix": "/dfc-api-lmi-import/",
 		"TopicKey": "__EventGridTopicKey__",
-		"ApiEndpoint": "__ContentApiEndpoint__/api/execute/lmisoc"
+		"ApiEndpoint": "__LmiImportApiEndpoint__/api/lmi-for-all-data"
 	}
 }

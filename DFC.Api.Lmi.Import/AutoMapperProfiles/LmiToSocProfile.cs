@@ -12,6 +12,8 @@ namespace DFC.Api.Lmi.Import.AutoMapperProfiles
     {
         public LmiToSocProfile()
         {
+            CreateMap<SocDatasetModel, SocDatasetSummaryItemModel>();
+
             CreateMap<LmiSocDatasetModel, SocDatasetModel>()
                 .ForMember(d => d.Id, s => s.MapFrom(m => Guid.NewGuid()));
 
