@@ -46,4 +46,4 @@ variables:
 - name: cosmosCollectionName
   value: lmi-for-all-data
 - name: CosmosDbDatabaseThroughput
-  value: 400
+  value: 1200
