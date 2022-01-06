@@ -67,24 +67,6 @@
     "LmiImportTimerTriggerSchedule": {
       "type": "string"
     },
-    "ApiSuffix": {
-      "type": "string"
-    },
-    "Neo4jEndpoints0Uri": {
-      "type": "string"
-    },
-    "Neo4jEndpoints1Uri": {
-      "type": "string"
-    },
-    "Neo4jEndpoints0Username": {
-      "type": "string"
-    },
-    "Neo4jEndpoints0Password": {
-      "type": "string"
-    },
-    "GraphOptionsContentApiUriPrefix": {
-      "type": "string"
-    },
     "JobProfileApiClientOptionsBaseAddress": {
       "type": "string"
     },
@@ -100,13 +82,25 @@
     "EventGridClientOptionsApiEndpoint": {
       "type": "string"
     },
-    "SubscriptionSettingsEndpoint": {
+    "CosmosDbResourceGroup": {
       "type": "string"
     },
-    "subscriptionUrl": {
+    "cosmosDbName": {
+      "type": "string"
+    },
+    "cosmosDbKey": {
+      "type": "securestring"
+    },
+    "CosmosDbDatabaseNeedsCreation": {
+      "type": "bool"
+    },
+    "CosmosDbDatabaseThroughput": {
+      "type": "int"
+    },
+    "CosmosDbCollectionName": {
       "type": "string",
       "metadata": {
-        "description": "subscriptionUrl"
+        "description": "The name of the collection to create"
       }
     }
   },
@@ -116,7 +110,10 @@
     "appServicePlanResourceGroup": "[concat(variables('resourcePrefix'),'-rg')]",
     "apimApiName": "[concat(parameters('apimProductName'), '-', parameters('apimApiName'))]",
     "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-    "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-app-sharedresources-actgrp')]"
+    "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-app-sharedresources-actgrp')]",
+    "cosmosDbCollectionPartitionKey": "/PartitionKey",
+    "cosmosDbDatabaseName": "dfc-api-lmi-import",
+    "cosmosDbEndpoint": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]"
   },
   "resources": [
     {
@@ -193,7 +190,70 @@
       "dependsOn": [
         "[concat('apim-product-', parameters('apimProductName'))]",
         "[concat('apim-logger-', parameters('apimLoggerName'))]"
-        ]
+      ]
+    },
+    {
+      "name": "[variables('CosmosDbDatabaseName')]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('CosmosDbResourceGroup')]",
+      "apiVersion": "2017-05-10",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'),'CosmosDb/cosmos-database.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "accountName": {
+            "value": "[parameters('CosmosDbName')]"
+          },
+          "databaseName": {
+            "value": "[variables('CosmosDbDatabaseName')]"
+          },
+          "useSharedRequestUnits": {
+            "value": true
+          },
+          "offerThroughput": {
+            "value": "[parameters('CosmosDbDatabaseThroughput')]"
+          },
+          "databaseNeedsCreation": {
+            "value": "[parameters('CosmosDbDatabaseNeedsCreation')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[parameters('CosmosDbCollectionName')]",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('CosmosDbResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'CosmosDb/cosmos-collection.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "accountName": {
+            "value": "[parameters('cosmosDbName')]"
+          },
+          "databaseName": {
+            "value": "[variables('cosmosDbDatabaseName')]"
+          },
+          "collectionName": {
+            "value": "[parameters('CosmosDbCollectionName')]"
+          },
+          "provisionRequestUnits": {
+            "value": false
+          },
+          "partitionKey": {
+            "value": "[variables('cosmosDbCollectionPartitionKey')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[variables('CosmosDbDatabaseName')]"
+      ]
     },
     {
       "apiVersion": "2017-05-10",
@@ -307,94 +367,6 @@
                 "value": "[parameters('LmiImportTimerTriggerSchedule')]"
               },
               {
-                "name": "ApiSuffix",
-                "value": "[parameters('ApiSuffix')]"
-              },
-              {
-                "name": "Neo4j__Endpoints__0__Name",
-                "value": "neo4j"
-              },
-              {
-                "name": "Neo4j__Endpoints__0__Uri",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Uri'),'')]"
-              },
-              {
-                "name": "Neo4j__Endpoints__0__Username",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Username'),'')]"
-              },
-              {
-                "name": "Neo4j__Endpoints__0__Password",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Password'),'')]"
-              },
-              {
-                "name": "Neo4j__Endpoints__0__Enabled",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
-              },
-              {
-                "name": "Neo4j__Endpoints__1__Name",
-                "value": "Draft"
-              },
-              {
-                "name": "Neo4j__Endpoints__1__Uri",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints1Uri'),'')]"
-              },
-              {
-                "name": "Neo4j__Endpoints__1__Username",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Username'),'')]"
-              },
-              {
-                "name": "Neo4j__Endpoints__1__Password",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('Neo4jEndpoints0Password'),'')]"
-              },
-              {
-                "name": "Neo4j__Endpoints__1__Enabled",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__0__ReplicaSetName",
-                "value": "neo4j"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__0__GraphInstances__0__Endpoint",
-                "value": "neo4j"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__0__GraphInstances__0__GraphName",
-                "value": "neo4j"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__0__GraphInstances__0__DefaultGraph",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'false','false')]"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__0__GraphInstances__0__Enabled",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__1__ReplicaSetName",
-                "value": "preview"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__1__GraphInstances__0__Endpoint",
-                "value": "Draft"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__1__GraphInstances__0__GraphName",
-                "value": "neo4j"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__1__GraphInstances__0__DefaultGraph",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
-              },
-              {
-                "name": "Neo4j__ReplicaSets__1__GraphInstances__0__Enabled",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'true','false')]"
-              },
-              {
-                "name": "GraphOptions__ContentApiUriPrefix",
-                "value": "[parameters('GraphOptionsContentApiUriPrefix')]"
-              },
-              {
                 "name": "JobProfileApiClientOptions__BaseAddress",
                 "value": "[parameters('JobProfileApiClientOptionsBaseAddress')]"
               },
@@ -428,47 +400,31 @@
               },
               {
                 "name": "LmiApiClientOptions__MinYear",
-                "value": "2021"
+                "value": "2022"
               },
               {
                 "name": "LmiApiClientOptions__MaxYear",
                 "value": "2027"
               },
               {
-                "name": "SubscriptionSettings__Endpoint",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('SubscriptionSettingsEndpoint'),'')]"
+                "name": "Configuration__CosmosDbConnections__LmiImport__EndpointUrl",
+                "value": "[variables('cosmosDbEndpoint')]"
               },
               {
-                "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),parameters('subscriptionUrl'),'')]"
+                "name": "Configuration__CosmosDbConnections__LmiImport__DatabaseId",
+                "value": "[variables('cosmosDbDatabaseName')]"
               },
               {
-                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Key",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'subject','')]"
+                "name": "Configuration__CosmosDbConnections__LmiImport__CollectionId",
+                "value": "[parameters('CosmosDbCollectionName')]"
               },
               {
-                "name": "SubscriptionSettings__Filter__PropertyContainsFilters__0__Values__0",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'/dfc-api-lmi-delta-report/','')]"
+                "name": "Configuration__CosmosDbConnections__LmiImport__PartitionKey",
+                "value": "[variables('cosmosDbCollectionPartitionKey')]"
               },
               {
-                "name": "SubscriptionSettings__Filter__IncludeEventTypes__0",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'published','')]"
-              },
-              {
-                "name": "SubscriptionSettings__Filter__IncludeEventTypes__1",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'unpublished','')]"
-              },
-              {
-                "name": "SubscriptionSettings__Filter__IncludeEventTypes__2",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'deleted','')]"
-              },
-              {
-                "name": "SubscriptionSettings__Filter__IncludeEventTypes__3",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'draft','')]"
-              },
-              {
-                "name": "SubscriptionSettings__Filter__IncludeEventTypes__4",
-                "value": "[if(contains(variables('resourcePrefix'),'draft'),'draft-discarded','')]"
+                "name": "Configuration__CosmosDbConnections__LmiImport__AccessKey",
+                "value": "[parameters('cosmosDbKey')]"
               }
             ]
           }

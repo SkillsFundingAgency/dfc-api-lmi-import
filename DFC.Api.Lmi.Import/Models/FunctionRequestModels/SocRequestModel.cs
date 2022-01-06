@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.Lmi.Import.Models.FunctionRequestModels
 {
@@ -7,7 +6,5 @@ namespace DFC.Api.Lmi.Import.Models.FunctionRequestModels
     public class SocRequestModel : OrchestratorRequestModel
     {
         public int Soc { get; set; }
-
-        public Guid? SocId { get; set; }
     }
 }
