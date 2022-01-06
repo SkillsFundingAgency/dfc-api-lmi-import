@@ -14,9 +14,15 @@ variables:
 - name: EnableAzureMonitorAlerting
   value: true
 - name: ReleaseEnvironmentName
+<<<<<<< HEAD:Resources/AzureDevOps/VariableTemplates/LabDraftEnvironmentVariables.yml
+  value: lab-draft
+- name: WebAppPrefix
+  value: dfc-lab-draft
+=======
   value: lab
 - name: WebAppPrefix
   value: dfc-lab
+>>>>>>> origin/dev:Resources/AzureDevOps/VariableTemplates/LabEnvironmentVariables.yml
 - name: FunctionAppInsightName
   value: $(WebAppPrefix)-api-lmi-import-ai
 - name: FunctionAppName
@@ -33,8 +39,7 @@ variables:
   value: Import
 - name: LmiImportTimerTriggerSchedule
   value: 0 0 2 1,15 * *
-<<<<<<<< HEAD:Resources/AzureDevOps/VariableTemplates/LabEnvironmentVariables.yml
-========
+<<<<<<< HEAD:Resources/AzureDevOps/VariableTemplates/LabDraftEnvironmentVariables.yml
 - name: ApiSuffix
   value: (draft)
 - name: Neo4jEndpoints0Name
@@ -48,8 +53,9 @@ variables:
 - name: Neo4jEndpoints0Password
   value: $(Neo4jPasswordDraft)
 - name: GraphOptionsContentApiUriPrefix
-  value: https://dfc-dev-draft-api-cont-fa.$(appServiceDomain)/api/execute/
->>>>>>>> origin/dev:Resources/AzureDevOps/VariableTemplates/DevDraftEnvironmentVariables.yml
+  value: https://dfc-lab-draft-api-cont-fa.$(appServiceDomain)/api/execute/
+=======
+>>>>>>> origin/dev:Resources/AzureDevOps/VariableTemplates/LabEnvironmentVariables.yml
 - name: JobProfileApiClientOptionsBaseAddress
   value: $(ApimProxyAddress)/job-profiles/summary
 - name: JobProfileApiClientOptionsApiKey
@@ -59,18 +65,18 @@ variables:
 - name: EventGridClientOptionsTopicKey
   value: $(EventGridAegSasKey)
 - name: EventGridClientOptionsApiEndpoint
-<<<<<<<< HEAD:Resources/AzureDevOps/VariableTemplates/LabEnvironmentVariables.yml
+<<<<<<< HEAD:Resources/AzureDevOps/VariableTemplates/LabDraftEnvironmentVariables.yml
+  value: https://dfc-lab-draft-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
+- name: SubscriptionSettingsEndpoint
+  value: $(ApimProxyAddress)/LMI/Import-Draft/lmi/webhook?subscription-key=$(apimLmiKey)
+- name: subscriptionUrl
+  value: https://dfc-lab-api-eventgridsubscriptions-fa.$(FunctionAppDomain)/api/execute/
+- name: SubscriptionPosturi
+  value: https://$(FunctionAppName).$(FunctionAppDomain)/subscription/
+=======
   value: https://dfc-lab-api-lmi-import-fa.$(appServiceDomain)/api/lmi-for-all-data
 - name: cosmosCollectionName
   value: lmi-for-all-data
 - name: CosmosDbDatabaseThroughput
   value: 1200
-========
-  value: https://dfc-dev-draft-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
-- name: SubscriptionSettingsEndpoint
-  value: $(ApimProxyAddress)/LMI/Import-Draft/lmi/webhook?subscription-key=$(apimLmiKey)
-- name: subscriptionUrl
-  value: https://dfc-dev-api-eventgridsubscriptions-fa.$(FunctionAppDomain)/api/execute/
-- name: SubscriptionPosturi
-  value: https://$(FunctionAppName).$(FunctionAppDomain)/subscription/
->>>>>>>> origin/dev:Resources/AzureDevOps/VariableTemplates/DevDraftEnvironmentVariables.yml
+>>>>>>> origin/dev:Resources/AzureDevOps/VariableTemplates/LabEnvironmentVariables.yml
