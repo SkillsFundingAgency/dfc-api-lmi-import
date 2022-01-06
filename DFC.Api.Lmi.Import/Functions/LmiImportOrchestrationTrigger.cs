@@ -1,14 +1,18 @@
+using AutoMapper;
 using DFC.Api.Lmi.Import.Contracts;
-using DFC.Api.Lmi.Import.Enums;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
+using DFC.Api.Lmi.Import.Models.SocDataset;
 using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
+using DFC.Compui.Cosmos.Contracts;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -17,42 +21,48 @@ namespace DFC.Api.Lmi.Import.Functions
 {
     public class LmiImportOrchestrationTrigger
     {
-        private const string EventTypeForDraft = "draft";
         private const string EventTypeForPublished = "published";
-        private const string EventTypeForDraftDiscarded = "draft-discarded";
         private const string EventTypeForDeleted = "deleted";
 
         private readonly ILogger<LmiImportOrchestrationTrigger> logger;
+        private readonly IMapper mapper;
         private readonly IJobProfileService jobProfileService;
-        private readonly IMapLmiToGraphService mapLmiToGraphService;
         private readonly ILmiSocImportService lmiSocImportService;
-        private readonly IGraphService graphService;
+        private readonly IDocumentService<SocDatasetModel> documentService;
         private readonly IEventGridService eventGridService;
         private readonly EventGridClientOptions eventGridClientOptions;
         private readonly SocJobProfilesMappingsCachedModel socJobProfilesMappingsCachedModel;
 
         public LmiImportOrchestrationTrigger(
             ILogger<LmiImportOrchestrationTrigger> logger,
+            IMapper mapper,
             IJobProfileService jobProfileService,
-            IMapLmiToGraphService mapLmiToGraphService,
             ILmiSocImportService lmiSocImportService,
-            IGraphService graphService,
+            IDocumentService<SocDatasetModel> documentService,
             IEventGridService eventGridService,
             EventGridClientOptions eventGridClientOptions,
             SocJobProfilesMappingsCachedModel socJobProfilesMappingsCachedModel)
         {
             this.logger = logger;
+            this.mapper = mapper;
             this.jobProfileService = jobProfileService;
-            this.mapLmiToGraphService = mapLmiToGraphService;
             this.lmiSocImportService = lmiSocImportService;
-            this.graphService = graphService;
+            this.documentService = documentService;
             this.eventGridService = eventGridService;
             this.eventGridClientOptions = eventGridClientOptions;
             this.socJobProfilesMappingsCachedModel = socJobProfilesMappingsCachedModel;
+
+            //TODO: ian: need to initialize the telemetry properly
+            Activity? activity = null;
+            if (Activity.Current == null)
+            {
+                activity = new Activity(nameof(LmiImportOrchestrationTrigger)).Start();
+                activity.SetParentId(Guid.NewGuid().ToString());
+            }
         }
 
-        [FunctionName(nameof(GraphRefreshSocOrchestrator))]
-        public async Task<HttpStatusCode> GraphRefreshSocOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
+        [FunctionName(nameof(CacheRefreshSocOrchestrator))]
+        public async Task<HttpStatusCode> CacheRefreshSocOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
@@ -64,19 +74,6 @@ namespace DFC.Api.Lmi.Import.Functions
             }
 
             var socJobProfileMapping = new SocJobProfileMappingModel { Soc = socRequest.Soc, JobProfiles = socJobProfilesMappingsCachedModel.SocJobProfileMappings.FirstOrDefault(f => f.Soc == socRequest.Soc)?.JobProfiles };
-
-            await context.CallActivityAsync(nameof(GraphPurgeSocActivity), socRequest.Soc).ConfigureAwait(true);
-
-            var eventGridPostPurgeRequest = new EventGridPostRequestModel
-            {
-                ItemId = socRequest.SocId,
-                Api = $"{eventGridClientOptions.ApiEndpoint}/{socRequest.SocId}",
-                DisplayText = $"LMI SOC purged: {socRequest.Soc}",
-                EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
-            };
-
-            await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostPurgeRequest).ConfigureAwait(true);
-
             var itemId = await context.CallActivityAsync<Guid?>(nameof(ImportSocItemActivity), socJobProfileMapping).ConfigureAwait(true);
 
             if (itemId != null)
@@ -86,10 +83,10 @@ namespace DFC.Api.Lmi.Import.Functions
                     ItemId = itemId,
                     Api = $"{eventGridClientOptions.ApiEndpoint}/{itemId}",
                     DisplayText = $"LMI SOC refreshed: {socRequest.Soc}",
-                    EventType = socRequest.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
+                    EventType = EventTypeForPublished,
                 };
 
-                await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
+                await context.CallActivityAsync(nameof(PostCacheEventActivity), eventGridPostRequest).ConfigureAwait(true);
 
                 return HttpStatusCode.OK;
             }
@@ -97,48 +94,52 @@ namespace DFC.Api.Lmi.Import.Functions
             return HttpStatusCode.NoContent;
         }
 
-        [FunctionName(nameof(GraphPurgeSocOrchestrator))]
-        public async Task GraphPurgeSocOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
+        [FunctionName(nameof(CachePurgeSocOrchestrator))]
+        public async Task CachePurgeSocOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
             var socRequest = context.GetInput<SocRequestModel>();
 
-            await context.CallActivityAsync(nameof(GraphPurgeSocActivity), socRequest.Soc).ConfigureAwait(true);
+            var existingDocument = await context.CallActivityAsync<SocDatasetModel>(nameof(GetCachedSocDocumentActivity), socRequest.Soc).ConfigureAwait(true);
 
-            var eventGridPostRequest = new EventGridPostRequestModel
+            if (existingDocument != null)
             {
-                ItemId = socRequest.SocId,
-                Api = $"{eventGridClientOptions.ApiEndpoint}/{socRequest.SocId}",
-                DisplayText = $"LMI SOC purged: {socRequest.Soc}",
-                EventType = socRequest.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
-            };
+                await context.CallActivityAsync(nameof(CachePurgeSocActivity), existingDocument.Id).ConfigureAwait(true);
 
-            await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
+                var eventGridPostRequest = new EventGridPostRequestModel
+                {
+                    ItemId = existingDocument.Id,
+                    Api = $"{eventGridClientOptions.ApiEndpoint}/{existingDocument.Id}",
+                    DisplayText = $"LMI SOC purged: {existingDocument.Soc}",
+                    EventType = EventTypeForDeleted,
+                };
+
+                await context.CallActivityAsync(nameof(PostCacheEventActivity), eventGridPostRequest).ConfigureAwait(true);
+            }
         }
 
-        [FunctionName(nameof(GraphPurgeOrchestrator))]
-        public async Task GraphPurgeOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
+        [FunctionName(nameof(CachePurgeOrchestrator))]
+        public async Task CachePurgeOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
-            var orchestratorRequestModel = context.GetInput<OrchestratorRequestModel>();
-            await context.CallActivityAsync(nameof(GraphPurgeActivity), null).ConfigureAwait(true);
+            await context.CallActivityAsync(nameof(CachePurgeActivity), null).ConfigureAwait(true);
 
             var eventGridPostRequest = new EventGridPostRequestModel
             {
                 ItemId = context.NewGuid(),
                 Api = $"{eventGridClientOptions.ApiEndpoint}",
                 DisplayText = "LMI Import purged",
-                EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraftDiscarded : EventTypeForDeleted,
+                EventType = EventTypeForDeleted,
             };
 
-            await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
+            await context.CallActivityAsync(nameof(PostCacheEventActivity), eventGridPostRequest).ConfigureAwait(true);
         }
 
-        [FunctionName(nameof(GraphRefreshOrchestrator))]
+        [FunctionName(nameof(CacheRefreshOrchestrator))]
         [Timeout("01:00:00")]
-        public async Task<HttpStatusCode> GraphRefreshOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
+        public async Task<HttpStatusCode> CacheRefreshOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
@@ -149,7 +150,7 @@ namespace DFC.Api.Lmi.Import.Functions
 
             if (socJobProfileMappings != null && socJobProfileMappings.Any())
             {
-                await context.CallActivityAsync(nameof(GraphPurgeActivity), null).ConfigureAwait(true);
+                await context.CallActivityAsync(nameof(CachePurgeActivity), null).ConfigureAwait(true);
 
                 logger.LogInformation($"Importing {socJobProfileMappings.Count} SOC mappings");
 
@@ -162,10 +163,10 @@ namespace DFC.Api.Lmi.Import.Functions
 
                 await Task.WhenAll(parallelTasks).ConfigureAwait(true);
 
-                decimal importedToGraphCount = parallelTasks.Count(t => t.Result != null);
-                var successPercentage = decimal.Divide(importedToGraphCount, socJobProfileMappings.Count) * 100;
+                decimal importedToCacheCount = parallelTasks.Count(t => t.Result != null);
+                var successPercentage = decimal.Divide(importedToCacheCount, socJobProfileMappings.Count) * 100;
 
-                logger.LogInformation($"Imported to Graph {importedToGraphCount} of {socJobProfileMappings.Count} SOC mappings = {successPercentage:0.0}% success");
+                logger.LogInformation($"Imported to cache {importedToCacheCount} of {socJobProfileMappings.Count} SOC mappings = {successPercentage:0.0}% success");
 
                 if (successPercentage >= orchestratorRequestModel.SuccessRelayPercent)
                 {
@@ -174,10 +175,10 @@ namespace DFC.Api.Lmi.Import.Functions
                         ItemId = context.NewGuid(),
                         Api = $"{eventGridClientOptions.ApiEndpoint}",
                         DisplayText = "LMI Import refreshed",
-                        EventType = orchestratorRequestModel.IsDraftEnvironment ? EventTypeForDraft : EventTypeForPublished,
+                        EventType = EventTypeForPublished,
                     };
 
-                    await context.CallActivityAsync(nameof(PostGraphEventActivity), eventGridPostRequest).ConfigureAwait(true);
+                    await context.CallActivityAsync(nameof(PostCacheEventActivity), eventGridPostRequest).ConfigureAwait(true);
 
                     return HttpStatusCode.OK;
                 }
@@ -191,61 +192,28 @@ namespace DFC.Api.Lmi.Import.Functions
             }
         }
 
-        [FunctionName(nameof(RefreshPublishedOrchestrator))]
-        public async Task RefreshPublishedOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
-        {
-            _ = context ?? throw new ArgumentNullException(nameof(context));
-
-            await context.CallActivityAsync(nameof(PurgePublishedActivity), null).ConfigureAwait(true);
-            await context.CallActivityAsync(nameof(RefreshPublishedActivity), null).ConfigureAwait(true);
-        }
-
-        [FunctionName(nameof(PurgePublishedOrchestrator))]
-        public async Task PurgePublishedOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
-        {
-            _ = context ?? throw new ArgumentNullException(nameof(context));
-
-            await context.CallActivityAsync(nameof(PurgePublishedActivity), null).ConfigureAwait(true);
-        }
-
         [FunctionName(nameof(GetJobProfileSocMappingsActivity))]
-        public async Task<IList<SocJobProfileMappingModel>?> GetJobProfileSocMappingsActivity([ActivityTrigger] string? name)
+        public Task<IList<SocJobProfileMappingModel>?> GetJobProfileSocMappingsActivity([ActivityTrigger] string? name)
         {
             logger.LogInformation("Getting Job profile to SOC mappings");
 
-            return await jobProfileService.GetMappingsAsync().ConfigureAwait(false);
+            return jobProfileService.GetMappingsAsync();
         }
 
-        [FunctionName(nameof(RefreshPublishedActivity))]
-        public async Task RefreshPublishedActivity([ActivityTrigger] string? name)
+        [FunctionName(nameof(CachePurgeActivity))]
+        public Task CachePurgeActivity([ActivityTrigger] string? name)
         {
-            logger.LogInformation("Refreshing published Graph from draft Graph");
+            logger.LogInformation("Purging cache of all SOC");
 
-            await graphService.PublishAsync(GraphReplicaSet.Draft, GraphReplicaSet.Published).ConfigureAwait(false);
+            return documentService.PurgeAsync();
         }
 
-        [FunctionName(nameof(PurgePublishedActivity))]
-        public async Task PurgePublishedActivity([ActivityTrigger] string? name)
+        [FunctionName(nameof(CachePurgeSocActivity))]
+        public Task CachePurgeSocActivity([ActivityTrigger] Guid id)
         {
-            logger.LogInformation("Purging published Graph of all SOC");
+            logger.LogInformation($"Purging cache of SOC guid: {id}");
 
-            await graphService.PurgeAsync(GraphReplicaSet.Published).ConfigureAwait(false);
-        }
-
-        [FunctionName(nameof(GraphPurgeActivity))]
-        public async Task GraphPurgeActivity([ActivityTrigger] string? name)
-        {
-            logger.LogInformation("Purging draft Graph of all SOC");
-
-            await graphService.PurgeAsync(GraphReplicaSet.Draft).ConfigureAwait(false);
-        }
-
-        [FunctionName(nameof(GraphPurgeSocActivity))]
-        public async Task GraphPurgeSocActivity([ActivityTrigger] int soc)
-        {
-            logger.LogInformation($"Purging draft Graph of SOC: {soc}");
-
-            await graphService.PurgeSocAsync(soc, GraphReplicaSet.Draft).ConfigureAwait(false);
+            return documentService.DeleteAsync(id);
         }
 
         [FunctionName(nameof(ImportSocItemActivity))]
@@ -258,19 +226,34 @@ namespace DFC.Api.Lmi.Import.Functions
             var lmiSocDataset = await lmiSocImportService.ImportAsync(socJobProfileMapping.Soc!.Value, socJobProfileMapping.JobProfiles).ConfigureAwait(false);
             if (lmiSocDataset != null)
             {
-                var graphSocDataset = mapLmiToGraphService.Map(lmiSocDataset);
-
-                if (await graphService.ImportAsync(graphSocDataset, GraphReplicaSet.Draft).ConfigureAwait(false))
+                var socDataset = mapper.Map<SocDatasetModel>(lmiSocDataset);
+                var exisitingDocument = await documentService.GetAsync(w => w.Soc == lmiSocDataset.Soc, lmiSocDataset.Soc.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+                if (exisitingDocument != null)
                 {
-                    return graphSocDataset!.ItemId;
+                    socDataset.Id = exisitingDocument.Id;
+                    socDataset.Etag = exisitingDocument.Etag;
+                }
+
+                var upsertResult = await documentService.UpsertAsync(socDataset).ConfigureAwait(false);
+                if (upsertResult == HttpStatusCode.OK || upsertResult == HttpStatusCode.Created)
+                {
+                    return socDataset.Id;
                 }
             }
 
             return null;
         }
 
-        [FunctionName(nameof(PostGraphEventActivity))]
-        public async Task PostGraphEventActivity([ActivityTrigger] EventGridPostRequestModel? eventGridPostRequest)
+        [FunctionName(nameof(GetCachedSocDocumentActivity))]
+        public Task<SocDatasetModel?> GetCachedSocDocumentActivity([ActivityTrigger] int soc)
+        {
+            logger.LogInformation($"Getting cached document for Soc: {soc}");
+
+            return documentService.GetAsync(w => w.Soc == soc, soc.ToString(CultureInfo.InvariantCulture));
+        }
+
+        [FunctionName(nameof(PostCacheEventActivity))]
+        public Task PostCacheEventActivity([ActivityTrigger] EventGridPostRequestModel? eventGridPostRequest)
         {
             _ = eventGridPostRequest ?? throw new ArgumentNullException(nameof(eventGridPostRequest));
 
@@ -285,7 +268,7 @@ namespace DFC.Api.Lmi.Import.Functions
                 Author = eventGridClientOptions.SubjectPrefix,
             };
 
-            await eventGridService.SendEventAsync(eventGridEventData, eventGridClientOptions.SubjectPrefix, eventGridPostRequest.EventType).ConfigureAwait(false);
+            return eventGridService.SendEventAsync(eventGridEventData, eventGridClientOptions.SubjectPrefix, eventGridPostRequest.EventType);
         }
     }
 }

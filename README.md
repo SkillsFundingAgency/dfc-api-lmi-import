@@ -3,7 +3,7 @@
 
 This function app is used to retrieve Job Profile information from the National Careers Service API. The Job Profiles each contain a SOC value, which is subsequently used to retrieve LMI data from the LMI API.
 The LMI API is provided by http://api.lmiforall.org.uk/.
-This function app collates the Job Profile / LMI data and stores in a Graph database to subsequent processing.
+This function app collates the Job Profile / LMI data and stores in a Cosmos database to subsequent processing.
 
 ## Getting Started
 
@@ -17,7 +17,7 @@ Clone the project and open the solution in Visual Studio 2019.
 
 |Item	|Purpose|
 |-------|-------|
-|DFC.ServiceTaxonomy.Neo4j|Stax Graph database connection|
+DFC.Compui.Cosmos|Cosmos repository nuget|
 
 ## Local Config Files
 
@@ -38,19 +38,11 @@ This app uses the LMI API to retrieve LMI data. This app also uses the Job Profi
 | App setting | Value |
 |-------|-------|
 LmiImportTimerTriggerSchedule | * * * * * * |
-ApiSuffix | dev | 
-Neo4j__Endpoints__0__Name | Published |
-Neo4j__Endpoints__0__Uri | Bolt endpoint uri to Graph database |
-Neo4j__Endpoints__0__Username | username |
-Neo4j__Endpoints__0__Password | password |
-Neo4j__Endpoints__0__Enabled | true |
-Neo4j__ReplicaSets__0__ReplicaSetName | published |
-Neo4j__ReplicaSets__0__GraphInstances__0__Endpoint | Published |
-Neo4j__ReplicaSets__0__GraphInstances__0__GraphName | published |
-Neo4j__ReplicaSets__0__GraphInstances__0__DefaultGraph | true |
-Neo4j__ReplicaSets__0__GraphInstances__0__Enabled | true |
-GraphOptions__ContentApiUriPrefix | Content API endpoint |
-GraphOptions__ReplicaSetName | published |
+|Configuration__CosmosDbConnections__LmiImport__AccessKey|__CosmosAccessKey__|
+|Configuration__CosmosDbConnections__LmiImport__EndpointUrl|__CosmosEndpoint__|
+|Configuration__CosmosDbConnections__LmiImport__DatabaseId|dfc-api-lmi-import|
+|Configuration__CosmosDbConnections__LmiImport__CollectionId|lmi-for-all-data|
+|Configuration__CosmosDbConnections__LmiImport__PartitionKey|/PartitionKey|
 JobProfileApiClientOptions__BaseAddress | Job Profiles summary API endpoint |
 JobProfileApiClientOptions__Version | v1 |
 JobProfileApiClientOptions__ApiKey | APIM key for PP JobProfiles api |

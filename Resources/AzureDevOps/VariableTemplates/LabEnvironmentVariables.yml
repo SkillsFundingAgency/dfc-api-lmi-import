@@ -33,20 +33,23 @@ variables:
   value: Import
 - name: LmiImportTimerTriggerSchedule
   value: 0 0 2 1,15 * *
+<<<<<<<< HEAD:Resources/AzureDevOps/VariableTemplates/LabEnvironmentVariables.yml
+========
 - name: ApiSuffix
-  value:
+  value: (draft)
 - name: Neo4jEndpoints0Name
-  value: Published
+  value: Draft
 - name: Neo4jEndpoints0Uri
   value: $(Neo4jUrl)
 - name: Neo4jEndpoints1Uri
   value: $(Neo4jUrlDraft)
 - name: Neo4jEndpoints0Username
-  value: $(Neo4jUser)
+  value: $(Neo4jUserDraft)
 - name: Neo4jEndpoints0Password
-  value: $(Neo4jPassword)
+  value: $(Neo4jPasswordDraft)
 - name: GraphOptionsContentApiUriPrefix
-  value: https://dfc-lab-api-cont-fa.$(appServiceDomain)/api/execute/
+  value: https://dfc-dev-draft-api-cont-fa.$(appServiceDomain)/api/execute/
+>>>>>>>> origin/dev:Resources/AzureDevOps/VariableTemplates/DevDraftEnvironmentVariables.yml
 - name: JobProfileApiClientOptionsBaseAddress
   value: $(ApimProxyAddress)/job-profiles/summary
 - name: JobProfileApiClientOptionsApiKey
@@ -56,10 +59,18 @@ variables:
 - name: EventGridClientOptionsTopicKey
   value: $(EventGridAegSasKey)
 - name: EventGridClientOptionsApiEndpoint
-  value: https://dfc-lab-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
+<<<<<<<< HEAD:Resources/AzureDevOps/VariableTemplates/LabEnvironmentVariables.yml
+  value: https://dfc-lab-api-lmi-import-fa.$(appServiceDomain)/api/lmi-for-all-data
+- name: cosmosCollectionName
+  value: lmi-for-all-data
+- name: CosmosDbDatabaseThroughput
+  value: 1200
+========
+  value: https://dfc-dev-draft-api-cont-fa.$(appServiceDomain)/api/execute/lmisoc
 - name: SubscriptionSettingsEndpoint
-  value: ''
+  value: $(ApimProxyAddress)/LMI/Import-Draft/lmi/webhook?subscription-key=$(apimLmiKey)
 - name: subscriptionUrl
-  value: ''
+  value: https://dfc-dev-api-eventgridsubscriptions-fa.$(FunctionAppDomain)/api/execute/
 - name: SubscriptionPosturi
-  value: ''
+  value: https://$(FunctionAppName).$(FunctionAppDomain)/subscription/
+>>>>>>>> origin/dev:Resources/AzureDevOps/VariableTemplates/DevDraftEnvironmentVariables.yml

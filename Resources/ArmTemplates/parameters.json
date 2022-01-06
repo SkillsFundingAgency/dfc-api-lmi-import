@@ -65,24 +65,6 @@
     "LmiImportTimerTriggerSchedule": {
       "value": "__LmiImportTimerTriggerSchedule__"
     },
-    "ApiSuffix": {
-      "value": "__ApiSuffix__"
-    },
-    "Neo4jEndpoints0Uri": {
-      "value": "__Neo4jEndpoints0Uri__"
-    },
-    "Neo4jEndpoints1Uri": {
-      "value": "__Neo4jEndpoints1Uri__"
-    },
-    "Neo4jEndpoints0Username": {
-      "value": "__Neo4jEndpoints0Username__"
-    },
-    "Neo4jEndpoints0Password": {
-      "value": "__Neo4jEndpoints0Password__"
-    },
-    "GraphOptionsContentApiUriPrefix": {
-      "value": "__GraphOptionsContentApiUriPrefix__"
-    },
     "JobProfileApiClientOptionsBaseAddress": {
       "value": "__JobProfileApiClientOptionsBaseAddress__"
     },
@@ -98,11 +80,23 @@
     "EventGridClientOptionsApiEndpoint": {
       "value": "__EventGridClientOptionsApiEndpoint__"
     },
-    "SubscriptionSettingsEndpoint": {
-      "value": "__SubscriptionSettingsEndpoint__"
+    "cosmosDbName": {
+      "value": "__appSharedCosmosDBName__"
     },
-    "subscriptionUrl": {
-      "value": "__subscriptionUrl__"
+    "cosmosDbKey": {
+      "value": "__appSharedCosmosPrimaryKey__"
+    },
+    "CosmosDbResourceGroup": {
+      "value": "__appSharedResourceGroup__"
+    },
+    "CosmosDbCollectionName": {
+      "value": "__cosmosCollectionName__"
+    },
+    "CosmosDbDatabaseThroughput": {
+      "value": __CosmosDbDatabaseThroughput__
+    },
+    "CosmosDbDatabaseNeedsCreation": {
+      "value": __CosmosDbDatabaseDoesntExist__
     }
   }
 }

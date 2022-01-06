@@ -18,33 +18,19 @@ namespace DFC.Api.Lmi.Import.UnitTests.Functions
         private readonly ILogger<LmiImportTimerTrigger> fakeLogger = A.Fake<ILogger<LmiImportTimerTrigger>>();
         private readonly IDurableOrchestrationClient fakeDurableOrchestrationClient = A.Fake<IDurableOrchestrationClient>();
         private readonly TimerInfo timerInfo = new TimerInfo(new ConstantSchedule(new TimeSpan(1)), new ScheduleStatus());
-        private readonly EnvironmentValues draftEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = "(draft)" };
-        private readonly EnvironmentValues publishedEnvironmentValues = new EnvironmentValues { EnvironmentNameApiSuffix = string.Empty };
+        private readonly EnvironmentValues environmentValues = new EnvironmentValues();
 
         [Fact]
         public async Task LmiImportTimerTriggerRunFunctionIsSuccessful()
         {
             // Arrange
-            var lmiImportTimerTrigger = new LmiImportTimerTrigger(fakeLogger, draftEnvironmentValues);
+            var lmiImportTimerTrigger = new LmiImportTimerTrigger(fakeLogger, environmentValues);
 
             // Act
             await lmiImportTimerTrigger.Run(timerInfo, fakeDurableOrchestrationClient).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustHaveHappenedOnceExactly();
-        }
-
-        [Fact]
-        public async Task LmiImportTimerTriggerRunFunctionReturnsBadRequestForPublishedEnvironment()
-        {
-            // Arrange
-            var lmiImportTimerTrigger = new LmiImportTimerTrigger(fakeLogger, publishedEnvironmentValues);
-
-            // Act
-            await lmiImportTimerTrigger.Run(timerInfo, fakeDurableOrchestrationClient).ConfigureAwait(false);
-
-            // Assert
-            A.CallTo(() => fakeDurableOrchestrationClient.StartNewAsync(A<string>.Ignored, A<OrchestratorRequestModel>.Ignored)).MustNotHaveHappened();
         }
     }
 }

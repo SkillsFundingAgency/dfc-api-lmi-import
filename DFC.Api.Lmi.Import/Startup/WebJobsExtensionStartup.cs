@@ -5,12 +5,14 @@ using DFC.Api.Lmi.Import.Extensions;
 using DFC.Api.Lmi.Import.HttpClientPolicies;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
+using DFC.Api.Lmi.Import.Models.SocDataset;
 using DFC.Api.Lmi.Import.Models.SocJobProfileMapping;
 using DFC.Api.Lmi.Import.Services;
 using DFC.Api.Lmi.Import.Startup;
-using DFC.Compui.Subscriptions.Pkg.Netstandard.Extensions;
-using DFC.ServiceTaxonomy.Neo4j.Configuration;
+using DFC.Compui.Cosmos;
+using DFC.Compui.Cosmos.Contracts;
 using DFC.Swagger.Standard;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +29,7 @@ namespace DFC.Api.Lmi.Import.Startup
     public class WebJobsExtensionStartup : IWebJobsStartup
     {
         private const string AppSettingsPolicies = "Policies";
+        private const string CosmosDbLmiImportConfigAppSettings = "Configuration:CosmosDbConnections:LmiImport";
 
         public void Configure(IWebJobsBuilder builder)
         {
@@ -38,33 +41,27 @@ namespace DFC.Api.Lmi.Import.Startup
                 .AddEnvironmentVariables()
                 .Build();
 
+            var cosmosDbConnection = configuration.GetSection(CosmosDbLmiImportConfigAppSettings).Get<CosmosDbConnection>();
+            var cosmosRetryOptions = new RetryOptions { MaxRetryAttemptsOnThrottledRequests = 20, MaxRetryWaitTimeInSeconds = 60 };
+
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly());
             builder.Services.AddHttpClient();
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
+            builder.Services.AddDocumentServices<SocDatasetModel>(cosmosDbConnection, false, cosmosRetryOptions);
             builder.Services.AddSingleton(new EnvironmentValues());
             builder.Services.AddSingleton(new SocJobProfilesMappingsCachedModel());
             builder.Services.AddSingleton(configuration.GetSection(nameof(EventGridClientOptions)).Get<EventGridClientOptions>() ?? new EventGridClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(LmiApiClientOptions)).Get<LmiApiClientOptions>() ?? new LmiApiClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(JobProfileApiClientOptions)).Get<JobProfileApiClientOptions>() ?? new JobProfileApiClientOptions());
-            builder.Services.AddSingleton(configuration.GetSection(nameof(GraphOptions)).Get<GraphOptions>() ?? new GraphOptions());
-            builder.Services.AddGraphCluster(options => configuration.GetSection(Neo4jOptions.Neo4j).Bind(options));
-            builder.Services.AddSubscriptionService(configuration);
             builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
             builder.Services.AddTransient<IApiConnector, ApiConnector>();
             builder.Services.AddTransient<IApiDataConnector, ApiDataConnector>();
-            builder.Services.AddTransient<IGraphConnector, GraphConnector>();
-            builder.Services.AddTransient<ICypherQueryBuilderService, CypherQueryBuilderService>();
             builder.Services.AddTransient<ILmiSocImportService, LmiSocImportService>();
             builder.Services.AddTransient<IJobProfileService, JobProfileService>();
             builder.Services.AddTransient<IJobProfilesToSocMappingService, JobProfilesToSocMappingService>();
-            builder.Services.AddTransient<IGraphService, GraphService>();
-            builder.Services.AddTransient<IGenericGraphQueryService, GenericGraphQueryService>();
-            builder.Services.AddTransient<ISocGraphQueryService, SocGraphQueryService>();
-            builder.Services.AddTransient<IMapLmiToGraphService, MapLmiToGraphService>();
             builder.Services.AddTransient<IEventGridService, EventGridService>();
             builder.Services.AddTransient<IEventGridClientService, EventGridClientService>();
-            builder.Services.AddTransient<ILmiWebhookReceiverService, LmiWebhookReceiverService>();
 
             var policyOptions = configuration.GetSection(AppSettingsPolicies).Get<PolicyOptions>() ?? new PolicyOptions();
             var policyRegistry = builder.Services.AddPolicyRegistry();

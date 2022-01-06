@@ -1,6 +1,4 @@
-﻿using DFC.Api.Lmi.Import.Models;
-using DFC.Api.Lmi.Import.Models.FunctionRequestModels;
-using DFC.Swagger.Standard.Annotations;
+﻿using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -14,45 +12,34 @@ using System.Threading.Tasks;
 
 namespace DFC.Api.Lmi.Import.Functions
 {
-    public class GraphRefreshHttpTrigger
+    public class CachePurgeHttpTrigger
     {
-        private readonly ILogger<GraphRefreshHttpTrigger> logger;
-        private readonly EnvironmentValues environmentValues;
+        private readonly ILogger<CachePurgeHttpTrigger> logger;
 
-        public GraphRefreshHttpTrigger(ILogger<GraphRefreshHttpTrigger> logger, EnvironmentValues environmentValues)
+        public CachePurgeHttpTrigger(ILogger<CachePurgeHttpTrigger> logger)
         {
             this.logger = logger;
-            this.environmentValues = environmentValues;
         }
 
-        [FunctionName("GraphRefresh")]
-        [Display(Name = "Graph refresh", Description = "Receives Post requests for graph refresh.")]
-        [Response(HttpStatusCode = (int)HttpStatusCode.Accepted, Description = "Refresh queued for processing", ShowSchema = false)]
+        [FunctionName("CachePurge")]
+        [Display(Name = "Cache purge", Description = "Receives Post requests for cache purge.")]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Accepted, Description = "Purge queued for processing", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Invalid request data or wrong environment", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.InternalServerError, Description = "Internal error caught and logged", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "graph/refresh")] HttpRequest? request,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "cache/purge")] HttpRequest? request,
             [DurableClient] IDurableOrchestrationClient starter)
         {
+            _ = starter ?? throw new ArgumentNullException(nameof(starter));
+
             try
             {
-                var orchestratorRequestModel = new OrchestratorRequestModel
-                {
-                    IsDraftEnvironment = environmentValues.IsDraftEnvironment,
-                    SuccessRelayPercent = environmentValues.SuccessRelayPercent,
-                };
+                logger.LogInformation("Received cache purge request");
 
-                if (!orchestratorRequestModel.IsDraftEnvironment)
-                {
-                    return new BadRequestResult();
-                }
-
-                logger.LogInformation("Received graph refresh request");
-
-                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.GraphRefreshOrchestrator), orchestratorRequestModel).ConfigureAwait(false);
+                string instanceId = await starter.StartNewAsync(nameof(LmiImportOrchestrationTrigger.CachePurgeOrchestrator)).ConfigureAwait(false);
 
                 logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
