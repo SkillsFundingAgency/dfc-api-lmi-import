@@ -1,9 +1,9 @@
-﻿using DFC.Api.Lmi.Import.Contracts;
+﻿using Azure.Messaging.EventGrid;
+using DFC.Api.Lmi.Import.Contracts;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
 using DFC.Api.Lmi.Import.Services;
 using FakeItEasy;
-using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -41,6 +41,7 @@ namespace DFC.Api.Lmi.Import.UnitTests.Services
             await eventGridService.SendEventAsync(dummyEventGridEventData, "a subject", "an event type").ConfigureAwait(false);
 
             // assert
+            A.CallTo(() => fakeEventGridClientService.SendEventAsync(A<List<EventGridEvent>>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeEventGridClientService.SendEventAsync(A<List<EventGridEvent>>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
