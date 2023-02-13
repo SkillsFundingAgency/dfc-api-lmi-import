@@ -52,7 +52,7 @@ stages:
 
 - stage: DeployToLabApiLmiImport
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
-  displayName: Deploy to LAB_ApiLmiImport
+  displayName: Deploy to LAB-ApiLmiImport
   variables:
   - group: dfc-shared-lab
   - group: dfc-app-shared-all
@@ -70,7 +70,7 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      EnvironmentName: LAB_ApiLmiImport
+      EnvironmentName: LAB-ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
