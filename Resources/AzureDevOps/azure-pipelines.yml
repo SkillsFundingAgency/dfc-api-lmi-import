@@ -47,13 +47,12 @@ stages:
         SolutionBaseName: $(SolutionBaseName)
         BuildPlatform: $(BuildPlatform)
         BuildConfiguration: $(BuildConfiguration)
-        DotNetCoreVersion: '3.1.100'
         PublishWebApp: true
         TestSuffix: UnitTests
 
 - stage: DeployToLabApiLmiImport
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
-  displayName: Deploy to LAB_ApiLmiImport
+  displayName: Deploy to LAB-ApiLmiImport
   variables:
   - group: dfc-shared-lab
   - group: dfc-app-shared-all
@@ -71,7 +70,7 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      EnvironmentName: LAB_ApiLmiImport
+      EnvironmentName: LAB-ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
@@ -84,7 +83,7 @@ stages:
 
 - stage: DeployToDevApiLmiImport
   dependsOn: Build
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+  condition: succeeded()
   displayName: Deploy to DEV_ApiLmiImport
   variables:
   - group: dfc-shared-dev
