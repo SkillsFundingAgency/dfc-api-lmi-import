@@ -145,7 +145,7 @@ stages:
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToPPApiLmiImport
-  condition: and(eq(dependencies.Build.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: succeeded()
   displayName: Deploy to PP_ApiLmiImport
   variables:
   - group: dfc-shared-pp
@@ -176,7 +176,7 @@ stages:
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToPRDApiLmiImport
-  condition: and(eq(dependencies.DeployToPPApiLmiImport.result,'Succeeded'), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: succeeded()
   displayName: Deploy to PRD_ApiLmiImport
   variables:
   - group: dfc-shared-prd
