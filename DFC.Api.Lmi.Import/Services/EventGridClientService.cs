@@ -1,11 +1,11 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
-using Microsoft.Azure.EventGrid;
-using Microsoft.Azure.EventGrid.Models;
+using Azure.Messaging.EventGrid;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Azure;
 
 namespace DFC.Api.Lmi.Import.Services
 {
@@ -31,10 +31,10 @@ namespace DFC.Api.Lmi.Import.Services
             try
             {
                 string topicHostname = new Uri(topicEndpoint).Host;
-                var topicCredentials = new TopicCredentials(topicKey);
-                using var client = new EventGridClient(topicCredentials);
+                var topicCredentials = new AzureKeyCredential(topicKey);
+                EventGridPublisherClient client = new EventGridPublisherClient( new Uri(topicEndpoint),  topicCredentials);
 
-                await client.PublishEventsAsync(topicHostname, eventGridEvents).ConfigureAwait(false);
+                await client.SendEventsAsync(eventGridEvents).ConfigureAwait(false);
 
                 logger.LogInformation($"Sent Event Grid message for: {logMessage}");
             }

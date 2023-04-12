@@ -1,7 +1,7 @@
 ﻿using DFC.Api.Lmi.Import.Contracts;
 using DFC.Api.Lmi.Import.Models;
 using DFC.Api.Lmi.Import.Models.ClientOptions;
-using Microsoft.Azure.EventGrid.Models;
+using Azure.Messaging.EventGrid;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -36,18 +36,14 @@ namespace DFC.Api.Lmi.Import.Services
 
             var eventGridEvents = new List<EventGridEvent>
             {
-                new EventGridEvent
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Subject = subject,
-                    Data = eventGridEventData,
-                    EventType = eventType,
-                    EventTime = DateTime.UtcNow,
-                    DataVersion = "1.0",
-                },
+                new EventGridEvent(
+                   subject,
+                   eventType,
+                   "1.0",
+                   eventGridEventData),
             };
 
-            eventGridEvents.ForEach(f => f.Validate());
+            //eventGridEvents.ForEach(f => f.Validate());
 
             await eventGridClientService.SendEventAsync(eventGridEvents, eventGridClientOptions.TopicEndpoint, eventGridClientOptions.TopicKey, subject).ConfigureAwait(false);
         }
