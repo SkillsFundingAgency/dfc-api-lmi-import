@@ -1,7 +1,7 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
+  "parameters": {    
     "appSharedResourceGroup": {
       "value": "dfc-dev-app-sharedresources-rg"
     },
@@ -25,9 +25,6 @@
     },
     "Environment": {
       "value": "dev"
-    },
-    "FunctionAppInsightName": {
-      "value": "dfc-dev-funcapp-v1-ai"
     },
     "FunctionAppName": {
       "value": "dfc-dev-funcapp-v1-fa"
@@ -94,6 +91,9 @@
     },
     "CosmosDbCollectionName": {
       "value": "CosmosDbCollectionName"
-    }
+    },
+    "appInsightsInstrumentationKey": {
+      "value": "2276ec76-bb9c-4a0c-a407-3347cbe6c6b8"
+    } 
   }
 }
