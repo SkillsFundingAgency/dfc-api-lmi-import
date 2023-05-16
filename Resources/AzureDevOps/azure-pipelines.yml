@@ -71,7 +71,7 @@ stages:
       ResourceGroup: '$(ResourceGroup)'
       PackageFile:  "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.DeploymentPackages/${{ variables.SolutionBaseName }}.zip"
       ArmTemplateFolder: "$(Pipeline.Workspace)/${{ variables.SolutionBaseName }}.Resources.ArmTemplates/"
-      EnvironmentName: LAB_ApiLmiImport
+      EnvironmentName: LAB-ApiLmiImport
       DFCAzureDevOpsProjectGuid: $(DFCAzureDevOpsProjectGuid)
       ApimLoggerName: "$(ApimLoggerName)"
       SharedResourceGroup: "$(SharedResourceGroup)"
