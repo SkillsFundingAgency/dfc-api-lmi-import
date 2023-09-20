@@ -51,7 +51,7 @@ stages:
         TestSuffix: UnitTests
 
 - stage: DeployToLabApiLmiImport
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+  condition: succeeded()
   displayName: Deploy to LAB-ApiLmiImport
   variables:
   - group: dfc-shared-lab
