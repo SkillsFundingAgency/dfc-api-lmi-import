@@ -26,9 +26,6 @@
     "Environment": {
       "value": "dev"
     },
-    "FunctionAppInsightName": {
-      "value": "dfc-dev-funcapp-v1-ai"
-    },
     "FunctionAppName": {
       "value": "dfc-dev-funcapp-v1-fa"
     },
@@ -94,6 +91,9 @@
     },
     "CosmosDbCollectionName": {
       "value": "CosmosDbCollectionName"
-    }
+    },
+    "appInsightsInstrumentationKey": {
+      "value": "deadbeef-0a0a-0a0a-0a0a-0a0a0a0a0a0a"
+    } 
   }
 }

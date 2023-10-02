@@ -29,9 +29,6 @@
         "comment": "Bug in tokenisation task prevents referencing Release.EnvironmentName directly.  https://github.com/TotalALM/VSTS-Tasks/issues/29"
       }
     },
-    "FunctionAppInsightName": {
-      "value": "__FunctionAppInsightName__"
-    },
     "FunctionAppName": {
       "value": "__FunctionAppName__"
     },
@@ -97,6 +94,9 @@
     },
     "CosmosDbDatabaseNeedsCreation": {
       "value": __CosmosDbDatabaseDoesntExist__
-    }
+    },
+    "appInsightsInstrumentationKey": {
+      "value": "__appInsightsInstrumentationKey__" 
+    } 
   }
 }
