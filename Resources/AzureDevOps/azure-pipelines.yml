@@ -83,7 +83,7 @@ stages:
 
 - stage: DeployToDevApiLmiImport
   dependsOn: Build
-  condition: succeeded()
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   displayName: Deploy to DEV_ApiLmiImport
   variables:
   - group: dfc-shared-dev
@@ -114,7 +114,7 @@ stages:
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToSitApiLmiImport
-  condition: succeeded()
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   displayName: Deploy to SIT_ApiLmiImport
   variables:
   - group: dfc-shared-sit
@@ -145,7 +145,7 @@ stages:
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToPPApiLmiImport
-  condition: succeeded()
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   displayName: Deploy to PP_ApiLmiImport
   variables:
   - group: dfc-shared-pp
@@ -176,7 +176,7 @@ stages:
           - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
 
 - stage: DeployToPRDApiLmiImport
-  condition: succeeded()
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   displayName: Deploy to PRD_ApiLmiImport
   variables:
   - group: dfc-shared-prd

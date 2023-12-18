@@ -102,6 +102,12 @@
       "metadata": {
         "description": "The name of the collection to create"
       }
+    },
+    "workspaceName": {
+        "type": "string"
+    },
+    "workspaceResourceGroup": {
+        "type": "string"
     }
   },
   "variables": {
@@ -133,6 +139,12 @@
           },
           "productDisplayName": {
             "value": "[parameters('apimProductName')]"
+          },
+          "workspaceName": {
+              "value": "[parameters('workspaceName')]"
+          },
+          "workspaceResourceGroup": {
+              "value": "[parameters('workspaceResourceGroup')]"
           }
         }
       }
@@ -303,6 +315,12 @@
           },
           "attachedService": {
             "value": ""
+          },
+          "workspaceName": {
+              "value": "[parameters('workspaceName')]"
+          },
+          "workspaceResourceGroup": {
+              "value": "[parameters('workspaceResourceGroup')]"
           }
         }
       }
