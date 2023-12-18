@@ -94,6 +94,12 @@
     },
     "CosmosDbCollectionName": {
       "value": "CosmosDbCollectionName"
+    },
+    "workspaceName": {
+      "value": "aTestLogAnalyticsAccount"
+    },
+    "workspaceResourceGroup": {
+        "value": "aResourceGroup"
     }
   }
 }
