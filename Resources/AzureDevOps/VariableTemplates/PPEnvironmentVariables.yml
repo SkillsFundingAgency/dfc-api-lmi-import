@@ -20,7 +20,7 @@ variables:
 - name: FunctionAppInsightName
   value: $(WebAppPrefix)-api-lmi-import-ai
 - name: FunctionAppName
-  value: $(WebAppPrefix)-api-lmi-import-fa
+  value: $(WebAppPrefix)-api-lmi-import-fa-ver2
 - name: ResourceGroup
   value: $(WebAppPrefix)-api-lmi-import-rg
 - name: appServicePlanName
@@ -42,7 +42,7 @@ variables:
 - name: EventGridClientOptionsTopicKey
   value: $(EventGridAegSasKey)
 - name: EventGridClientOptionsApiEndpoint
-  value: https://dfc-pp-api-lmi-import-fa.$(appServiceDomain)/api/lmi-for-all-data
+  value: https://dfc-pp-api-lmi-import-fa-ver2.$(appServiceDomain)/api/lmi-for-all-data
 - name: cosmosCollectionName
   value: lmi-for-all-data
 - name: CosmosDbDatabaseThroughput
