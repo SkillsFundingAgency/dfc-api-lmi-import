@@ -8,22 +8,8 @@
     "appSharedStorageAccountName": {
       "type": "string"
     },
-    "aspInstances": {
-      "type": "int"
-    },
-    "aspSize": {
+    "appServicePlanName": {
       "type": "string"
-    },
-    "aspTier": {
-      "type": "string"
-    },
-    "aseHostingEnvironmentName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "aseResourceGroup": {
-      "type": "string",
-      "defaultValue": ""
     },
     "environment": {
       "type": "string"
@@ -41,12 +27,6 @@
       }
     },
     "ExceptionCountThreshold": {
-      "type": "string"
-    },
-    "CPUPercentageThreshold": {
-      "type": "string"
-    },
-    "MemoryPercentageThreshold": {
       "type": "string"
     },
     "apimLoggerName": {
@@ -112,7 +92,6 @@
   },
   "variables": {
     "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-api-lmi-import'))]",
-    "appServicePlanName": "[concat(variables('resourcePrefix'), '-asp')]",
     "appServicePlanResourceGroup": "[concat(variables('resourcePrefix'),'-rg')]",
     "apimApiName": "[concat(parameters('apimProductName'), '-', parameters('apimApiName'))]",
     "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
@@ -308,7 +287,7 @@
             "value": "[parameters('FunctionAppName')]"
           },
           "appServicePlanName": {
-            "value": "[variables('appServicePlanName')]"
+            "value": "[parameters('appServicePlanName')]"
           },
           "appServicePlanResourceGroup": {
             "value": "[variables('appServicePlanResourceGroup')]"

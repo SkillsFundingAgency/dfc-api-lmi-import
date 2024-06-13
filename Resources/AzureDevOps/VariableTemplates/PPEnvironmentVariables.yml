@@ -1,16 +1,6 @@
 variables:
-- name: aspTier
-  value: Standard
-- name: aspInstances
-  value: 2
-- name: aspSize
-  value: 1
 - name: ExceptionCountThreshold
   value: 10
-- name: MemoryPercentageThreshold
-  value: 75
-- name: CPUPercentageThreshold
-  value: 75
 - name: EnableAzureMonitorAlerting
   value: true
 - name: ReleaseEnvironmentName
@@ -20,11 +10,11 @@ variables:
 - name: FunctionAppInsightName
   value: $(WebAppPrefix)-api-lmi-import-ai
 - name: FunctionAppName
-  value: $(WebAppPrefix)-api-lmi-import-fa
+  value: $(WebAppPrefix)-api-lmi-import-fa-ver2
 - name: ResourceGroup
   value: $(WebAppPrefix)-api-lmi-import-rg
 - name: appServicePlanName
-  value: $(WebAppPrefix)-api-lmi-import-asp
+  value: $(WebAppPrefix)-api-lmi-import-migrated-asp
 - name: apimLoggerName
   value: LMI-logger
 - name: apimProductName
@@ -42,7 +32,7 @@ variables:
 - name: EventGridClientOptionsTopicKey
   value: $(EventGridAegSasKey)
 - name: EventGridClientOptionsApiEndpoint
-  value: https://dfc-pp-api-lmi-import-fa.$(appServiceDomain)/api/lmi-for-all-data
+  value: https://dfc-pp-api-lmi-import-fa-ver2.$(appServiceDomain)/api/lmi-for-all-data
 - name: cosmosCollectionName
   value: lmi-for-all-data
 - name: CosmosDbDatabaseThroughput
