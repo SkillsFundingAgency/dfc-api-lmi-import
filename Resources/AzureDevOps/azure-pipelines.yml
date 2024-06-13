@@ -19,15 +19,15 @@ pool:
   - msbuild
   - visualstudio
 
-trigger: 
+trigger:
   branches:
-    include: 
+    include:
     - dev
     - master
 
 pr:
   branches:
-    include: 
+    include:
     - dev
     - master
 
@@ -173,7 +173,7 @@ stages:
       appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
-          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa-ver2'
 
 - stage: DeployToPRDApiLmiImport
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
