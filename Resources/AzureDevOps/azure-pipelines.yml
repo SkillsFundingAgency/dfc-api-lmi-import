@@ -204,4 +204,4 @@ stages:
       appSharedCosmosDBName: $(appSharedCosmosDBName)
       Apis:
         -
-          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa'
+          - azureFunctionName: '${{ variables.WebAppPrefix }}-api-lmi-import-fa-ver2'
